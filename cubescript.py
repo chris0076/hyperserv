@@ -10,11 +10,7 @@ class CSParser:
 	
 	def consume(self,length=1):
 		self.string=self.string[length:]
-
-	def error(self,message):
-		print message
-		exit()
-
+	
 	def parse(self,expect=""):
 		output=[""]
 		
@@ -97,10 +93,7 @@ class CSParser:
 
 class CSInterpreter:
 		
-	def __init__(self, command, outputfunction):
-		self.command=command
-		self.outputfunction=outputfunction
-		
+	def __init__(self):
 		self.functions = {
 			"begin":  self.begin,
 			"if":     self.csif,
@@ -171,7 +164,7 @@ class CSInterpreter:
 			self.force(params[1])
 	
 	def echo(self,params):
-		self.outputfunction(' '.join(params))
+		self.functions["outputfunction"](' '.join(map(str,params)))
 	
 	def execute(self,sexp):
 		if type(sexp) != list:
@@ -183,6 +176,8 @@ class CSInterpreter:
 					raise CSError("No such variable: "+sexp)
 			#number/string
 			return sexp
+		if sexp==[]:
+			return
 		try:
 			#function
 			if len(sexp)>1 and sexp[1]=="=":
@@ -195,27 +190,33 @@ class CSInterpreter:
 		except IndexError:
 			raise CSError("Missing parameter for \""+sexp[0]+"\"")
 		except TypeError:
-			raise CSError("Expected function, found a block: "+str(sexp[0]))
+			if(sexp[0][0]!="lambda"):
+				raise CSError("Expected function, found a block: "+str(sexp[0]))
 		except ValueError:
 			raise CSError("Value Error: Something does not have the right type in "+str(sexp))
-	def executestring(self):
-		sexp=CSParser(self.command).parse()
-		if type(sexp[0]) is list:
+	def executestring(self,string):
+		sexp=CSParser(string).parse()
+		if len(sexp)>0 and type(sexp[0]) is list:
 			sexp=sexp[0]
 		self.execute(sexp)
 
 if __name__ == '__main__':
 	import readline,sys
 	
-	def echo(msg):
+	def print_to_stdout(msg):
 		print msg
 	
-	CSInterpreter("echo \"Cubescript Python Interpreter\"",echo).executestring()
+	interpreter=CSInterpreter()
+	interpreter.functions["outputfunction"]=print_to_stdout
+	interpreter.functions["exit"]=lambda x: exit()
+	
+	interpreter.executestring("echo Cubescript Python Interpreter")
 	
 	args=' '.join(sys.argv[1:])
 	if(args!=""):
-		print CSParser(args).parse()
-		#CSInterpreter(args,echo).executestring()
+		print "cs>",args
+		interpreter.executestring(args)
 	
 	while(1):
-		CSInterpreter(raw_input(),echo).executestring()
+		string=raw_input("cs> ")
+		interpreter.executestring(string)
