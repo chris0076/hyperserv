@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import re, random
-import sys #for testing
 
 class CSError(Exception): pass
 
@@ -83,7 +82,7 @@ class CSParser:
 			output=output[:-1]
 		return output
 
-class CSExecuter:
+class CSInterpreter:
 		
 	def __init__(self, command, outputfunction):
 		self.command=command
@@ -185,10 +184,15 @@ class CSExecuter:
 			return self.functions[sexp[0]](map(self.execute,sexp[1:]))
 		except KeyError:
 			raise CSError("No such command: "+sexp[0])
-	def value(self):
-		self.execute(CSParser(self.command).parse())
+	def executestring(self):
+		sexp=CSParser(self.command).parse()
+		if type(sexp[0]) is list:
+			sexp=sexp[0]
+		self.execute(sexp)
 
 if __name__ == '__main__':
+	import readline
 	def echo(msg):
 		print msg
-	CSExecuter(' '.join(sys.argv[1:]),echo).value()
+	while(1):
+		CSInterpreter(raw_input(),echo).executestring()
