@@ -105,7 +105,7 @@ class CSExecuter:
 			"<=":     lambda params: self.numeric(lambda a: a[0]<=a[1],params),
 			">=":     lambda params: self.numeric(lambda a: a[0]>=a[1],params),
 			
-			"div":    lambda params: self.numeric(lambda a: a[0]/[1],params),
+			"div":    lambda params: self.numeric(lambda a: a[0]/a[1],params),
 			"mod":    lambda params: self.numeric(lambda a: a[0]%a[1],params),
 			"min":    lambda params: self.numeric(min,params),
 			"max":    lambda params: self.numeric(max,params),
@@ -188,6 +188,7 @@ class CSExecuter:
 	def value(self):
 		self.execute(CSParser(self.command).parse())
 
-def echo(msg):
-	print msg
-#CSExecuter(' '.join(sys.argv[1:]),echo).value()
+if __name__ == '__main__':
+	def echo(msg):
+		print msg
+	CSExecuter(' '.join(sys.argv[1:]),echo).value()
