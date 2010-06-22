@@ -198,7 +198,7 @@ class CSInterpreter:
 		sexp=CSParser(string).parse()
 		if len(sexp)>0 and type(sexp[0]) is list:
 			sexp=sexp[0]
-		self.execute(sexp)
+		return self.execute(sexp)
 
 if __name__ == '__main__':
 	import readline,sys
