@@ -115,11 +115,6 @@ class CSInterpreter:
 			"strlen": lambda params: str(len(params[0])),
 			"strstr": lambda params: str(params[0].find(params[1])),
 			
-			#ICOMMAND(rnd, "ii", (int *a, int *b), intret(*a - *b > 0 ? rnd(*a - *b) + *b : *b));
-			#ICOMMAND(strcmp, "ss", (char *a, char *b), intret(strcmp(a,b)==0));
-			#ICOMMAND(strstr, "ss", (char *a, char *b), { char *s = strstr(a, b); intret(s ? s-a : -1); });
-			#ICOMMAND(strlen, "s", (char *s), intret(strlen(s)));
-			
 			"echo": self.echo
 		}
 		
@@ -183,7 +178,13 @@ class CSInterpreter:
 				return sexp
 			return self.functions[sexp[0]](map(self.execute,sexp[1:]))
 		except KeyError:
-			raise CSError("No such command: "+sexp[0])
+			raise CSError("No such command \""+sexp[0]+"\"")
+		except IndexError:
+			raise CSError("Missing parameter for \""+sexp[0]+"\"")
+		except TypeError:
+			raise CSError("Expected function, found a block: "+str(sexp[0]))
+		except ValueError:
+			raise CSError("Value Error: Something does not have the right type in "+str(sexp))
 	def executestring(self):
 		sexp=CSParser(self.command).parse()
 		if type(sexp[0]) is list:
@@ -191,8 +192,16 @@ class CSInterpreter:
 		self.execute(sexp)
 
 if __name__ == '__main__':
-	import readline
+	import readline,sys
+	
 	def echo(msg):
 		print msg
+	
+	CSInterpreter("echo \"Cubescript Python Interpreter\"",echo).executestring()
+	
+	args=' '.join(sys.argv[1:])
+	if(args!=""):
+		CSInterpreter(args,echo).executestring()
+	
 	while(1):
 		CSInterpreter(raw_input(),echo).executestring()
