@@ -28,6 +28,11 @@ class CSParser:
 				if expect==")":
 					self.consume()
 					break
+				elif expect=="begin":
+					self.consume()
+					if output[-1]!="":
+						output.append("")
+					output[-1]="begin"
 				else:
 					raise CSError("Unexpected ): "+self.string)
 			
@@ -40,6 +45,11 @@ class CSParser:
 			elif self.string.startswith("]"):
 				if expect=="]":
 					self.consume()
+				elif expect=="begin":
+					self.consume()
+					if output[-1]!="":
+						output.append("")
+					output[-1]="begin"
 				else:
 					raise CSError("Unexpected ]: "+self.string)
 				break
@@ -63,9 +73,12 @@ class CSParser:
 				if output!=[""]:
 					if output[-1]=="":
 						output=output[:-1]
-					output=["begin",output,self.parse()]
+					output=["begin",output,self.parse("begin")]
 					if output[2]==[]:
 						output=output[1]
+					if output[2][-1]=="begin":
+						output[2]=output[2][:-1]
+						return output
 			
 			elif self.string.startswith("//"):
 				self.string=self.string.partition("\n")[2]
@@ -201,7 +214,8 @@ if __name__ == '__main__':
 	
 	args=' '.join(sys.argv[1:])
 	if(args!=""):
-		CSInterpreter(args,echo).executestring()
+		print CSParser(args).parse()
+		#CSInterpreter(args,echo).executestring()
 	
 	while(1):
 		CSInterpreter(raw_input(),echo).executestring()
