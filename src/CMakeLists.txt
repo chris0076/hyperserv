@@ -4,7 +4,7 @@ find_package(PythonLibs REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(Threads REQUIRED)
 
-set(xsbs_srcs
+set(hyperserv_srcs
 	engine/server.cpp
 	engine/command.cpp
 
@@ -52,10 +52,10 @@ include_directories(${CMAKE_SOURCE_DIR}/src/engine
 	${PYTHON_INCLUDE_PATH}
 	${ZLIB_INCLUDE_PATH})
 
-add_executable(xsbs
-	${xsbs_srcs})
+add_executable(hyperserv
+	${hyperserv_srcs})
 
-target_link_libraries(xsbs ${XSBS_LIBS})
+target_link_libraries(hyperserv ${XSBS_LIBS})
 
-install(TARGETS xsbs DESTINATION bin)
+install(TARGETS hyperserv DESTINATION bin)
 

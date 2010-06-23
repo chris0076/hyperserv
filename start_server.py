@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 import os, sys
 
-xsbs_root_path = ''
+hyperserv_root_path = ''
 pyscripts_path = ''
-xsbs_bin_path = ''
+hyperserv_bin_path = ''
 
 cwddirs = os.getcwd().split('/')
 root_found = False
 
-if xsbs_root_path == '':
+if hyperserv_root_path == '':
 	for dir in cwddirs:
 		if dir.find('hyperserv') > -1:
 			root_found = True
-		xsbs_root_path += dir + '/'
+		hyperserv_root_path += dir + '/'
 else:
 	root_found = True
 
@@ -22,16 +22,16 @@ if not root_found:
 	sys.exit(1)
 
 if pyscripts_path == '':
-	pyscripts_path = xsbs_root_path + 'src/pyscripts'
+	pyscripts_path = hyperserv_root_path + 'src/pyscripts'
 if not os.path.isdir(pyscripts_path):
 	print 'Error: Could not find pyscripts folder in your XSBS directory.'
 	print 'Did you perform an out of source build?  Make sure you are in the XSBS source directory.'
 	sys.exit(1)
 
-if xsbs_bin_path == '':
-	xsbs_bin_path = xsbs_root_path + 'src/xsbs'
-if not os.path.isfile(xsbs_bin_path):
-	os.execlpe('xsbs', 'xsbs', '-lsauer.log', '-s'+pyscripts_path, os.environ)
+if hyperserv_bin_path == '':
+	hyperserv_bin_path = hyperserv_root_path + 'src/hyperserv'
+if not os.path.isfile(hyperserv_bin_path):
+	os.execlpe('hyperserv', 'hyperserv', '-lsauer.log', '-s'+pyscripts_path, os.environ)
 else:
-	os.execle(xsbs_bin_path, 'xsbs' '-lsauer.log', '-s'+pyscripts_path, os.environ)
+	os.execle(hyperserv_bin_path, 'hyperserv' '-lsauer.log', '-s'+pyscripts_path, os.environ)
 

@@ -19,7 +19,7 @@ make install
 RUN XSBS
 -------
 cd into xsbs
-./bin/start_server.py
+./start_server.py
 
 If you experienced an error, or for more detailed information, see the project documentation: http://xsbs.greghaynes.net/documentation
 

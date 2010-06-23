@@ -81,7 +81,7 @@ bool initPy()
 {
 	PyObject *pFunc = 0, *pArgs = 0, *pValue = 0, *pluginsModule = 0;
 	
-	eventsModule = PyImport_ImportModule("xsbs.events");
+	eventsModule = PyImport_ImportModule("hyperserv.events");
 	SBPY_ERR(eventsModule)
 	triggerEventFunc = PyObject_GetAttrString(eventsModule, "triggerServerEvent");
 	SBPY_ERR(triggerEventFunc);
@@ -104,7 +104,7 @@ bool initPy()
 		fprintf(stderr, "Error: update function could not be loaded.\n");
 		return false;
 	}
-	pluginsModule = PyImport_ImportModule("xsbs.plugins");
+	pluginsModule = PyImport_ImportModule("hyperserv.plugins");
 	SBPY_ERR(pluginsModule)
 	return true;
 }

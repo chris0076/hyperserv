@@ -721,7 +721,7 @@ COMMAND(stoplistenserver, "");
 
 void showhelp()
 {
-	printf("Usage: xsbs -sPYSCRIPTS_PATH [OPTION...]\n");
+	printf("Usage: hyperserv -sPYSCRIPTS_PATH [OPTION...]\n");
 	printf("\n");
 	printf(" -cMAXCLIENTS             Set the maximum number of clients.\n");
 	printf(" -iIP_ADDRESS             Set ip address to bind server to.\n");

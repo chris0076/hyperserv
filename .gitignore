@@ -1,7 +1,6 @@
 *.pyc
 tags
 sauer.log
-xsbs.db
 *.log
 *.swp
 
