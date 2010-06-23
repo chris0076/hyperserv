@@ -129,7 +129,7 @@ class CSInterpreter:
 	
 	def functionwrapper(self,functionpointer,params):
 		try:
-			functionpointer(params)
+			functionpointer(*params)
 		except Exception as e:
 			raise CSFunctionError(sys.exc_info())
 	
@@ -174,7 +174,7 @@ class CSInterpreter:
 			self.force(params[1])
 	
 	def echo(self,params):
-		self.functions["outputfunction"](' '.join(map(str,params)))
+		self.functions["outputfunction"]([' '.join(map(str,params))])
 	
 	def execute(self,sexp):
 		if type(sexp) != list:
@@ -220,13 +220,13 @@ if __name__ == '__main__':
 	def print_to_stdout(msg):
 		print msg
 	
-	def cause_error(params):
+	def cause_error(value):
 		"""Causes Error when called with a 1 or +"""
-		return 1/(int(params[0])-1)
+		return 1/(int(value)-1)
 	
 	interpreter=CSInterpreter()
 	interpreter.addfunction("outputfunction",print_to_stdout)
-	interpreter.addfunction("exit",lambda x: exit())
+	interpreter.addfunction("exit",exit)
 	interpreter.addfunction("error",cause_error)
 	
 	interpreter.executestring("echo Cubescript Python Interpreter")
