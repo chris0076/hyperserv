@@ -1,6 +1,6 @@
 import os, sys
 import sbserver
-import say
+import cubescript
 
 # Initialize these before loading plugins
 
