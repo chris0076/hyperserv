@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import re, random
+import re, random, sys, traceback
 
 class CSError(Exception): pass
+class CSFunctionError(Exception): pass
 
 class CSParser:
 	def __init__(self, string):
@@ -12,8 +13,8 @@ class CSParser:
 		self.string=self.string[length:]
 	
 	def parse(self,expect=""):
+		"""Parses a string and outputs an sexp"""
 		output=[""]
-		
 		while True:
 			if self.string.startswith("("):
 				self.consume()
@@ -126,6 +127,16 @@ class CSInterpreter:
 		
 		self.variables = {}
 	
+	def functionwrapper(self,functionpointer,params):
+		try:
+			functionpointer(*params)
+		except Exception as e:
+			raise CSFunctionError(sys.exc_info())
+	
+	def addfunction(self,functionname,functionpointer):
+		"""add an external function to the interpreter"""
+		self.functions[functionname]=lambda params: self.functionwrapper(functionpointer, params)
+	
 	def assignvar(self,name,value):
 		self.variables[name]=value
 		return value
@@ -164,9 +175,10 @@ class CSInterpreter:
 			self.force(params[1])
 	
 	def echo(self,params):
-		self.functions["outputfunction"](' '.join(map(str,params)))
+		self.functions["outputfunction"]([' '.join(map(str,params))])
 	
 	def execute(self,sexp):
+		"""Executes Cubescript in sexp form, it needs to already be parsed"""
 		if type(sexp) != list:
 			if type(sexp) is str and sexp.startswith("$"):
 				#variable
@@ -194,7 +206,12 @@ class CSInterpreter:
 				raise CSError("Expected function, found a block: "+str(sexp[0]))
 		except ValueError:
 			raise CSError("Value Error: Something does not have the right type in "+str(sexp))
+		except CSFunctionError as e:
+			#reraise the error from the function
+			execinfo=e.args[0]
+			raise execinfo[0],execinfo[1],execinfo[2]
 	def executestring(self,string):
+		"""Parses and Executes Cubescript"""
 		sexp=CSParser(string).parse()
 		if len(sexp)>0 and type(sexp[0]) is list:
 			sexp=sexp[0]
@@ -206,9 +223,14 @@ if __name__ == '__main__':
 	def print_to_stdout(msg):
 		print msg
 	
+	def cause_error(value):
+		"""Causes Error when called with a 1 or +"""
+		return 1/(int(value)-1)
+	
 	interpreter=CSInterpreter()
-	interpreter.functions["outputfunction"]=print_to_stdout
-	interpreter.functions["exit"]=lambda x: exit()
+	interpreter.addfunction("outputfunction",print_to_stdout)
+	interpreter.addfunction("exit",exit)
+	interpreter.addfunction("error",cause_error)
 	
 	interpreter.executestring("echo Cubescript Python Interpreter")
 	
