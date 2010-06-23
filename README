@@ -1,7 +1,24 @@
-XSBS is a protocol compatible Sauerbraten server which allows for server side modifications through a python plugin system.
+ _    _                       _____                 
+| |  | |                     / ____|                
+| |__| |_   _ _ __   ___ _ _| (___   ___ _ ____   __
+|  __  | | | | '_ \ / _ \ '__\___ \ / _ \ '__\ \ / /
+| |  | | |_| | |_) |  __/ |  ____) |  __/ |   \ V / 
+|_|  |_|\__, | .__/ \___|_| |_____/ \___|_|    \_/  
+         __/ | |                                    
+DESIGN  |___/|_| 
+======
+HyperServ is a Sauerbraten server which accepts python plugins to extend the functionality.
+HyperServ features a cubescript interpreter at its core, and all the functions are exposed to the cubescript system.
+Then cubescript can be used from various places including IRC, ingame, console, http. This provides uniform functionality and no disadvantage in using one interface for the other.
+
+HISTORY
+=======
+HyperServ was created by SirAlex because he wanted something like XSBS extensibility but with frogmod functionality.
+He decided upon XSBS but the issue was that it was kind of hard to implement the features that he wanted(editing, consistent irc control) on the already finished foundation.
+He eventually forked XSBS(from commit: 41b8a5d293376a91f76a1dd14dbd5bb58e10c27b) for its C++ fondation and started the python from scratch. Thanks are in need to greghayes, darkf and others for their work so far on XSBS.
 
 PREREQUISITES
--------------
+=============
 Before you can build and install the server, you must have the following installed on your computer.
  - Python 2.4 or greater (Python 2.6 recommended)
  - Twisted python framework
@@ -10,16 +27,16 @@ Before you can build and install the server, you must have the following install
  - C++ compiler
 
 INSTALL
--------
-cd into xsbs folder
+=======
+cd into hyperserv folder
 cmake .
 make
-make install
 
 RUN XSBS
--------
-cd into xsbs
+========
+cd into hyperserv folder
 ./start_server.py
 
-If you experienced an error, or for more detailed information, see the project documentation: http://xsbs.greghaynes.net/documentation
-
+SUPPORT
+=======
+If you need to contact SirAlex come to #hypertriangle on quakenet. Please note that windows is not supported as there is no windows developer.
