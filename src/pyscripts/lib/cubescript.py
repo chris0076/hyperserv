@@ -132,7 +132,7 @@ class CSInterpreter:
 	
 	def functionwrapper(self,functionpointer,params):
 		try:
-			functionpointer(self,*params)
+			return functionpointer(self,*params)
 		except Exception as e:
 			raise CSFunctionError(sys.exc_info())
 	
