@@ -6,10 +6,19 @@ from lib.cubescript import CSInterpreter, CSError
 def PlayerMessage(a,b):
 	if(b.startswith("#")):
 		try:
-			interpreter.executestring(b[1:])
+			playerCS.executeby(a,b[1:])
 		except CSError,e:
-			interpreter.executestring("echo Error: "+' '.join(e))
+			playerCS.executeby(a,"echo Error: "+' '.join(e))
 
-interpreter=CSInterpreter()
-interpreter.functions["outputfunction"]=sbserver.message
-interpreter.functions["map"]=lambda params: sbserver.setMap(params[0],1)
+class CSInterpreterOwner(CSInterpreter):
+	owner=""
+	def executeby(self,owner,string):
+		self.owner=owner
+		print "setting owner to",owner
+		return self.executestring(string)
+
+systemCS=CSInterpreterOwner()
+systemCS.addfunction("outputfunction",lambda interpreter,msg: sbserver.message(msg))
+systemCS.addfunction("map",lambda interpreter,name,mode=1: sbserver.setMap(name,mode))
+systemCS.addfunction("whoami",lambda interpreter: "cs"+str(interpreter.owner))
+playerCS=CSInterpreterOwner(systemCS.functions,systemCS.variables)
