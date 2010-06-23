@@ -94,42 +94,45 @@ class CSParser:
 
 class CSInterpreter:
 		
-	def __init__(self):
-		self.functions = {
-			"begin":  self.begin,
-			"if":     self.csif,
-			"loop":   self.csloop,
-			"while":  self.cswhile,
-			"+":      lambda params: self.numeric(sum,params),
-			"-":      lambda params: self.numeric(lambda a: a[0]-a[1],params),
-			"*":      lambda params: self.numeric(lambda a: reduce(lambda x,y: x*y,a),params),
-			
-			"=":      lambda params: self.numeric(lambda a: a[0]==a[1],params),
-			"!=":     lambda params: self.numeric(lambda a: a[0]!=a[1],params),
-			"<":      lambda params: self.numeric(lambda a: a[0]<a[1],params),
-			">":      lambda params: self.numeric(lambda a: a[0]>a[1],params),
-			"<=":     lambda params: self.numeric(lambda a: a[0]<=a[1],params),
-			">=":     lambda params: self.numeric(lambda a: a[0]>=a[1],params),
-			
-			"div":    lambda params: self.numeric(lambda a: a[0]/a[1],params),
-			"mod":    lambda params: self.numeric(lambda a: a[0]%a[1],params),
-			"min":    lambda params: self.numeric(min,params),
-			"max":    lambda params: self.numeric(max,params),
-			
-			"rnd":    lambda params: self.numeric(lambda a: random.randint(a[0],a[1]),params),
-			"strcmp": lambda params: str(cmp(params[0],params[1])),
-			"strstr": lambda params: str(params[0].find(params[1])),
-			"strlen": lambda params: str(len(params[0])),
-			"strstr": lambda params: str(params[0].find(params[1])),
-			
-			"echo": self.echo
-		}
-		
-		self.variables = {}
+	def __init__(self,functions=0,variables=0):
+		if variables!=0: #check if there's some external space to put these
+			self.functions=functions
+			self.variables=variables
+		else:
+			self.functions = {
+				"begin":  self.begin,
+				"if":     self.csif,
+				"loop":   self.csloop,
+				"while":  self.cswhile,
+				"+":      lambda params: self.numeric(sum,params),
+				"-":      lambda params: self.numeric(lambda a: a[0]-a[1],params),
+				"*":      lambda params: self.numeric(lambda a: reduce(lambda x,y: x*y,a),params),
+				
+				"=":      lambda params: self.numeric(lambda a: a[0]==a[1],params),
+				"!=":     lambda params: self.numeric(lambda a: a[0]!=a[1],params),
+				"<":      lambda params: self.numeric(lambda a: a[0]<a[1],params),
+				">":      lambda params: self.numeric(lambda a: a[0]>a[1],params),
+				"<=":     lambda params: self.numeric(lambda a: a[0]<=a[1],params),
+				">=":     lambda params: self.numeric(lambda a: a[0]>=a[1],params),
+				
+				"div":    lambda params: self.numeric(lambda a: a[0]/a[1],params),
+				"mod":    lambda params: self.numeric(lambda a: a[0]%a[1],params),
+				"min":    lambda params: self.numeric(min,params),
+				"max":    lambda params: self.numeric(max,params),
+				
+				"rnd":    lambda params: self.numeric(lambda a: random.randint(a[0],a[1]),params),
+				"strcmp": lambda params: str(cmp(params[0],params[1])),
+				"strstr": lambda params: str(params[0].find(params[1])),
+				"strlen": lambda params: str(len(params[0])),
+				"strstr": lambda params: str(params[0].find(params[1])),
+				
+				"echo": self.echo
+			}
+			self.variables = {}
 	
 	def functionwrapper(self,functionpointer,params):
 		try:
-			functionpointer(*params)
+			functionpointer(self,*params)
 		except Exception as e:
 			raise CSFunctionError(sys.exc_info())
 	
@@ -220,16 +223,16 @@ class CSInterpreter:
 if __name__ == '__main__':
 	import readline,sys
 	
-	def print_to_stdout(msg):
+	def print_to_stdout(interpreter,msg):
 		print msg
 	
-	def cause_error(value):
+	def cause_error(interpreter,value):
 		"""Causes Error when called with a 1 or +"""
 		return 1/(int(value)-1)
 	
 	interpreter=CSInterpreter()
 	interpreter.addfunction("outputfunction",print_to_stdout)
-	interpreter.addfunction("exit",exit)
+	interpreter.addfunction("exit",lambda interpreter: exit())
 	interpreter.addfunction("error",cause_error)
 	
 	interpreter.executestring("echo Cubescript Python Interpreter")
