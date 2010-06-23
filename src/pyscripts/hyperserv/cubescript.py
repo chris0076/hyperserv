@@ -12,3 +12,4 @@ def PlayerMessage(a,b):
 
 interpreter=CSInterpreter()
 interpreter.functions["outputfunction"]=sbserver.message
+interpreter.functions["map"]=lambda params: sbserver.setMap(params[0],1)
