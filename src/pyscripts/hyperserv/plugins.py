@@ -3,6 +3,7 @@ import os, sys
 import hyperserv.cubescript
 import hyperserv.permissions
 import hyperserv.server
+import hyperserv.notices
 
 # Initialize these before loading plugins
 
@@ -16,10 +17,7 @@ class PluginManager(object):
 			if file[0] != '.':
 				self.plugin_modules.append(__import__(os.path.basename(self.plugins_path) + '.' + os.path.splitext(file)[0]))
 
-def main():
-	pm = PluginManager()
-	pm.loadPlugins()
-	#setup_all()
-	#create_all()
-
-main()
+pm = PluginManager()
+pm.loadPlugins()
+#setup_all()
+#create_all()

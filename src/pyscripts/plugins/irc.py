@@ -87,6 +87,10 @@ factory.doConnect()
 @eventHandler('say')
 def sayirc(msg):
 	factory.broadcast(msg)
+	
+@eventHandler('notice')
+def noticeirc(msg):
+	factory.broadcast(msg)
 
 @eventHandler('user_communication')
 def usercommunicationirc(who,msg):
