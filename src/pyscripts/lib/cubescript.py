@@ -138,7 +138,7 @@ class CSInterpreter:
 	
 	def addfunction(self,functionname,functionpointer):
 		"""add an external function to the interpreter"""
-		self.functions[functionname]=lambda params: self.functionwrapper(functionpointer, params)
+		self.functions[functionname]=("outside",functionpointer)
 	
 	def assignvar(self,name,value):
 		self.variables[name]=value
@@ -178,7 +178,7 @@ class CSInterpreter:
 			self.force(params[1])
 	
 	def echo(self,params):
-		self.functions["outputfunction"]([' '.join(map(str,params))])
+		return self.functionwrapper(self.functions["outputfunction"][1],[' '.join(map(str,params))])
 	
 	def execute(self,sexp):
 		"""Executes Cubescript in sexp form, it needs to already be parsed"""
@@ -199,7 +199,13 @@ class CSInterpreter:
 				return self.assignvar(sexp[0],self.execute(sexp[2]))
 			if sexp[0]=="lambda":
 				return sexp
-			return self.functions[sexp[0]](map(self.execute,sexp[1:]))
+			function=self.functions[sexp[0]]
+			argumentslist=map(self.execute,sexp[1:])
+			if type(function) is tuple: #check if this is an outside function
+				return self.functionwrapper(function[1],argumentslist)
+			else:
+				return function(argumentslist)
+			return 
 		except KeyError:
 			raise CSError("No such command \""+sexp[0]+"\"")
 		except IndexError:
