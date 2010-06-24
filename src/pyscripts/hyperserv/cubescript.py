@@ -11,22 +11,33 @@ def PlayerMessage(a,b):
 			playerCS.executeby(a,"echo Error: "+' '.join(e))
 
 class CSInterpreterOwner(CSInterpreter):
-	def executeby(self,owner,string):
+	def executeby(self,owner,string): #TODO: add logging here
+		while(self.owner[0]!="nobody"):
+			pass
 		self.owner=owner
-		print "setting owner to",self.owner
-		return self.executestring(string)
+		try:
+			returns=self.executestring(string)
+		finally:
+			self.owner=("nobody","")
 		
 def whoami(interpreter):
-	print interpreter.owner
+	return str(interpreter.owner)
 
-playerCS=CSInterpreterOwner()
-playerCS.addfunction("outputfunction",lambda interpreter,msg: sbserver.message(msg))
-playerCS.addfunction("map",lambda interpreter,name,mode=1: sbserver.setMap(name,mode))
-playerCS.addfunction("whoami",whoami)
+def echo(interpreter,msg):
+	print msg
 
-systemCS=CSInterpreterOwner(playerCS.functions.copy(),playerCS.variables)
+systemCS=CSInterpreterOwner()
 systemCS.owner=("system","")
+#systemCS.addfunction("outputfunction",lambda interpreter,msg: sbserver.message(msg))
+systemCS.addfunction("outputfunction",echo)
+systemCS.addfunction("map",lambda interpreter,name,mode=1: sbserver.setMap(name,mode))
+systemCS.addfunction("whoami",whoami)
 
+playerCS=CSInterpreterOwner(systemCS.functions,systemCS.variables)
+playerCS.owner=("nobody","") #have this for security, functions from playerCS should never be called as nobody
 
-playerCS.executeby(("ingame",0),"echo (whoami)")
-systemCS.executestring("echo (whoami)")
+##demo for this commit
+systemCS.executestring("echo systemCS.executestring (whoami)")
+playerCS.executestring("echo playerCS.executestring (whoami)")
+playerCS.executeby(("ingame",0),"echo playerCS.executeby (whoami)")
+playerCS.executestring("echo playerCS.executestring again (whoami)")
