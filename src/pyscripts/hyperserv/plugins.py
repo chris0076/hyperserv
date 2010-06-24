@@ -1,6 +1,8 @@
 import os, sys
 
 import hyperserv.cubescript
+import hyperserv.permissions
+import hyperserv.server
 
 # Initialize these before loading plugins
 

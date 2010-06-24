@@ -6,9 +6,9 @@ from lib.cubescript import CSInterpreter, CSError
 def PlayerMessage(a,b):
 	if(b.startswith("#")):
 		try:
-			playerCS.executeby(a,b[1:])
+			playerCS.executeby(("ingame",a),b[1:])
 		except CSError,e:
-			playerCS.executeby(a,"echo Error: "+' '.join(e))
+			playerCS.executeby(("ingame",a),"echo Error: "+' '.join(e))
 
 class CSInterpreterOwner(CSInterpreter):
 	def executeby(self,owner,string): #TODO: add logging here
@@ -19,25 +19,10 @@ class CSInterpreterOwner(CSInterpreter):
 			returns=self.executestring(string)
 		finally:
 			self.owner=("nobody","")
-		
-def whoami(interpreter):
-	return str(interpreter.owner)
-
-def echo(interpreter,msg):
-	print msg
 
 systemCS=CSInterpreterOwner()
 systemCS.owner=("system","")
-#systemCS.addfunction("outputfunction",lambda interpreter,msg: sbserver.message(msg))
-systemCS.addfunction("outputfunction",echo)
-systemCS.addfunction("map",lambda interpreter,name,mode=1: sbserver.setMap(name,mode))
-systemCS.addfunction("whoami",whoami)
+systemCS.addfunction("outputfunction",lambda interpreter,msg: sbserver.message(msg))
 
 playerCS=CSInterpreterOwner(systemCS.functions,systemCS.variables)
 playerCS.owner=("nobody","") #have this for security, functions from playerCS should never be called as nobody
-
-##demo for this commit
-systemCS.executestring("echo systemCS.executestring (whoami)")
-playerCS.executestring("echo playerCS.executestring (whoami)")
-playerCS.executeby(("ingame",0),"echo playerCS.executeby (whoami)")
-playerCS.executestring("echo playerCS.executestring again (whoami)")
