@@ -5,7 +5,9 @@ from twisted.internet import reactor, protocol, task, defer
 
 import sbserver
 
-from hyperserv.cubescript import playerCS
+from hyperserv.events import eventHandler, triggerServerEvent
+from hyperserv.cubescript import playerCS, CSError
+from hyperserv.util import formatOwner
 
 config = {
 	"server": "irc.freenode.net",
@@ -13,125 +15,86 @@ config = {
 	"channels": [
 		"#hyperserv"
 	],
+	
 	"nickname": "hyperserv_test",
 	"short": "hs",
 }
 
-
-
-#**************
-#
-#  IRC Connection
-#
-#**************
-
-class IRCBot(irc.IRCClient):
-	nickname = config["nickname"]
-	
+class IrcBot(irc.IRCClient):
 	def connectionMade(self):
+		self.nickname = self.factory.nickname
 		irc.IRCClient.connectionMade(self)
 		self.joined_channels = []
-
-	def connectionLost(self, reason):
-		irc.IRCClient.connectionLost(self, reason)
-
-	# callbacks for events
-
 	def signedOn(self):
-		"""Called when bot has succesfully signed on to server."""
-		self.join(config["channels"][0])
-		self.msg(config["channels"][0],"here I am!")
-		
-		for channel in config["channels"][1:]:
+		for channel in self.factory.channels:
 			self.join(channel)
-		
-		print "Signed on IRC"
-
+		self.factory.signedOn(self)
+	def connectionLost(self, reason):
+		self.factory.signedOut(self)
 	def joined(self, channel):
 		if channel not in self.joined_channels:
 			self.joined_channels.append(channel)
-
-	def userJoined(self, user, channel):
-		pass
-	
 	def left(self, channel):
 		if channel in self.joined_channels:
 			self.joined_channels.remove(channel)
-
-	def broadcast(self, msg):
+	def broadcast(self, message):
 		for channel in self.joined_channels:
-			self.say(channel, msg)
-
+			self.say(channel, message)
 	def privmsg(self, user, channel, msg):
-		"""This will get called when the bot receives a message."""
-		user = user.split('!', 1)[0]
-		
-		if user=="Q":
-			return
-		
-		# Check to see if they're sending me a private message
-		if channel == self.nickname:
-			self.say(user, "i'm just a bot");
-			return
-		
-		# Directed at me?
-		if msg.startswith("#"):
-			playerCS.executeby(("irc",user),msg[1:])
-		
-		if msg.startswith(self.nickname + ":"):
-			self.say(channel, "long");
-		if msg.startswith(config["short"]):
-			self.say(channel, "short");
-
-	def action(self, user, channel, msg):
-		"""This will get called when the bot sees someone do an action."""
-		#user = user.split('!', 1)[0]
-		#self.logger.log("* %s %s" % (user, msg))\
-		pass
-
-	# irc callbacks
-
-	def irc_NICK(self, prefix, params):
-		"""Called when an IRC user changes their nickname."""
-		old_nick = prefix.split('!')[0]
-		new_nick = params[0]
-		pass
-
-
-	# For fun, override the method that determines how a nickname is changed on
-	# collisions. The default method appends an underscore.
+		if channel != self.nickname:
+			user = user.split('!', 1)[0]
+			if(msg.startswith("#")):
+				try:
+					playerCS.executeby(("irc",user),msg[1:])
+				except CSError,e:
+					playerCS.executeby(("irc",user),"echo Error: "+' '.join(e))
+			else:
+				triggerServerEvent("user_communication",[("irc",user),msg])
 	def alterCollidedNick(self, nickname):
-		"""
-		Generate an altered version of a nickname that caused a collision in an
-		effort to create an unused related name for subsequent registration.
-		"""
 		return nickname + '_'
 
-class IRCBotFactory(protocol.ClientFactory):
-	"""A factory for IRCBots.
+class IrcBotFactory(protocol.ClientFactory):
+	protocol = IrcBot
+	def __init__(self, nickname, channels):
+		self.nickname = nickname
+		self.channels = channels
+		self.bots = []
+		self.reconnect_count = 0
+	def doConnect(self):
+		reactor.connectTCP(config['server'], 6667, factory)
+	def doReconnect(self):
+		if self.reconnect_count < 5:
+			self.reconnect_count += 1
+			self.doConnect()
+	def signedOn(self, bot):
+		if bot not in self.bots:
+			self.bots.append(bot)
+	def signedOut(self, bot):
+		if bot in self.bots:
+			self.bots.remove(bot)
+			addTimer(5000, self.doReconnect, ())
+	def broadcast(self, message):
+		for bot in self.bots:
+			bot.broadcast(message)
+	def notice(self, nick, message):
+		for bot in self.bots:
+			bot.notice(nick,message)
 
-	A new protocol instance will be created each time we connect to the server.
-	"""
+# create factory protocol and application
+factory = IrcBotFactory(config['nickname'], config['channels'])
+factory.doConnect()
 
-	# the class of the protocol to build when new connection is made
-	protocol = IRCBot
+@eventHandler('say')
+def sayirc(msg):
+	factory.broadcast(msg)
 
-	def __init__(self):
-		pass
+@eventHandler('user_communication')
+def usercommunicationirc(who,msg):
+	if who[0]=="irc":
+		return
+	factory.broadcast("<"+formatOwner(who)+"> "+msg)
 
-	def clientConnectionLost(self, connector, reason):
-		"""If we get disconnected, reconnect to server."""
-		connector.connect()
-
-	def clientConnectionFailed(self, connector, reason):
-		print "connection failed:", reason
-		reactor.stop()
-
-def init():
-	# create factory protocol and application
-	f = IRCBotFactory()
-
-	# connect factory to this host and port
-	reactor.connectTCP(config["server"], 6667, f)
-
-init()
+@eventHandler('echo')
+def ircecho(who,msg):
+	if who[0]=="irc":
+		factory.notice(who[1],msg)

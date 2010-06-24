@@ -1,17 +1,17 @@
 """This file contains all the basic commands that the server needs to be playable, this does not handle '/' type requests from clients only server-side cubescript commands"""
-from hyperserv.events import eventHandler
+from hyperserv.events import eventHandler, triggerServerEvent
 import sbserver
 from hyperserv.cubescript import systemCS
-from hyperserv.permissions import masterRequired, adminRequired
-from hyperserv.net import ipLongToString
+from hyperserv.permissions import masterRequired, adminRequired, trustedRequired
+from hyperserv.util import ipLongToString, formatOwner
 
 def whoami(caller):
-	return str(caller)
+	return str(caller.owner)
 systemCS.addfunction("whoami",whoami)
 
 @masterRequired
-def changeMap(caller,name,mode=1):
-	return sbserver.setMap(name,mode)
+def changeMap(caller,name,mode="1"):
+	return sbserver.setMap(name,int(mode))
 systemCS.addfunction("map",changeMap)
 
 @masterRequired
@@ -34,3 +34,30 @@ def who(caller,where="ingame"):
 			return sbserver.playerName(cn)+" (cn"+str(cn)+"/"+ipLongToString(sbserver.playerIpLong(cn))+")"
 		return '; '.join(map(cndetails,sbserver.clients()))
 systemCS.addfunction("who",who)
+
+def listCommands(caller):
+	commands=systemCS.functions.keys()
+	commands.sort()
+	return ' '.join(commands)
+systemCS.addfunction("list",listCommands)
+
+@trustedRequired
+def say(caller,*what):
+	string=' '.join(map(str,what))
+	triggerServerEvent("say",[string])
+	sbserver.message(string)
+	return string
+systemCS.addfunction("say",say)
+
+def echo(caller,*what):
+	string=' '.join(map(str,what))
+	triggerServerEvent("echo",[caller.owner,string])
+	if caller.owner[0]=="ingame":
+		sbserver.playerMessage(caller.owner[1],string)
+systemCS.addfunction("echo",echo)
+
+@eventHandler('user_communication')
+def usercommunicationingame(who,msg):
+	if who[0]=="ingame":
+		return
+	sbserver.message(""+formatOwner(who)+": "+msg)

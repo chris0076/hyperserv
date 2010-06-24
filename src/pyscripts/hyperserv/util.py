@@ -1,4 +1,6 @@
+"""Utility functions that do misc stuff(ex. convert between formats)"""
 import struct, socket
+import sbserver
 
 def ipLongToString(num):
 	return '%d.%d.%d.%d' % ((num & 0xff),
@@ -26,3 +28,9 @@ def ipStringToLong(st):
 			return -2147483648
 	return n
 
+def formatOwner(owner):
+	if owner[0]=="ingame":
+		return sbserver.playerName(owner[1])
+	if owner[0]=="irc":
+		return "<irc> "+owner[1]
+	return ""

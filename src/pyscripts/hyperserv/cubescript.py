@@ -1,14 +1,17 @@
-from hyperserv.events import eventHandler
+from hyperserv.events import eventHandler, triggerServerEvent
 import sbserver
 from lib.cubescript import CSInterpreter, CSError
 
 @eventHandler('player_message')
-def PlayerMessage(a,b):
-	if(b.startswith("#")):
+def PlayerMessage(cn,msg):
+	if(msg.startswith("#")):
 		try:
-			playerCS.executeby(("ingame",a),b[1:])
+			playerCS.executeby(("ingame",cn),msg[1:])
 		except CSError,e:
-			playerCS.executeby(("ingame",a),"echo Error: "+' '.join(e))
+			playerCS.executeby(("ingame",cn),"echo Error: "+' '.join(e))
+	else:
+		triggerServerEvent("user_communication",[("ingame",cn),msg])
+	
 
 class CSInterpreterOwner(CSInterpreter):
 	def executeby(self,owner,string): #TODO: add logging here
@@ -22,7 +25,6 @@ class CSInterpreterOwner(CSInterpreter):
 
 systemCS=CSInterpreterOwner()
 systemCS.owner=("system","")
-systemCS.addfunction("outputfunction",lambda interpreter,msg: sbserver.message(msg))
 
 playerCS=CSInterpreterOwner(systemCS.functions,systemCS.variables)
 playerCS.owner=("nobody","") #have this for security, functions from playerCS should never be called as nobody
