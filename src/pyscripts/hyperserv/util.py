@@ -34,3 +34,66 @@ def formatOwner(owner):
 	if owner[0]=="irc":
 		return "<irc> "+owner[1]
 	return ""
+
+#Mode name converters
+modes = [
+	'ffa',
+	'coop',
+	'team',
+	'insta',
+	'instateam',
+	'effic',
+	'efficteam',
+	'tac',
+	'tacteam',
+	'capture',
+	'regencapture',
+	'ctf',
+	'instactf',
+	'protect',
+	'instaprotect'
+]
+
+def modeName(modenum):
+	'''String representing game mode number'''
+	return modes[int(modenum)]
+
+def modeNumber(modename):
+	'''Number representing game mode string'''
+	i = 0
+	for mode in modes:
+		if modename == mode:
+			return i
+		i += 1
+	try:
+		if int(modename)<len(modes) and int(modename)>=0:
+			return int(modename)
+		raise ValueError('Invalid mode')
+	except ValueError:
+		raise ValueError('Invalid mode')
+
+#Mastermode name converters
+mastermodes = [
+	'open',
+	'veto',
+	'locked',
+	'private'
+]
+
+def mastermodeName(modenum):
+	'''String representing game mode number'''
+	return mastermodes[int(modenum)]
+
+def mastermodeNumber(modename):
+	'''Number representing game mode string'''
+	i = 0
+	for mode in mastermodes:
+		if modename == mode:
+			return i
+		i += 1
+	try:
+		if int(modename)<len(modes) and int(modename)>=0:
+			return int(modename)
+		raise ValueError('Invalid mastermode')
+	except ValueError:
+		raise ValueError('Invalid mastermode')

@@ -14,9 +14,9 @@ def PlayerMessage(cn,msg):
 	
 
 class CSInterpreterOwner(CSInterpreter):
-	def executeby(self,owner,string): #TODO: add logging here
+	def executeby(self,owner,string):
 		while(self.owner[0]!="nobody"):
-			pass
+			pass #TODO: add logging here
 		self.owner=owner
 		try:
 			returns=self.executestring(string)

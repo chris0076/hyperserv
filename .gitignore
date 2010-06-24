@@ -4,3 +4,16 @@ sauer.log
 *.log
 *.swp
 
+#stuff that comes after cmake . and make
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+src/CMakeFiles/
+src/Makefile
+src/cmake_install.cmake
+src/hyperserv
+src/shared/CMakeFiles/
+src/shared/Makefile
+src/shared/cmake_install.cmake
+src/shared/libsauertools.a

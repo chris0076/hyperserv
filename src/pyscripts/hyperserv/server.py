@@ -3,15 +3,15 @@ from hyperserv.events import eventHandler, triggerServerEvent
 import sbserver
 from hyperserv.cubescript import systemCS
 from hyperserv.permissions import masterRequired, adminRequired, trustedRequired
-from hyperserv.util import ipLongToString, formatOwner
+from hyperserv.util import ipLongToString, formatOwner, modeNumber
 
 def whoami(caller):
 	return str(caller.owner)
 systemCS.addfunction("whoami",whoami)
 
 @masterRequired
-def changeMap(caller,name,mode="1"):
-	return sbserver.setMap(name,int(mode))
+def changeMap(caller,name,mode="coop"):
+	return sbserver.setMap(name,modeNumber(mode))
 systemCS.addfunction("map",changeMap)
 
 @masterRequired
