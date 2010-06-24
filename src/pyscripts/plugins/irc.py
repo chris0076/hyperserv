@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-# twisted imports
 from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol, task, defer
-from twisted.python import log
+
+import sbserver
+
+from hyperserv.cubescript import playerCS
 
 config = {
 	"server": "irc.freenode.net",
@@ -38,7 +40,7 @@ class IRCBot(irc.IRCClient):
 	def signedOn(self):
 		"""Called when bot has succesfully signed on to server."""
 		self.join(config["channels"][0])
-		self.msg(config["channels"][0],"here I am!"+config["nickname"]+self.nickname+"!")
+		self.msg(config["channels"][0],"here I am!")
 		
 		for channel in config["channels"][1:]:
 			self.join(channel)
@@ -73,11 +75,13 @@ class IRCBot(irc.IRCClient):
 			return
 		
 		# Directed at me?
+		if msg.startswith("#"):
+			playerCS.executeby(("irc",user),msg[1:])
+		
 		if msg.startswith(self.nickname + ":"):
 			self.say(channel, "long");
-			
 		if msg.startswith(config["short"]):
-			self.say(channel, "long");
+			self.say(channel, "short");
 
 	def action(self, user, channel, msg):
 		"""This will get called when the bot sees someone do an action."""
@@ -123,12 +127,11 @@ class IRCBotFactory(protocol.ClientFactory):
 		print "connection failed:", reason
 		reactor.stop()
 
-if __name__ == '__main__':
+def init():
 	# create factory protocol and application
 	f = IRCBotFactory()
 
 	# connect factory to this host and port
 	reactor.connectTCP(config["server"], 6667, f)
-	
-	# run bot
-	reactor.run()
+
+init()
