@@ -125,8 +125,6 @@ class CSInterpreter:
 				"strstr": lambda params: str(params[0].find(params[1])),
 				"strlen": lambda params: str(len(params[0])),
 				"strstr": lambda params: str(params[0].find(params[1])),
-				
-				"echo": self.echo
 			}
 			self.variables = {}
 	
@@ -177,9 +175,6 @@ class CSInterpreter:
 		while(int(self.force(params[0]))):
 			self.force(params[1])
 	
-	def echo(self,params):
-		return self.functionwrapper(self.functions["outputfunction"][1],[' '.join(map(str,params))])
-	
 	def execute(self,sexp):
 		"""Executes Cubescript in sexp form, it needs to already be parsed"""
 		if type(sexp) != list:
@@ -229,15 +224,15 @@ class CSInterpreter:
 if __name__ == '__main__':
 	import readline,sys
 	
-	def print_to_stdout(interpreter,msg):
-		print msg
+	def print_to_stdout(interpreter,*stuff):
+		print ' '.join(map(str,stuff))
 	
 	def cause_error(interpreter,value):
 		"""Causes Error when called with a 1 or +"""
 		return 1/(int(value)-1)
 	
 	interpreter=CSInterpreter()
-	interpreter.addfunction("outputfunction",print_to_stdout)
+	interpreter.addfunction("echo",print_to_stdout)
 	interpreter.addfunction("exit",lambda interpreter: exit())
 	interpreter.addfunction("error",cause_error)
 	
