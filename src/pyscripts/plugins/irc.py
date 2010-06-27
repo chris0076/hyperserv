@@ -6,7 +6,7 @@ from twisted.internet import reactor, protocol, task, defer
 import sbserver
 
 from hyperserv.events import eventHandler, triggerServerEvent
-from hyperserv.cubescript import playerCS, CSError
+from hyperserv.cubescript import checkforCS
 from hyperserv.util import formatOwner
 
 config = {
@@ -41,14 +41,13 @@ class IrcBot(irc.IRCClient):
 		for channel in self.joined_channels:
 			self.say(channel, message)
 	def privmsg(self, user, channel, msg):
-		if channel != self.nickname:
-			user = user.split('!', 1)[0]
-			if(msg.startswith("#")):
-				try:
-					playerCS.executeby(("irc",user),msg[1:])
-				except CSError,e:
-					playerCS.executeby(("irc",user),"echo Error: "+' '.join(e))
-			else:
+		user = user.split('!', 1)[0]
+		if channel == self.nickname:
+			if checkforCS(("irc",user),msg)==0:
+				msg="@"+msg
+				checkforCS(("irc",user),msg)
+		else:
+			if(checkforCS(("irc",user),msg)==0):
 				triggerServerEvent("user_communication",[("irc",user),msg])
 	def alterCollidedNick(self, nickname):
 		return nickname + '_'
@@ -84,21 +83,21 @@ class IrcBotFactory(protocol.ClientFactory):
 factory = IrcBotFactory(config['nickname'], config['channels'])
 factory.doConnect()
 
+@eventHandler('echo')
+def ircecho(caller,msg):
+	if caller[0]=="irc":
+		factory.notice(caller[1],msg)
+
 @eventHandler('say')
 def sayirc(msg):
 	factory.broadcast(msg)
+
+@eventHandler('user_communication')
+def usercommunicationirc(caller,msg):
+	if caller[0]=="irc":
+		return
+	factory.broadcast("<"+formatOwner(caller)+"> "+msg)
 	
 @eventHandler('notice')
 def noticeirc(msg):
 	factory.broadcast(msg)
-
-@eventHandler('user_communication')
-def usercommunicationirc(who,msg):
-	if who[0]=="irc":
-		return
-	factory.broadcast("<"+formatOwner(who)+"> "+msg)
-
-@eventHandler('echo')
-def ircecho(who,msg):
-	if who[0]=="irc":
-		factory.notice(who[1],msg)

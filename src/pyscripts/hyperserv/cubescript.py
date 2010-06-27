@@ -4,14 +4,8 @@ from lib.cubescript import CSInterpreter, CSError
 
 @eventHandler('player_message')
 def PlayerMessage(cn,msg):
-	if(msg.startswith("#")):
-		try:
-			playerCS.executeby(("ingame",cn),msg[1:])
-		except CSError,e:
-			playerCS.executeby(("ingame",cn),"echo Error: "+' '.join(e))
-	else:
+	if checkforCS(("ingame",cn),msg)==0:
 		triggerServerEvent("user_communication",[("ingame",cn),msg])
-	
 
 class CSInterpreterOwner(CSInterpreter):
 	def executeby(self,owner,string):
@@ -28,3 +22,22 @@ systemCS.owner=("system","")
 
 playerCS=CSInterpreterOwner(systemCS.functions,systemCS.variables)
 playerCS.owner=("nobody","") #have this for security, functions from playerCS should never be called as nobody
+
+class CSCommand(object):
+	def __init__(self, name):
+		self.name=name
+	def __call__(self,f):
+		newfunction=lambda interpreter, *args: f(interpreter.owner,*args)
+		systemCS.addfunction(self.name,newfunction)
+		return newfunction
+
+def checkforCS(caller,string):
+	if string[0] in ['#','@']:
+		try:
+			playerCS.executeby(caller,string[1:])
+		except Exception,e:
+			print caller
+			playerCS.executeby(caller,"echo Error: "+' '.join(e))
+		return 1
+	else:
+		return 0
