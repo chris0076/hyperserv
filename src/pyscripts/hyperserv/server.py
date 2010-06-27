@@ -6,20 +6,20 @@ from hyperserv.cubescript import systemCS, CSCommand
 from hyperserv.util import ipLongToString, formatOwner, modeNumber
 
 @CSCommand("whoami")
-def whoami(caller):
+def whoami(caller,*args):
 	return str(caller)
 
-@CSCommand("map")
+@CSCommand("map","master")
 def changeMap(caller,name,mode="coop"):
 	return sbserver.setMap(name,modeNumber(mode))
 
-@CSCommand("master")
+@CSCommand("master","master")
 def setMaster(caller):
 	if(caller[0]=="ingame"):
 		return sbserver.setMaster(caller[1])
 	return
 
-@CSCommand("admin")
+@CSCommand("admin","admin")
 def setAdmin(caller):
 	if(caller[0]=="ingame"):
 		return sbserver.setAdmin(caller[1])
@@ -38,7 +38,7 @@ def listCommands(caller):
 	commands.sort()
 	return ' '.join(commands)
 
-@CSCommand("say")
+@CSCommand("say","trusted")
 def say(caller,*what):
 	string=' '.join(map(str,what))
 	triggerServerEvent("say",[string])
