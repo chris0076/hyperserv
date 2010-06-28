@@ -2,12 +2,7 @@
 from hyperserv.events import eventHandler, triggerServerEvent
 import sbserver
 from hyperserv.cubescript import systemCS, CSCommand
-#from hyperserv.permissions import masterRequired, adminRequired, trustedRequired
 from hyperserv.util import ipLongToString, formatOwner, modeNumber
-
-@CSCommand("whoami")
-def whoami(caller,*args):
-	return str(caller)
 
 @CSCommand("map","master")
 def changeMap(caller,name,mode="coop"):

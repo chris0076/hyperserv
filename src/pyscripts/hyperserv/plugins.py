@@ -5,6 +5,8 @@ import hyperserv.permissions
 import hyperserv.server
 import hyperserv.notices
 
+import hyperserv.user
+
 # Initialize these before loading plugins
 
 class PluginManager(object):

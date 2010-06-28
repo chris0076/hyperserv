@@ -9,6 +9,8 @@ from hyperserv.events import eventHandler, triggerServerEvent
 from hyperserv.cubescript import checkforCS
 from hyperserv.util import formatOwner
 
+from hyperserv.user import UserSessionManager
+
 config = {
 	"server": "irc.freenode.net",
 	
@@ -51,6 +53,17 @@ class IrcBot(irc.IRCClient):
 				triggerServerEvent("user_communication",[("irc",user),msg])
 	def alterCollidedNick(self, nickname):
 		return nickname + '_'
+	
+	def userJoined(self, user, channel):
+		UserSessionManager.create(("irc",user))
+	def userLeft(self, user, channel):
+		UserSessionManager.destroy(("irc",user))
+	def userQuit(self, user, quitMessage):
+		UserSessionManager.destroy(("irc",user))
+	def userKicked(self, kickee, channel, kicker, message):
+		UserSessionManager.destroy(("irc",kickee))
+	def userRenamed(self, oldname, newname):
+		UserSessionManager.rename(("irc",oldname),("irc",newname))
 
 class IrcBotFactory(protocol.ClientFactory):
 	protocol = IrcBot

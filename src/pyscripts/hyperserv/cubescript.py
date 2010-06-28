@@ -1,5 +1,7 @@
-from hyperserv.events import eventHandler, triggerServerEvent
+import sys,traceback
+
 import sbserver
+from hyperserv.events import eventHandler, triggerServerEvent
 from lib.cubescript import CSInterpreter, CSError
 from hyperserv.permissions import checkPermissions, PermissionError
 
@@ -15,11 +17,9 @@ class CSInterpreterOwner(CSInterpreter):
 		self.owner=owner
 		try:
 			returns=self.executestring(string)
-		except PermissionError,e:
-			print "%s was not allowed to execute %s" % (owner,string) #TODO: log this properly
-			raise
 		finally:
 			self.owner=("nobody","")
+		return returns
 
 systemCS=CSInterpreterOwner()
 systemCS.owner=("system","")
@@ -46,8 +46,10 @@ def checkforCS(caller,string):
 	if string[0] in ['#','@']:
 		try:
 			playerCS.executeby(caller,string[1:])
-		except Exception,e:
-			playerCS.executeby(caller,"echo Error: \"%s\"" % (' '.join(e).replace('"','^"'),))
+		except Exception:
+			exctype,exctext,exctraceback=sys.exc_info()
+			errormsg="%s: %s" % (exctype.__name__, exctext)
+			playerCS.executeby(caller,"echo \"%s\"" % (errormsg.replace('"','^"'),))
 		return 1
 	else:
 		return 0
