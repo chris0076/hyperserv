@@ -5,11 +5,6 @@ from hyperserv.events import eventHandler, triggerServerEvent
 from lib.cubescript import CSInterpreter, CSError
 from hyperserv.permissions import checkPermissions, PermissionError
 
-@eventHandler('player_message')
-def PlayerMessage(cn,msg):
-	if checkforCS(("ingame",cn),msg)==0:
-		triggerServerEvent("user_communication",[("ingame",cn),msg])
-
 class CSInterpreterOwner(CSInterpreter):
 	def executeby(self,owner,string):
 		while(self.owner[0]!="nobody"):

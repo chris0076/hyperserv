@@ -1,11 +1,14 @@
 import os, sys
 
 import hyperserv.cubescript
+
 import hyperserv.permissions
+import hyperserv.user
+
+import hyperserv.ingame
 import hyperserv.server
 import hyperserv.notices
 
-import hyperserv.user
 
 # Initialize these before loading plugins
 

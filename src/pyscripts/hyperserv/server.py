@@ -2,7 +2,7 @@
 from hyperserv.events import eventHandler, triggerServerEvent
 import sbserver
 from hyperserv.cubescript import systemCS, CSCommand
-from hyperserv.util import ipLongToString, formatOwner, modeNumber
+from hyperserv.util import ipLongToString, modeNumber
 
 @CSCommand("map","master")
 def changeMap(caller,name,mode="coop"):
@@ -37,18 +37,10 @@ def listCommands(caller):
 def say(caller,*what):
 	string=' '.join(map(str,what))
 	triggerServerEvent("say",[string])
-	sbserver.message(string)
 	return string
 
 @CSCommand("echo")
 def echo(caller,*what):
 	string=' '.join(map(str,what))
 	triggerServerEvent("echo",[caller,string])
-	if caller[0]=="ingame":
-		sbserver.playerMessage(caller[1],string)
-
-@eventHandler('user_communication')
-def usercommunicationingame(caller,msg):
-	if caller[0]=="ingame":
-		return
-	sbserver.message(""+formatOwner(caller)+": "+msg)
+	return string

@@ -5,7 +5,6 @@ from hyperserv.util import modeName, mastermodeName
 
 def serverNotice(string):
 	triggerServerEvent("notice",[string])
-	sbserver.message(string)
 
 @eventHandler('player_connect')
 def noticePlayerConnect(cn):
