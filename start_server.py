@@ -28,10 +28,19 @@ if not os.path.isdir(pyscripts_path):
 	print 'Did you perform an out of source build?  Make sure you are in the XSBS source directory.'
 	sys.exit(1)
 
-if hyperserv_bin_path == '':
-	hyperserv_bin_path = hyperserv_root_path + 'src/hyperserv'
-if not os.path.isfile(hyperserv_bin_path):
-	os.execlpe('hyperserv', 'hyperserv', '-lsauer.log', '-s'+pyscripts_path, os.environ)
-else:
-	os.execle(hyperserv_bin_path, 'hyperserv' '-lsauer.log', '-s'+pyscripts_path, os.environ)
+def start():
+	global hyperserv_bin_path
+	if hyperserv_bin_path == '':
+		hyperserv_bin_path = hyperserv_root_path + 'src/hyperserv'
+	if not os.path.isfile(hyperserv_bin_path):
+		os.execlpe('hyperserv', 'hyperserv', '-lsauer.log', '-s'+pyscripts_path, os.environ)
+	else:
+		os.execle(hyperserv_bin_path, 'hyperserv' '-lsauer.log', '-s'+pyscripts_path, os.environ)
 
+try:
+	start()
+except OSError:
+	print "Maybe not compiled, Compiling:"
+	print os.popen('cmake .').read()
+	print os.popen('make').read()
+	start()
