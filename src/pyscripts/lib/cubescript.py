@@ -94,9 +94,11 @@ class CSParser:
 
 class CSInterpreter:
 		
-	def __init__(self,external=None):
+	def __init__(self,external=None,variables={}):
 		if external is None:
 			self.external={}
+		else
+			self.variables=variables
 		
 		self.functions = {
 			"begin":  self.begin,
@@ -125,8 +127,6 @@ class CSInterpreter:
 			"strlen": lambda params: str(len(params[0])),
 			"strstr": lambda params: str(params[0].find(params[1])),
 		}
-		
-		self.variables = {}
 	
 	def functionErrorWrapper(self,functionpointer,*params):
 		try:
