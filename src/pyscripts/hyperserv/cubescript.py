@@ -19,7 +19,7 @@ class CSInterpreterOwner(CSInterpreter):
 systemCS=CSInterpreterOwner()
 systemCS.owner=("system","")
 
-playerCS=CSInterpreterOwner(systemCS.functions,systemCS.variables)
+playerCS=CSInterpreterOwner(systemCS.external,systemCS.variables)
 playerCS.owner=("nobody","") #have this for security, functions from playerCS should never be called as nobody
 
 class CSCommand(object):
@@ -33,9 +33,9 @@ class CSCommand(object):
 		self.permissionRequirement=permissionRequirement
 	
 	def __call__(self,f):
-		newfunction=lambda *args: self.wrapper(f,*args)
-		systemCS.addfunction(self.name,newfunction)
-		return newfunction
+		functionpointer=lambda *args: self.wrapper(f,*args)
+		systemCS.external[self.name]=functionpointer
+		return f
 
 def checkforCS(caller,string):
 	if string[0] in ['#','@']:

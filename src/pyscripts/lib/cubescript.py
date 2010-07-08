@@ -97,7 +97,9 @@ class CSInterpreter:
 	def __init__(self,external=None,variables={}):
 		if external is None:
 			self.external={}
-		else
+			self.variables={}
+		else:
+			self.external=external
 			self.variables=variables
 		
 		self.functions = {

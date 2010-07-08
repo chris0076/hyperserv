@@ -47,8 +47,14 @@ def who(caller,where="ingame"):
 		return '; '.join(map(cndetails,sbserver.clients()))
 
 @CSCommand("list")
-def listCommands(caller):
-	commands=systemCS.functions.keys()
+def listCommands(caller,which="hyperserv"):
+	"""List all commands available"""
+	if which=="all":
+		commands=systemCS.functions.keys()+systemCS.external.keys()
+	elif which=="cubescript":
+		commands=systemCS.functions.keys()
+	else:
+		commands=systemCS.external.keys()
 	commands.sort()
 	return ' '.join(commands)
 
