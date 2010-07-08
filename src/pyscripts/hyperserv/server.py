@@ -2,23 +2,42 @@
 from hyperserv.events import eventHandler, triggerServerEvent
 import sbserver
 from hyperserv.cubescript import systemCS, CSCommand
-from hyperserv.util import ipLongToString, modeNumber
+from hyperserv.util import ipLongToString, modeNumber, mastermodeNumber
+
+class ServerError(Exception): pass
 
 @CSCommand("map","master")
-def changeMap(caller,name,mode="coop"):
+def changeMap(caller,name,mode=None):
+	if mode is None:
+		mode=sbserver.gameMode()
 	return sbserver.setMap(name,modeNumber(mode))
 
 @CSCommand("master","master")
 def setMaster(caller):
 	if(caller[0]=="ingame"):
 		return sbserver.setMaster(caller[1])
+	raise ServerError("You are not ingame.")
 	return
 
 @CSCommand("admin","admin")
 def setAdmin(caller):
 	if(caller[0]=="ingame"):
 		return sbserver.setAdmin(caller[1])
+	raise ServerError("You are not ingame.")
 	return
+
+@CSCommand("relinquish")
+def setAdmin(caller):
+	if(caller[0]=="ingame"):
+		return sbserver.resetPrivilege(caller[1])
+	raise ServerError("You are not ingame.")
+	return
+
+@CSCommand("mastermode","master")
+def masterMode(caller,name=None):
+	if name==None:
+		return sbserver.masterMode()
+	return sbserver.setMasterMode(mastermodeNumber(name))
 
 @CSCommand("who")
 def who(caller,where="ingame"):

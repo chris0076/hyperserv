@@ -1,8 +1,9 @@
 #from hyperserv.events import eventHandler
 import sbserver
 
-from hyperserv.permissions import userSessions
 from hyperserv.cubescript import CSCommand
+from hyperserv.permissions import userSessions
+from hyperserv.notices import serverNotice
 
 class UserSessionManagerClass():
 	def create(self,who,login=("notloggedin","")):
@@ -20,6 +21,7 @@ def login(caller):
 		username=caller[1].rstrip("_")
 	if caller[0]=="ingame":
 		username=sbserver.playerName(caller[1])
+	serverNotice("%s has logged in from %s" % (username, caller[0]))
 	userSessions[caller]=(username,"admin")
 	
 @CSCommand("whoami")

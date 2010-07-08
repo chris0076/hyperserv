@@ -21,3 +21,24 @@ def noticeMapChanged(name,mode):
 @eventHandler('intermission_begin')
 def noticeIntermissionBegin():
 	serverNotice("Intermission.")
+
+@eventHandler('server_mastermode_changed')
+def noticeMastermodeChanged(number):
+	serverNotice("Mastermode is now %s (%d)." %(mastermodeName(number),number))
+
+#master and admin stuff
+@eventHandler("player_claimed_master")
+def noticeClaimMaster(cn):
+	serverNotice("%s claimed main master." % (sbserver.playerName(cn),))
+
+@eventHandler("player_claimed_admin")
+def noticeClaimAdmin(cn):
+	serverNotice("%s claimed main admin." % (sbserver.playerName(cn),))
+
+@eventHandler("player_released_master")
+def noticeRelinquishMaster(cn):
+	serverNotice("%s relinquished master." % (sbserver.playerName(cn),))
+
+@eventHandler("player_released_admin")
+def noticeRelinquishAdmin(cn):
+	serverNotice("%s relinquished admin." % (sbserver.playerName(cn),))

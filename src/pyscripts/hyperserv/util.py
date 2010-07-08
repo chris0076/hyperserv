@@ -60,6 +60,7 @@ def modeName(modenum):
 
 def modeNumber(modename):
 	'''Number representing game mode string'''
+	modename=str(modename)
 	i = 0
 	for mode in modes:
 		if modename == mode:
@@ -81,11 +82,12 @@ mastermodes = [
 ]
 
 def mastermodeName(modenum):
-	'''String representing game mode number'''
+	'''String representing mastermode number'''
 	return mastermodes[int(modenum)]
 
 def mastermodeNumber(modename):
-	'''Number representing game mode string'''
+	'''Number representing mastermode string'''
+	modename=str(modename)
 	i = 0
 	for mode in mastermodes:
 		if modename == mode:
