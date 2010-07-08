@@ -94,49 +94,45 @@ class CSParser:
 
 class CSInterpreter:
 		
-	def __init__(self,functions=0,variables=0):
-		if variables!=0: #check if there's some external space to put these
-			self.functions=functions
-			self.variables=variables
-		else:
-			self.functions = {
-				"begin":  self.begin,
-				"if":     self.csif,
-				"loop":   self.csloop,
-				"while":  self.cswhile,
-				"+":      lambda params: self.numeric(sum,params),
-				"-":      lambda params: self.numeric(lambda a: a[0]-a[1],params),
-				"*":      lambda params: self.numeric(lambda a: reduce(lambda x,y: x*y,a),params),
-				
-				"=":      lambda params: self.numeric(lambda a: a[0]==a[1],params),
-				"!=":     lambda params: self.numeric(lambda a: a[0]!=a[1],params),
-				"<":      lambda params: self.numeric(lambda a: a[0]<a[1],params),
-				">":      lambda params: self.numeric(lambda a: a[0]>a[1],params),
-				"<=":     lambda params: self.numeric(lambda a: a[0]<=a[1],params),
-				">=":     lambda params: self.numeric(lambda a: a[0]>=a[1],params),
-				
-				"div":    lambda params: self.numeric(lambda a: a[0]/a[1],params),
-				"mod":    lambda params: self.numeric(lambda a: a[0]%a[1],params),
-				"min":    lambda params: self.numeric(min,params),
-				"max":    lambda params: self.numeric(max,params),
-				
-				"rnd":    lambda params: self.numeric(lambda a: random.randint(a[0],a[1]),params),
-				"strcmp": lambda params: str(cmp(params[0],params[1])),
-				"strstr": lambda params: str(params[0].find(params[1])),
-				"strlen": lambda params: str(len(params[0])),
-				"strstr": lambda params: str(params[0].find(params[1])),
-			}
-			self.variables = {}
+	def __init__(self,external=None):
+		if external is None:
+			self.external={}
+		
+		self.functions = {
+			"begin":  self.begin,
+			"if":     self.csif,
+			"loop":   self.csloop,
+			"while":  self.cswhile,
+			"+":      lambda params: self.numeric(sum,params),
+			"-":      lambda params: self.numeric(lambda a: a[0]-a[1],params),
+			"*":      lambda params: self.numeric(lambda a: reduce(lambda x,y: x*y,a),params),
+			
+			"=":      lambda params: self.numeric(lambda a: a[0]==a[1],params),
+			"!=":     lambda params: self.numeric(lambda a: a[0]!=a[1],params),
+			"<":      lambda params: self.numeric(lambda a: a[0]<a[1],params),
+			">":      lambda params: self.numeric(lambda a: a[0]>a[1],params),
+			"<=":     lambda params: self.numeric(lambda a: a[0]<=a[1],params),
+			">=":     lambda params: self.numeric(lambda a: a[0]>=a[1],params),
+			
+			"div":    lambda params: self.numeric(lambda a: a[0]/a[1],params),
+			"mod":    lambda params: self.numeric(lambda a: a[0]%a[1],params),
+			"min":    lambda params: self.numeric(min,params),
+			"max":    lambda params: self.numeric(max,params),
+			
+			"rnd":    lambda params: self.numeric(lambda a: random.randint(a[0],a[1]),params),
+			"strcmp": lambda params: str(cmp(params[0],params[1])),
+			"strstr": lambda params: str(params[0].find(params[1])),
+			"strlen": lambda params: str(len(params[0])),
+			"strstr": lambda params: str(params[0].find(params[1])),
+		}
+		
+		self.variables = {}
 	
-	def functionwrapper(self,functionpointer,params):
+	def functionErrorWrapper(self,functionpointer,*params):
 		try:
 			return functionpointer(self,*params)
 		except Exception as e:
 			raise CSFunctionError(sys.exc_info())
-	
-	def addfunction(self,functionname,functionpointer):
-		"""add an external function to the interpreter"""
-		self.functions[functionname]=("outside",functionpointer)
 	
 	def assignvar(self,name,value):
 		self.variables[name]=value
@@ -177,30 +173,35 @@ class CSInterpreter:
 	
 	def execute(self,sexp):
 		"""Executes Cubescript in sexp form, it needs to already be parsed"""
+		
 		if type(sexp) != list:
-			if type(sexp) is str and sexp.startswith("$"):
-				#variable
+			if type(sexp) is str and sexp.startswith("$"): #variable?
 				try:
 					return str(self.variables[sexp[1:]])
 				except KeyError:
 					raise CSError("No such variable: "+sexp)
-			#number/string
-			return sexp
-		if sexp==[]:
+			else: #number/string
+				return sexp
+		
+		if sexp==[]: #nothing to execute?
 			return
-		try:
-			#function
+		
+		try: #function
+			#value assignment
 			if len(sexp)>1 and sexp[1]=="=":
 				return self.assignvar(sexp[0],self.execute(sexp[2]))
+			
+			#lamba non-execution
 			if sexp[0]=="lambda":
 				return sexp
-			function=self.functions[sexp[0]]
+			
+			#proceed to execute
 			argumentslist=map(self.execute,sexp[1:])
-			if type(function) is tuple: #check if this is an outside function
-				return self.functionwrapper(function[1],argumentslist)
-			else:
-				return function(argumentslist)
-			return 
+			if sexp[0] in self.functions:
+				return self.functions[sexp[0]](argumentslist)
+			else: #must be external
+				return self.functionErrorWrapper(self.external[sexp[0]],*argumentslist)
+			
 		except KeyError:
 			raise CSError("No such command \""+sexp[0]+"\"")
 		except IndexError:
@@ -214,6 +215,7 @@ class CSInterpreter:
 			#reraise the error from the function
 			execinfo=e.args[0]
 			raise execinfo[0],execinfo[1],execinfo[2]
+	
 	def executestring(self,string):
 		"""Parses and Executes Cubescript"""
 		sexp=CSParser(string).parse()
@@ -232,9 +234,10 @@ if __name__ == '__main__':
 		return 1/(int(value)-1)
 	
 	interpreter=CSInterpreter()
-	interpreter.addfunction("echo",print_to_stdout)
-	interpreter.addfunction("exit",lambda interpreter: exit())
-	interpreter.addfunction("error",cause_error)
+	interpreter.external["echo"]=print_to_stdout
+	interpreter.external["exit"]=lambda interpreter: exit()
+	interpreter.external["error"]=cause_error
+	interpreter.external["pycall"]=lambda interpreter, function, *arguments: eval(function)(*arguments)
 	
 	interpreter.executestring("echo Cubescript Python Interpreter")
 	
