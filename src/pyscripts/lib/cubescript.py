@@ -1,8 +1,18 @@
 #!/usr/bin/env python
 import re, random, sys, traceback
 
-class CSError(Exception): pass
-class CSFunctionError(Exception): pass
+class CSError(Exception):
+	"""Internal Cubescript Error, syntax usually"""
+	pass
+
+class CSFunctionError(Exception):
+	"""Exception happened in external function. Only unhandled if using execute directly, see executestring for implementation
+		except CSFunctionError as e:
+			#reraise the error from the external function
+			execinfo=e.args[0]
+			raise execinfo[0],execinfo[1],execinfo[2]
+	"""
+	pass
 
 class CSParser:
 	def __init__(self, string):
@@ -211,19 +221,19 @@ class CSInterpreter:
 		except TypeError:
 			if(sexp[0][0]!="lambda"):
 				raise CSError("Expected function, found a block: "+str(sexp[0]))
-		except ValueError:
-			raise CSError("Value Error: Something does not have the right type in "+str(sexp))
-		except CSFunctionError as e:
-			#reraise the error from the function
-			execinfo=e.args[0]
-			raise execinfo[0],execinfo[1],execinfo[2]
 	
 	def executestring(self,string):
-		"""Parses and Executes Cubescript"""
+		"""Parses and Executes Cubescript, also handles errors from external functions"""
 		sexp=CSParser(string).parse()
 		if len(sexp)>0 and type(sexp[0]) is list:
 			sexp=sexp[0]
-		return self.execute(sexp)
+		
+		try:
+			return self.execute(sexp)
+		except CSFunctionError as e:
+			#reraise the error from the external function
+			execinfo=e.args[0]
+			raise execinfo[0],execinfo[1],execinfo[2]
 
 if __name__ == '__main__':
 	import readline,sys
