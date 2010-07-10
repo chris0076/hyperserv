@@ -219,8 +219,7 @@ class CSInterpreter:
 		except IndexError:
 			raise CSError("Missing parameter for \""+sexp[0]+"\"")
 		except TypeError:
-			if(sexp[0][0]!="lambda"):
-				raise CSError("Expected function, found a block: "+str(sexp[0]))
+			raise CSError("Expected function, found a block: "+str(sexp[0]))
 	
 	def executestring(self,string):
 		"""Parses and Executes Cubescript, also handles errors from external functions"""
