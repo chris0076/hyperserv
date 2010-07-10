@@ -1,6 +1,8 @@
 """This file contains all the basic commands that the server needs to be playable, this does not handle '/' type requests from clients only server-side cubescript commands"""
-from hyperserv.events import eventHandler, triggerServerEvent
+
 import sbserver
+import hyperserv.usercommands
+from hyperserv.events import eventHandler, triggerServerEvent
 from hyperserv.cubescript import systemCS, CSCommand
 from hyperserv.util import ipLongToString, modeNumber, mastermodeNumber
 
@@ -57,15 +59,3 @@ def listCommands(caller,which="hyperserv"):
 		commands=systemCS.external.keys()
 	commands.sort()
 	return ' '.join(commands)
-
-@CSCommand("say","trusted")
-def say(caller,*what):
-	string=' '.join(map(str,what))
-	triggerServerEvent("say",[string])
-	return string
-
-@CSCommand("echo")
-def echo(caller,*what):
-	string=' '.join(map(str,what))
-	triggerServerEvent("echo",[caller,string])
-	return string

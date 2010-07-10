@@ -1,16 +1,21 @@
-#from hyperserv.events import eventHandler
-import sbserver
-
-userSessions = {}
-
 class PermissionError(Exception): pass
 
-def checkPermissions(caller,level):
-	try:
+class UserSessionManagerClass(dict):
+	def create(self,who,login=("notloggedin","")):
+		self[who]=login
+		return self[who]
+	def destroy(self,who):
+		return self.pop(who)
+	def rename(self,who,to):
+		self.create(to,self.destroy(who))
+	def __missing__(self,key):
+		return self.create(key)
+	
+	def checkPermissions(self,caller,level):
 		if caller==("system",""): #allow system do do everything
 			return
 		
-		session=userSessions[caller]
+		session=self[caller]
 		if level=="none":
 			return
 		elif level=="master":
@@ -25,6 +30,5 @@ def checkPermissions(caller,level):
 		else:
 			raise PermissionError("Permission Level %s not recognized" % (level,))
 		raise PermissionError("Permission denied, you need %s privileges." % (level,))
-	except KeyError:
-		userSessions[caller]=("notloggedin","")
-		checkPermissions(caller,level)
+		
+UserSessionManager=UserSessionManagerClass()

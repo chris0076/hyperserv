@@ -9,7 +9,7 @@ from hyperserv.events import eventHandler, triggerServerEvent
 from hyperserv.cubescript import checkforCS
 from hyperserv.util import formatOwner
 
-from hyperserv.user import UserSessionManager
+from hyperserv.permissions import UserSessionManager
 
 config = {
 	"server": "irc.freenode.net",
