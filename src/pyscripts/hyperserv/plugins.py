@@ -1,14 +1,13 @@
 import os, sys
 
 import hyperserv.cubescript
-import hyperserv.permissions
+import hyperserv.config
+
+import hyperserv.servercommands
+import hyperserv.usercommands
 
 import hyperserv.ingame
-import hyperserv.server
 import hyperserv.notices
-
-
-# Initialize these before loading plugins
 
 class PluginManager(object):
 	def __init__(self, plugins_path='plugins'):

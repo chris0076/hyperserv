@@ -3,7 +3,7 @@ import sys,traceback
 import sbserver
 from hyperserv.events import eventHandler, triggerServerEvent
 from lib.cubescript import CSParser, CSInterpreter, CSError
-from hyperserv.permissions import UserSessionManager, PermissionError
+from hyperserv.usersession import UserSessionManager, PermissionError
 
 class CSInterpreterOwner(CSInterpreter):
 	def executeby(self,owner,string):
@@ -63,6 +63,9 @@ def checkforCS(caller,string):
 		return 1
 	else:
 		return 0
+
+def escape(string):
+	return string.replace('"','^"')
 
 @CSCommand("say","trusted")
 def say(caller,*what):

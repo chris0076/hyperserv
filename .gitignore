@@ -1,8 +1,8 @@
 *.pyc
-tags
 sauer.log
 *.log
 *.swp
+config.cfg
 
 #stuff that comes after cmake . and make
 CMakeCache.txt

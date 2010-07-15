@@ -4,7 +4,7 @@ import sbserver
 from hyperserv.events import eventHandler, triggerServerEvent
 from hyperserv.cubescript import checkforCS
 
-from hyperserv.permissions import UserSessionManager
+from hyperserv.usersession import UserSessionManager
 from hyperserv.util import formatOwner
 
 @eventHandler('player_message')

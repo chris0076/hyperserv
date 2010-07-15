@@ -1,0 +1,13 @@
+//Factory settings, please change them
+
+cfg servername HyperServ New Server
+cfg serverpassword hyperserv
+
+cfg dbtype mysql
+cfg dbhost localhost
+cfg dbuser hyperserv
+cfg dbpassword hyperpass
+
+cfg ircserver irc.server.tdl
+cfg ircchannel #yourchannel
+cfg ircnick hyperserv_newbot

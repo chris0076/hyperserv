@@ -4,23 +4,12 @@ from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol, task, defer
 
 import sbserver
-
+from hyperserv.config import config
 from hyperserv.events import eventHandler, triggerServerEvent
+
 from hyperserv.cubescript import checkforCS
 from hyperserv.util import formatOwner
-
-from hyperserv.permissions import UserSessionManager
-
-config = {
-	"server": "irc.freenode.net",
-	
-	"channels": [
-		"#hyperserv"
-	],
-	
-	"nickname": "hyperserv_test",
-	"short": "hs",
-}
+from hyperserv.usersession import UserSessionManager
 
 class IrcBot(irc.IRCClient):
 	def connectionMade(self):
@@ -73,7 +62,7 @@ class IrcBotFactory(protocol.ClientFactory):
 		self.bots = []
 		self.reconnect_count = 0
 	def doConnect(self):
-		reactor.connectTCP(config['server'], 6667, factory)
+		reactor.connectTCP(config['ircserver'], 6667, factory)
 	def doReconnect(self):
 		if self.reconnect_count < 5:
 			self.reconnect_count += 1
@@ -93,7 +82,7 @@ class IrcBotFactory(protocol.ClientFactory):
 			bot.notice(nick,message)
 
 # create factory protocol and application
-factory = IrcBotFactory(config['nickname'], config['channels'])
+factory = IrcBotFactory(config['ircnick'], [config['ircchannel']])
 factory.doConnect()
 
 @eventHandler('echo')

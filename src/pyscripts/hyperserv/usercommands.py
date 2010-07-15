@@ -1,6 +1,6 @@
 #from hyperserv.events import eventHandler
 from hyperserv.cubescript import CSCommand
-from hyperserv.permissions import UserSessionManager
+from hyperserv.usersession import UserSessionManager
 from hyperserv.notices import serverNotice
 
 @CSCommand("login")
