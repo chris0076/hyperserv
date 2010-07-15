@@ -6,6 +6,7 @@ cfg serverpassword hyperserv
 cfg dbtype mysql
 cfg dbhost localhost
 cfg dbuser hyperserv
+cfg dbname hyperserv
 cfg dbpassword hyperpass
 
 cfg ircserver irc.server.tdl

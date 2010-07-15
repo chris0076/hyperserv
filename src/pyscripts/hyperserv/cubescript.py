@@ -1,6 +1,5 @@
 import sys,traceback
 
-import sbserver
 from hyperserv.events import eventHandler, triggerServerEvent
 from lib.cubescript import CSParser, CSInterpreter, CSError
 from hyperserv.usersession import UserSessionManager, PermissionError
