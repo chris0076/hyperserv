@@ -1,12 +1,9 @@
 import os, sys
 
-import hyperserv.cubescript
-import hyperserv.config
-
-import hyperserv.servercommands
-import hyperserv.usercommands
+import hypershade
 
 import hyperserv.ingame
+import hyperserv.servercommands
 import hyperserv.notices
 
 class PluginManager(object):

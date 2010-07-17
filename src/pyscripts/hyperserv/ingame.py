@@ -1,11 +1,13 @@
 """This file handles the events that happen ingame"""
 
 import sbserver
-from hyperserv.events import eventHandler, triggerServerEvent
-from hyperserv.cubescript import checkforCS
 
-from hyperserv.usersession import UserSessionManager
-from hyperserv.util import formatOwner
+from hyperserv.events import eventHandler, triggerServerEvent
+
+from hypershade.cubescript import checkforCS
+from hypershade.usersession import UserSessionManager
+
+from hypershade.util import formatCaller
 
 @eventHandler('player_message')
 def PlayerMessage(cn,msg):
@@ -25,7 +27,7 @@ def sayingame(msg):
 def usercommunicationingame(caller,msg):
 	if caller[0]=="ingame":
 		return
-	sbserver.message(""+formatOwner(caller)+": "+msg)
+	sbserver.message(""+formatCaller(caller)+": "+msg)
 	
 @eventHandler('notice')
 def noticeingame(msg):

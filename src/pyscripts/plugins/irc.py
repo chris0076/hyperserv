@@ -3,13 +3,13 @@
 from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol, task, defer
 
-import sbserver
-from hyperserv.config import config
 from hyperserv.events import eventHandler, triggerServerEvent
 
-from hyperserv.cubescript import checkforCS
-from hyperserv.util import formatOwner
-from hyperserv.usersession import UserSessionManager
+from hypershade.config import config
+from hypershade.cubescript import checkforCS
+
+from hypershade.usersession import UserSessionManager
+from hypershade.util import formatCaller
 
 class IrcBot(irc.IRCClient):
 	def connectionMade(self):
@@ -98,7 +98,7 @@ def sayirc(msg):
 def usercommunicationirc(caller,msg):
 	if caller[0]=="irc":
 		return
-	factory.broadcast("<"+formatOwner(caller)+"> "+msg)
+	factory.broadcast("<"+formatCaller(caller)+"> "+msg)
 	
 @eventHandler('notice')
 def noticeirc(msg):
