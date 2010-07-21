@@ -3,6 +3,7 @@ import os, sys
 import hypershade
 
 import hyperserv.ingame
+import hyperserv.clientcommands
 import hyperserv.servercommands
 import hyperserv.notices
 
