@@ -32,11 +32,12 @@ cd into hyperserv folder
 cmake .
 make
 
-RUN XSBS
-========
+RUN HyperServ
+=============
 cd into hyperserv folder
 ./start_server.py
 
 SUPPORT
 =======
+Main github page: http://github.com/SirAlex/hyperserv
 If you need to contact SirAlex come to #hypertriangle on quakenet. Please note that windows is not supported as there is no windows developer.
