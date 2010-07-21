@@ -30,7 +30,7 @@ def login(caller,*params):
 		else:
 			raise ValueError("Could not determine your login name.")
 		if user is None:
-			raise ValueError("Could not determine your login name. Use \"login username password\" to specify.")
+			raise ValueError("Could not determine your login name. Use \"@login username password\" to specify.")
 	else:
 		user=userdatabase[username]
 	

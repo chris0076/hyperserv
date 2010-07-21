@@ -56,7 +56,7 @@ def checkforCS(caller,string):
 		except:
 			exctype,exctext,exctraceback=sys.exc_info()
 			errormsg="%s: %s" % (exctype.__name__, exctext)
-			playerCS.executeby(caller,"echo \"%s\"" % (errormsg.replace('"','^"'),))
+			playerCS.executeby(caller,"echo \"%s\"" % escape(errormsg))
 			raise
 		return 1
 	else:

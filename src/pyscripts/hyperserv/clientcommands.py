@@ -4,28 +4,32 @@ import sbserver
 from hyperserv.events import eventHandler
 from hyperserv.servercommands import ServerError
 
-from hypershade.cubescript import playerCS, systemCS
+from hypershade.cubescript import checkforCS
 from hypershade.usersession import UserSessionManager
 
 @eventHandler("player_setmaster")
 def clientSetMaster(caller,text):
-	playerCS.executeby(("ingame",caller),"login %s" % text)
+	checkforCS(("ingame",caller),"@login %s" % text)
 
 @eventHandler("player_setmaster_off")
 def clientLoseMaster(caller):
-	playerCS.executeby(("ingame",caller),"logout")
+	checkforCS(("ingame",caller),"@logout")
 
 @eventHandler("player_request_spectate")
 def clientSpectate(caller,who):
-	playerCS.executeby(("ingame",caller),"spectator 1 %s" % who)
+	checkforCS(("ingame",caller),"@spectator 1 %s" % who)
 
 @eventHandler("player_request_unspectate")
 def clientUnspectate(caller,who):
-	playerCS.executeby(("ingame",caller),"spectator 0 %s" % who)
+	checkforCS(("ingame",caller),"@spectator 0 %s" % who)
 
 @eventHandler("player_map_vote")
 def clientMapVote(caller,mapname,mode):
-	playerCS.executeby(("ingame",caller),"map %s %s" % (mapname,mode))
+	checkforCS(("ingame",caller),"@map %s %s" % (mapname,mode))
+
+@eventHandler("player_set_mastermode")
+def clientMastermode(caller,mastermode):
+	checkforCS(("ingame",caller),"@mastermode %s" % mastermode)
 
 @eventHandler("player_kick")
 def clientKick(caller,who):
