@@ -53,3 +53,20 @@ def noticeRelinquishMaster(cn):
 @eventHandler("player_released_admin")
 def noticeRelinquishAdmin(cn):
 	serverNotice("%s relinquished admin." % (formatCaller(("ingame",cn)),))
+
+@eventHandler("player_kick")
+def noticePlayerKick(cn,victim):
+	#TODO: fix this
+	serverNotice("%s was kicked." % (formatCaller(("ingame",cn))))
+
+@eventHandler("player_spectated")
+def noticePlayerSpectated(cn):
+	serverNotice("%s is now a spectator." % (formatCaller(("ingame",cn)),))
+
+@eventHandler("player_unspectated")
+def noticePlayerUnSpectated(cn):
+	serverNotice("%s is no longer a spectator." % (formatCaller(("ingame",cn)),))
+
+@eventHandler("player_uploaded_map")
+def noticePlayerUploadedMap(cn):
+	serverNotice("%s has sent the map." % (formatCaller(("ingame",cn)),))
