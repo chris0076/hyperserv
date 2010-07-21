@@ -2,17 +2,19 @@
 
 import sbserver
 
-from hyperserv.events import eventHandler, triggerServerEvent
+from hyperserv.events import eventHandler, triggerServerEvent, registerPolicyEventHandler
 
 from hypershade.cubescript import checkforCS
 from hypershade.usersession import UserSessionManager
 
 from hypershade.util import formatCaller
 
+#process cubescript
+registerPolicyEventHandler('allow_message', lambda cn, msg: checkforCS(("ingame",cn),msg)==0)
+
 @eventHandler('player_message')
 def PlayerMessage(cn,msg):
-	if checkforCS(("ingame",cn),msg)==0:
-		triggerServerEvent("user_communication",[("ingame",cn),msg])
+	triggerServerEvent("user_communication",[("ingame",cn),msg])
 
 @eventHandler('echo')
 def echoingame(caller,msg):
