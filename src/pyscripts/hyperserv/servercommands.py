@@ -39,7 +39,9 @@ def setAdmin(caller):
 
 @CSCommand("kick","master")
 def kick(caller,cn):
-	return sbserver.playerKick(int(cn))
+	cn=int(cn)
+	UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
+	return sbserver.playerKick(cn)
 
 @CSCommand("spectator")
 def spectator(caller,boolean=None,cn=None):

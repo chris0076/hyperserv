@@ -16,7 +16,7 @@ class UserSessionManagerClass(dict):
 			return
 		
 		session=self[caller]
-		if level=="none":
+		if level=="none" or level=="":
 			return
 		elif level=="master":
 			if session[1] in ("master","trusted","admin"):

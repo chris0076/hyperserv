@@ -48,6 +48,12 @@ def login(caller,*params):
 		if password in userInterface["password"]:
 			succeedLogin(caller,user)
 			return
+		if caller[0]=="ingame":
+			import sbserver
+			#maybe it's a setmaster 1 request, therefore the password is hashed by sauer
+			if password in map(lambda password: sbserver.hashPassword(caller[1],password), userInterface["password"]):
+				succeedLogin(caller,user)
+				return
 	
 	raise PermissionError("Denied to login.")
 
@@ -55,10 +61,16 @@ def succeedLogin(caller,user):
 	UserSessionManager[caller]=(user["username"],user["privileges"])
 	systemCS.executestring('notice "%s"' % escape("%s has logged in from %s as %s" % (formatCaller(caller), caller[0], user["username"])))
 
-@CSCommand("logout")
-def logout(caller):
-	del UserSessionManager[caller]
-	playerCS.executeby(caller,"echo You have logged out.")
+@CSCommand("logout","master")
+def logout(caller,everything="no"):
+	if everything=="everything":
+		username=UserSessionManager[caller][0]
+		for session in UserSessionManager:
+			if UserSessionManager[session][0]==username:
+				playerCS.executeby(session,"logout")
+	else:
+		del UserSessionManager[caller]
+		playerCS.executeby(caller,"echo You have logged out.")
 
 @CSCommand("whoami")
 def whoami(caller,param=""):
@@ -85,12 +97,10 @@ def userKey(caller,key=None,*values):
 	username=UserSessionManager[caller][0]
 	if key=="privileges":
 		raise PermissionError("You cannot change your privileges level.")
-	print "userkey",caller,key,values
 	return userKeyAdmin(caller,username,key,*values)
 
 @CSCommand("useradmin","admin")
 def userKeyAdmin(caller,username=None,key=None,*values):
-	print "userAdmin", caller, username, key, values
 	#if called with no arguments, list the user/keys
 	if key is None:
 		if username is None:
@@ -106,8 +116,15 @@ def userKeyAdmin(caller,username=None,key=None,*values):
 	#change what there is to be changed
 	if key=="username":
 		raise Exception("Usernames cannot be changed, only created and deleted.")
-	if key=="password":
-		import sbserver
-		userdatabase[username][key]=map(lambda password: sbserver.hashPassword(caller[0],password), values)
+	userdatabase[username][key]=values
+
+@CSCommand("loginother","trusted")
+def loginOther(caller,where,who,username=None):
+	if where=="ingame":
+		who=int(who)
+	if username is None:
+		username=UserSessionManager[caller][0]
 	else:
-		userdatabase[username][key]=values
+		UserSessionManager.checkPermissions(caller,"admin")
+	aswho=dict(userdatabase[username].items())
+	succeedLogin((where,who),aswho)
