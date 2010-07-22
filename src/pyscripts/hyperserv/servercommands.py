@@ -59,7 +59,7 @@ def spectator(caller,boolean=None,cn=None):
 	if caller[1]==cn:
 		spectatorHelpler(boolean,cn)
 	else:
-		UserSessionManager.checkPermissions(UserSessionManager[caller[1]],"master")
+		UserSessionManager.checkPermissions(caller,"master")
 		spectatorHelpler(boolean,cn)
 
 def spectatorHelpler(boolean,cn):
