@@ -50,12 +50,12 @@ def login(caller,*params):
 			pass
 	else:
 		if user["password"]==password:
-			succeed_login(caller,user)
+			succeedLogin(caller,user)
 			return
 	
 	raise PermissionError("Denied to login.")
 
-def succeed_login(caller,user):
+def succeedLogin(caller,user):
 	systemCS.executestring('notice "%s"' % escape("%s has logged in from %s as %s" % (formatCaller(caller), caller[0], user["username"])))
 	UserSessionManager[caller]=(user["username"],user["privileges"])
 

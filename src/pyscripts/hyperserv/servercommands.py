@@ -26,7 +26,6 @@ def setMaster(caller):
 @CSCommand("admin","admin")
 def setAdmin(caller):
 	if(caller[0]=="ingame"):
-		print caller[1]
 		return sbserver.setAdmin(caller[1])
 	raise ServerError("You are not ingame.")
 	return
