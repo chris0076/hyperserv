@@ -12,3 +12,9 @@ cfg dbpassword hyperpass
 cfg ircserver irc.server.tdl
 cfg ircchannel #yourchannel
 cfg ircnick hyperserv_newbot
+
+cfg masterhost sauerbraten.org
+cfg masterport 28787
+cfg masterregister yes
+cfg masterregisterinterval 3600
+cfg authgainmaster yes

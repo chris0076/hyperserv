@@ -4,7 +4,7 @@ from hypershade.cubescript import systemCS, CSCommand, escape
 
 class CSConfig(dict):
 	def order(self,x):
-		order=["server","db","irc"]
+		order=["server","db","irc","master"]
 		for i,string in enumerate(order):
 			if x.startswith('cfg "'+string):
 				return "%3d%s" % (i,x)
