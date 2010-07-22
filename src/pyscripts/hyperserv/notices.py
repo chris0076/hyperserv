@@ -6,6 +6,7 @@ from hypershade.cubescript import CSCommand
 from hypershade.util import modeName, mastermodeName, formatCaller
 
 def serverNotice(string):
+	print "Notice: ",string
 	triggerServerEvent("notice",[string])
 
 @CSCommand("notice","admin")

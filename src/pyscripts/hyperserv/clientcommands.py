@@ -4,6 +4,7 @@ import sbserver
 from hyperserv.events import eventHandler
 from hyperserv.servercommands import ServerError
 
+from hypershade.config import config
 from hypershade.cubescript import checkforCS, playerCS
 from hypershade.usersession import UserSessionManager
 from hypershade.userdatabase import userdatabase
@@ -52,8 +53,8 @@ def authLogin(caller,authname):
 	if user is not None:
 		succeedLogin(caller,dict(user.items()))
 	else:
-		#normal auth request, not trying to login
-		setSimpleMaster(caller)
+		if(config["authgainmaster"]=="yes"):
+			setSimpleMaster(caller)
 
 def simpleMasterRequest(caller):
 	#check for other privileged people
