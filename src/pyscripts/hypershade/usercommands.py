@@ -5,6 +5,10 @@ from hypershade.userdatabase import userdatabase
 
 from hypershade.util import formatCaller
 
+import hashlib
+def hashPassword(password):
+	return hashlib.sha224(password).hexdigest()
+
 @CSCommand("login")
 def login(caller,*params):
 	username=None
@@ -45,13 +49,13 @@ def login(caller,*params):
 			pass
 		#check hostname TODO
 	else:
-		if password in userInterface["password"]:
+		if hashPassword(password) in userInterface["password"]:
 			succeedLogin(caller,user)
 			return
 		if caller[0]=="ingame":
 			import sbserver
 			#maybe it's a setmaster 1 request, therefore the password is hashed by sauer
-			if password in map(lambda password: sbserver.hashPassword(caller[1],password), userInterface["password"]):
+			if hashPassword(password) in map(lambda password: sbserver.hashPassword(caller[1],password), userInterface["password"]):
 				succeedLogin(caller,user)
 				return
 	
@@ -116,7 +120,10 @@ def userKeyAdmin(caller,username=None,key=None,*values):
 	#change what there is to be changed
 	if key=="username":
 		raise Exception("Usernames cannot be changed, only created and deleted.")
-	userdatabase[username][key]=values
+	if key=="password":
+		userdatabase[username][key]=map(hashPassword,values)
+	else:
+		userdatabase[username][key]=values
 
 @CSCommand("loginother","trusted")
 def loginOther(caller,where,who,username=None):
