@@ -35,6 +35,7 @@ def login(caller,*params):
 		user=userdatabase[username]
 	
 	#temporarly cache the user instance
+	userInterface=user
 	user=dict(user.items())
 	
 	#authenticate with everything's that's available
@@ -42,22 +43,17 @@ def login(caller,*params):
 		if caller[0]=="irc":
 			#call an ident message, TODO
 			pass
-		if caller[0]=="ingame":
-			#this can only be verified with auth, and that's user initiated
-			pass
-		else:
-			#hostname based
-			pass
+		#check hostname TODO
 	else:
-		if user["password"]==password:
+		if password in userInterface["password"]:
 			succeedLogin(caller,user)
 			return
 	
 	raise PermissionError("Denied to login.")
 
 def succeedLogin(caller,user):
-	systemCS.executestring('notice "%s"' % escape("%s has logged in from %s as %s" % (formatCaller(caller), caller[0], user["username"])))
 	UserSessionManager[caller]=(user["username"],user["privileges"])
+	systemCS.executestring('notice "%s"' % escape("%s has logged in from %s as %s" % (formatCaller(caller), caller[0], user["username"])))
 
 @CSCommand("logout")
 def logout(caller):
@@ -73,3 +69,45 @@ def whoami(caller,param=""):
 @CSCommand("listusersessions","admin")
 def listusersessions(caller):
 	return str(UserSessionManager)
+
+##
+#User Management
+@CSCommand("adduser","admin")
+def addUser(caller,username,privileges):
+	userdatabase[username]=privileges
+
+@CSCommand("deluser","admin")
+def addUser(caller,username):
+	del userdatabase[username]
+
+@CSCommand("user","trusted")
+def userKey(caller,key=None,*values):
+	username=UserSessionManager[caller][0]
+	if key=="privileges":
+		raise PermissionError("You cannot change your privileges level.")
+	print "userkey",caller,key,values
+	return userKeyAdmin(caller,username,key,*values)
+
+@CSCommand("useradmin","admin")
+def userKeyAdmin(caller,username=None,key=None,*values):
+	print "userAdmin", caller, username, key, values
+	#if called with no arguments, list the user/keys
+	if key is None:
+		if username is None:
+			return userdatabase
+		else:
+			return userdatabase[username]
+	if len(values)==0:
+		return userdatabase[username][key]
+	if values[0]=="delete":
+		del userdatabase[username][key]
+		return
+	
+	#change what there is to be changed
+	if key=="username":
+		raise Exception("Usernames cannot be changed, only created and deleted.")
+	if key=="password":
+		import sbserver
+		userdatabase[username][key]=map(lambda password: sbserver.hashPassword(caller[0],password), values)
+	else:
+		userdatabase[username][key]=values

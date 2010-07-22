@@ -19,12 +19,22 @@ class UserDatabase():
 		return self.cursor.fetchall()
 	
 	def __getitem__(self,username):
-		self.cursor.execute('SELECT `user` FROM `users` WHERE `user` = "%s" AND `key` = "privileges"' % (username,))
+		self.cursor.execute('SELECT `user` FROM `users` WHERE `user` = "%s" AND `key` = "privileges"' % (username))
 		
 		if self.cursor.rowcount==0:
-			raise KeyError("No such user: %s" % username)
+			raise KeyError("No such user: %s" % (username))
 		
 		return User(self.cursor,username)
+	
+	def __setitem__(self,username,privileges):
+		try:
+			del self[username]["privileges"]
+		except:
+			pass
+		User(self.cursor,username)["privileges"]=privileges
+	
+	def __delitem__(self,username):
+		self.cursor.execute('DELETE FROM `users` WHERE `user` = "%s"' % (username))
 	
 	def __repr__(self):
 		return repr(self.items())
@@ -53,6 +63,17 @@ class User():
 	def __getitem__(self,key):
 		self.cursor.execute('SELECT value FROM `users` WHERE `user` = "%s" AND `key` = "%s"' % (self.username,key))
 		return tuple(row[0] for row in self.cursor.fetchall())
+	
+	def __setitem__(self,key,values):
+		del self[key] #delete the old values
+		if type(values) is str:
+			#probably a mistake, just one value is wanted
+			values=(values,)
+		for value in values:
+			self.cursor.execute('INSERT INTO `users` VALUES ("%s","%s","%s")' % (self.username,key,value))
+	
+	def __delitem__(self, key):
+		self.cursor.execute('DELETE FROM `users` WHERE `user` = "%s" AND `key` = "%s"' % (self.username,key))
 	
 	def __repr__(self):
 		return repr(self.items())
