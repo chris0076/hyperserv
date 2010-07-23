@@ -44,8 +44,7 @@ def clientAuth(caller,name):
 
 @eventHandler("player_kick")
 def clientKick(caller,who):
-	#TODO: fix this kick event mess, both the notice and this
-	print "kick",caller,who
+	checkforCS(("ingame",caller),"@kick %s" % who)
 
 ##
 #Auth and simple setmaster

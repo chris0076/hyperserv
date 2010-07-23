@@ -78,3 +78,7 @@ def noticePlayerGetMap(cn):
 @eventHandler("player_name_changed")
 def noticeNameChange(cn,namefrom,nameto):
 	serverNotice("%s changed his name to %s." % (namefrom,nameto))
+
+@eventHandler('player_auth_succeed')
+def noticeAuth(cn,name):
+	serverNotice("%s authed as '%s'." % (formatCaller(("ingame",cn)),name))
