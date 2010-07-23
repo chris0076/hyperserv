@@ -12,10 +12,11 @@ from hypershade.usercommands import succeedLogin
 
 @eventHandler("player_setmaster")
 def clientSetMaster(caller,text):
+	caller=("ingame",caller)
 	if UserSessionManager[caller][0]=="notloggedin":
-		simpleMasterRequest(("ingame",caller))
+		simpleMasterRequest(caller)
 	else:
-		checkforCS(("ingame",caller),"@master")
+		checkforCS(caller,"@master")
 
 @eventHandler("player_setmaster_off")
 def clientLoseMaster(caller):
