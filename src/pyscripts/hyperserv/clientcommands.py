@@ -5,7 +5,7 @@ from hyperserv.events import eventHandler
 from hyperserv.servercommands import ServerError
 
 from hypershade.config import config
-from hypershade.cubescript import checkforCS, playerCS
+from hypershade.cubescript import checkforCS, playerCS, CSCommand
 from hypershade.usersession import UserSessionManager
 from hypershade.userdatabase import userdatabase
 from hypershade.usercommands import succeedLogin
@@ -71,3 +71,7 @@ def setSimpleMaster(caller):
 	"""sets the caller a simple master, just like /setmaster 1 does it on a vanilla server"""
 	UserSessionManager[caller]=("notloggedin","master")
 	playerCS.executeby(caller,"master")
+
+@CSCommand("givemaster","master")
+def giveMaster(caller,cn):
+	setSimpleMaster(("ingame",int(cn)))

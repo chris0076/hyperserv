@@ -129,3 +129,9 @@ def loginOther(caller,where,who,username=None):
 		UserSessionManager.checkPermissions(caller,"admin")
 	aswho=dict(userdatabase[username].items())
 	succeedLogin((where,who),aswho)
+
+@CSCommand("takemaster","trusted")
+def takeMaster(caller):
+	masters=[session for session,user in UserSessionManager.items() if session[0]=='ingame' and user[1]=='master']
+	for master in masters:
+		playerCS.executeby(master,"relinquish; logout")
