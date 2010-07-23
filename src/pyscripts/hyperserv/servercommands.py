@@ -59,6 +59,8 @@ def spectator(caller,boolean=None,cn=None):
 	
 	#check if it's a self call
 	if caller[1]==cn:
+		if boolean==0 and sbserver.masterMode()>=2:
+			UserSessionManager.checkPermissions(caller,"master")
 		spectatorHelpler(boolean,cn)
 	else:
 		UserSessionManager.checkPermissions(caller,"master")
