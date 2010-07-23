@@ -52,12 +52,6 @@ def login(caller,*params):
 		if hashPassword(password) in userInterface["password"]:
 			succeedLogin(caller,user)
 			return
-		if caller[0]=="ingame":
-			import sbserver
-			#maybe it's a setmaster 1 request, therefore the password is hashed by sauer
-			if hashPassword(password) in map(lambda password: sbserver.hashPassword(caller[1],password), userInterface["password"]):
-				succeedLogin(caller,user)
-				return
 	
 	raise PermissionError("Denied to login.")
 

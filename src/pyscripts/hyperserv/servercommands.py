@@ -14,7 +14,6 @@ def changeMap(caller,name,mode=None):
 	if mode is None:
 		mode=sbserver.gameMode()
 	return sbserver.setMap(name,modeNumber(mode))
-systemCS.executestring("map mediterranean insta") #first map
 
 @CSCommand("master","master")
 def setMaster(caller):
@@ -41,6 +40,7 @@ def setAdmin(caller):
 def kick(caller,cn):
 	cn=int(cn)
 	UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
+	triggerServerEvent("player_kicked",[caller,cn])
 	return sbserver.playerKick(cn)
 
 @CSCommand("spectator")

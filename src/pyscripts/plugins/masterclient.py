@@ -5,7 +5,7 @@ from twisted.internet.task import LoopingCall
 from hypershade.config import config
 from hyperserv.notices import serverNotice
 from hyperserv.events import triggerServerEvent, eventHandler
-from hyperserv.util import ipLongToString
+from hypershade.util import ipLongToString
 
 import sbserver
 import time

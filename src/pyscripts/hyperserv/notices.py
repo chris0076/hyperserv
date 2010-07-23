@@ -63,6 +63,10 @@ def noticePlayerSpectated(cn):
 def noticePlayerUnSpectated(cn):
 	serverNotice("%s is no longer a spectator." % (formatCaller(("ingame",cn)),))
 
+@eventHandler("player_kicked")
+def noticePlayerUnSpectated(caller,cn):
+	serverNotice("%s got kicked by %s." % (formatCaller(("ingame",cn)),formatCaller(caller)))
+
 @eventHandler("player_uploaded_map")
 def noticePlayerUploadedMap(cn):
 	serverNotice("%s has sent the map." % (formatCaller(("ingame",cn)),))
@@ -70,3 +74,7 @@ def noticePlayerUploadedMap(cn):
 @eventHandler("player_get_map")
 def noticePlayerGetMap(cn):
 	serverNotice("%s is getting the map." % (formatCaller(("ingame",cn)),))
+
+@eventHandler("player_name_changed")
+def noticeNameChange(cn,namefrom,nameto):
+	serverNotice("%s changed his name to %s." % (namefrom,nameto))
