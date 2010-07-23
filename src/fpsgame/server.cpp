@@ -606,6 +606,7 @@ namespace server
     {
         ci->privilege = PRIV_NONE;
         if(ci->state.state==CS_SPECTATOR && !ci->local) aiman::removeai(ci);
+        sendf(-1, 1, "ri4", N_CURRENTMASTER, -1, 0, mastermode);
     }
 
     void setcimaster(clientinfo *ci)
@@ -631,6 +632,7 @@ namespace server
         ci->privilege = PRIV_ADMIN;
         currentmaster = ci->clientnum;
         SbPy::triggerEventInt("player_claimed_admin", ci->clientnum);
+        sendf(-1, 1, "ri4", N_CURRENTMASTER, currentmaster, currentmaster >= 0 ? ci->privilege : 0, mastermode);
     }
 
     void resetpriv(clientinfo *ci)
@@ -640,7 +642,7 @@ namespace server
             SbPy::triggerEventInt("player_released_master", ci->clientnum);
         else
             SbPy::triggerEventInt("player_released_admin", ci->clientnum);
-        ci->privilege = PRIV_NONE;
+        revokemaster(ci);
         currentmaster = -1; 
     }
 
