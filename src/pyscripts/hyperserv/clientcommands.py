@@ -5,7 +5,7 @@ from hyperserv.events import eventHandler
 from hyperserv.servercommands import ServerError
 
 from hypershade.config import config
-from hypershade.cubescript import checkforCS, playerCS, CSCommand
+from hypershade.cubescript import checkforCS, systemCS, playerCS, CSCommand
 from hypershade.usersession import UserSessionManager
 from hypershade.userdatabase import userdatabase
 from hypershade.usercommands import succeedLogin
@@ -54,6 +54,7 @@ def authLogin(caller,authname):
 		succeedLogin(caller,dict(user.items()))
 	else:
 		if(config["authgainmaster"]=="yes"):
+			systemCS.executestring("takemaster") #logout all other tiny masters
 			setSimpleMaster(caller)
 
 def simpleMasterRequest(caller):
