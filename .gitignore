@@ -2,6 +2,8 @@
 sauer.log
 *.log
 *.swp
+
+/server-init.cfg
 /config.cfg
 /*.sqlite
 
