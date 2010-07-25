@@ -4,11 +4,14 @@ class UserDatabase():
 	def __init__(self):
 		if config["dbtype"]=="mysql":
 			import MySQLdb
-			
-			mysqldb=MySQLdb.connect(host=config["dbhost"],user=config["dbuser"],passwd=config["dbpassword"],db=config["dbname"])
-			self.cursor=mysqldb.cursor()
+			self.connection=MySQLdb.connect(host=config["dbhost"],user=config["dbuser"],passwd=config["dbpassword"],db=config["dbname"])
+		elif config["dbtype"]=="sqlite":
+			import sqlite3
+			self.connection = sqlite3.connect(config["dburl"])
+			self.connection.text_factory = str
 		else:
 			raise Exception("Database driver %s not implemented." % config["dbtype"])
+		self.cursor=self.connection.cursor()
 	
 	def __iter__(self):
 		for user in self.items():
@@ -16,7 +19,7 @@ class UserDatabase():
 	
 	def items(self):
 		self.cursor.execute('SELECT * FROM `users` where `key` = "privileges"')
-		return self.cursor.fetchall()
+		return tuple(self.cursor.fetchall())
 	
 	def __getitem__(self,username):
 		self.cursor.execute('SELECT `user` FROM `users` WHERE `user` = "%s" AND `key` = "privileges"' % (username))
@@ -24,17 +27,18 @@ class UserDatabase():
 		if self.cursor.rowcount==0:
 			raise KeyError("No such user: %s" % (username))
 		
-		return User(self.cursor,username)
+		return User(self,username)
 	
 	def __setitem__(self,username,privileges):
 		try:
 			del self[username]["privileges"]
 		except:
 			pass
-		User(self.cursor,username)["privileges"]=privileges
+		User(self,username)["privileges"]=privileges
 	
 	def __delitem__(self,username):
 		self.cursor.execute('DELETE FROM `users` WHERE `user` = "%s"' % (username))
+		self.connection.commit()
 	
 	def __repr__(self):
 		return repr(self.items())
@@ -48,8 +52,9 @@ class UserDatabase():
 			return None
 
 class User():
-	def __init__(self,cursor,username):
-		self.cursor=cursor
+	def __init__(self,parent,username):
+		self.cursor=parent.cursor
+		self.connection=parent.connection
 		self.username=username
 	
 	def __iter__(self):
@@ -58,7 +63,7 @@ class User():
 	
 	def items(self):
 		self.cursor.execute('SELECT `key`,`value` FROM `users` WHERE `user` = "%s"' % (self.username))
-		return (("username",self.username),)+self.cursor.fetchall()
+		return (("username",self.username),)+tuple(self.cursor.fetchall())
 	
 	def __getitem__(self,key):
 		self.cursor.execute('SELECT value FROM `users` WHERE `user` = "%s" AND `key` = "%s"' % (self.username,key))
@@ -71,9 +76,11 @@ class User():
 			values=(values,)
 		for value in values:
 			self.cursor.execute('INSERT INTO `users` VALUES ("%s","%s","%s")' % (self.username,key,value))
+			self.connection.commit()
 	
 	def __delitem__(self, key):
 		self.cursor.execute('DELETE FROM `users` WHERE `user` = "%s" AND `key` = "%s"' % (self.username,key))
+		self.connection.commit()
 	
 	def __repr__(self):
 		return repr(self.items())

@@ -2,7 +2,8 @@
 sauer.log
 *.log
 *.swp
-config.cfg
+/config.cfg
+/*.sqlite
 
 #stuff that comes after cmake . and make
 CMakeCache.txt

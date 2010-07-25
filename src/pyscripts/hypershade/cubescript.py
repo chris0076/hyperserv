@@ -46,6 +46,7 @@ def checkUntrustedCode(code):
 
 def checkforCS(caller,string):
 	if string[0] in ['#','@']:
+		cspresent=1
 		string=string[1:]
 		try:
 			try:
@@ -57,7 +58,7 @@ def checkforCS(caller,string):
 			exctype,exctext,exctraceback=sys.exc_info()
 			errormsg="%s: %s" % (exctype.__name__, exctext)
 			playerCS.executeby(caller,"echo \"%s\"" % escape(errormsg))
-			raise
+			traceback.print_exc()
 		finally:
 			return 1
 	else:
