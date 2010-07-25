@@ -94,7 +94,6 @@ class ResponseHandler(object):
 class MasterClient(LineReceiver):
 	delimiter = '\n'
 	def connectionMade(self):
-		serverNotice('Connected to master server')
 		self.factory.clientConnected(self)
 	def connectionLost(self, reason):
 		self.factory.clientDisconnected(self)
