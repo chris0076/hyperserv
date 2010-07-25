@@ -83,7 +83,12 @@ def who(caller,where="ingame"):
 	if where=="ingame":
 		def cndetails(cn):
 			return sbserver.playerName(cn)+" (cn"+str(cn)+"/"+ipLongToString(sbserver.playerIpLong(cn))+")"
-		return '; '.join(map(cndetails,sbserver.clients()))
+		
+		string='; '.join(map(cndetails,sbserver.clients()))
+		if string is not "":
+			return string
+		else:
+			return "No players on this server."
 
 @CSCommand("list")
 def listCommands(caller,which="hyperserv"):
