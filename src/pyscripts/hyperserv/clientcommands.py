@@ -6,7 +6,7 @@ from hyperserv.servercommands import ServerError
 
 from hypershade.config import config
 from hypershade.cubescript import checkforCS, systemCS, playerCS, CSCommand
-from hypershade.usersession import UserSessionManager
+from hypershade.usersession import UserSessionManager, PermissionError
 from hypershade.userdatabase import userdatabase
 from hypershade.usercommands import succeedLogin
 
