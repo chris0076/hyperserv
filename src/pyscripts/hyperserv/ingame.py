@@ -19,21 +19,21 @@ def PlayerMessage(cn,msg):
 @eventHandler('echo')
 def echoingame(caller,msg):
 	if caller[0]=="ingame":
-		sbserver.playerMessage(caller[1],msg)
+		sbserver.playerMessage(caller[1],"\f4%s" % msg)
 
 @eventHandler('say')
 def sayingame(msg):
-	sbserver.message(msg)
+	sbserver.message("\f4%s" % msg)
 
 @eventHandler('user_communication')
 def usercommunicationingame(caller,msg):
 	if caller[0]=="ingame":
 		return
-	sbserver.message(""+formatCaller(caller)+": "+msg)
+	sbserver.message("\f2%s: \f0%s" % (formatCaller(caller),msg))
 	
 @eventHandler('notice')
 def noticeingame(msg):
-	sbserver.message(msg)
+	sbserver.message("\f1%s" % msg)
 
 #User Sessions
 @eventHandler('player_connect')
