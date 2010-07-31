@@ -4,7 +4,7 @@ import sbserver
 
 from hyperserv.events import eventHandler, policyHandler, triggerServerEvent, registerPolicyEventHandler
 
-from hypershade.cubescript import checkforCS
+from hypershade.cubescript import checkforCS, playerCS
 from hypershade.usersession import UserSessionManager
 
 from hypershade.util import formatCaller
@@ -49,6 +49,6 @@ def playerdisconnect(cn):
 def checkConnectPassword(cn,password):
 	return False
 	
-@policyHandler('check_check_banned')
-def checkConnectBanned(cn,password):
+@policyHandler('check_connect_banned')
+def checkConnectBanned(cn):
 	return False
