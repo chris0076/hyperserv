@@ -2,7 +2,7 @@
 
 import sbserver
 
-from hyperserv.events import eventHandler, triggerServerEvent, registerPolicyEventHandler
+from hyperserv.events import eventHandler, policyHandler, triggerServerEvent, registerPolicyEventHandler
 
 from hypershade.cubescript import checkforCS
 from hypershade.usersession import UserSessionManager
@@ -43,3 +43,12 @@ def playerconnect(cn):
 @eventHandler('player_disconnect')
 def playerdisconnect(cn):
 	UserSessionManager.destroy(("ingame",cn))
+
+#Connection denied handling
+@policyHandler('check_connect_password')
+def checkConnectPassword(cn,password):
+	return False
+	
+@policyHandler('check_check_banned')
+def checkConnectBanned(cn,password):
+	return False

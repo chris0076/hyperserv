@@ -1562,17 +1562,11 @@ namespace server
     int allowconnect(clientinfo *ci, const char *pwd)
     {
         if(!m_mp(gamemode)) return DISC_PRIVATE;
-        if(serverpass[0])
-        {
-            if(!checkpassword(ci, serverpass, pwd)) return DISC_PRIVATE;
-            return DISC_NONE;
-        }
-        if(adminpass[0] && checkpassword(ci, adminpass, pwd)) return DISC_NONE;
+        if(SbPy::triggerPolicyEventIntString("check_connect_password", ci->clientnum, pwd)) return DISC_NONE;
         if(numclients(-1, false, true)>=maxclients) return DISC_MAXCLIENTS;
         uint ip = getclientip(ci->clientnum);
         if(mastermode>=MM_PRIVATE && allowedips.find(ip)<0) return DISC_PRIVATE;
-        if(!SbPy::triggerPolicyEventIntString("connect_private", ci->clientnum, pwd)) return DISC_PRIVATE;
-        if(!SbPy::triggerPolicyEventIntString("connect_kick", ci->clientnum, pwd)) return DISC_KICK;
+        if(SbPy::triggerPolicyEventInt("check_connect_banned", ci->clientnum)) return DISC_IPBAN;
         return DISC_NONE;
     }
 
