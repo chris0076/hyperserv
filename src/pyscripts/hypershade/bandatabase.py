@@ -5,9 +5,11 @@ def checkForExpired(function):
 	def newfunction(*args):
 		results=function(*args)
 		if len(results)>0 and type(results[0]) is not tuple:
-			if expired(results):
+			ban=results
+			if expired(ban):
 				del bandatabase[ban[0]]
 				raise KeyError("No such ban: %s" % (ban[0]))
+			return formatExpiration(ban)
 		else:
 			def checkExpired(ban):
 				if expired(ban):
@@ -15,11 +17,14 @@ def checkForExpired(function):
 					return False
 				else:
 					return True
-			return filter(checkExpired,results)
+			return map(formatExpiration,filter(checkExpired,results))
 	return newfunction
 
 def expired(ban):
-	return ban[1]<datetime.datetime.now()
+	if ban[1] is None:
+		#permanent ban
+		return False
+	return ban[1]<datetime.datetime.utcnow()
 
 class BanDatabase():
 	def __iter__(self):
@@ -61,5 +66,12 @@ class BanDatabase():
 		string = ' OR '.join(map(lambda name: '`id` = "%s"' % name,names))
 		database.query('SELECT * FROM `bans` WHERE %s ORDER BY `bans`.`expires` DESC' % (string))
 		return tuple(database.cursor.fetchall())
+
+def formatExpiration(time):
+	if type(time) is tuple:
+		return (time[0],formatExpiration(time[1]),time[2])
+	if time==None:
+		return "permanently"
+	return time.strftime("till %b %d %I:%M%p")
 
 bandatabase=BanDatabase()

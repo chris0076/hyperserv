@@ -7,7 +7,10 @@ from hyperserv.events import eventHandler, policyHandler, triggerServerEvent, re
 from hypershade.cubescript import checkforCS, playerCS
 from hypershade.usersession import UserSessionManager
 
-from hypershade.util import formatCaller
+from hyperserv.notices import serverNotice
+from hypershade.bandatabase import bandatabase
+
+from hypershade.util import formatCaller, ipLongToString
 
 #process cubescript
 registerPolicyEventHandler('allow_message', lambda cn, msg: checkforCS(("ingame",cn),msg)==0)
@@ -48,7 +51,23 @@ def playerdisconnect(cn):
 @policyHandler('check_connect_password')
 def checkConnectPassword(cn,password):
 	return False
-	
+	#TODO: see http://github.com/SirAlex/hyperserv/issues#issue/23
+
 @policyHandler('check_connect_banned')
 def checkConnectBanned(cn):
+	checklist=(
+		sbserver.playerName(cn),
+		ipLongToString(sbserver.playerIpLong(cn))
+	)
+	
+	matches=bandatabase.search(checklist)
+	
+	if len(matches)>0:
+		timeperiod="indefinatelly"
+		reason=matches[0][2]
+		if reason== "":
+			reason="none"
+		serverNotice("%s is banned %s, reason: %s" % (sbserver.playerName(cn),matches[0][1],reason))
+		return True
+	
 	return False

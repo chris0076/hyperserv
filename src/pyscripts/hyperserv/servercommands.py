@@ -1,11 +1,15 @@
 """This file contains all the basic commands that the server needs to be playable, this does not handle '/' type requests from clients only server-side cubescript commands"""
 
 import sbserver
+from datetime import timedelta, datetime
+
 from hyperserv.events import eventHandler, triggerServerEvent
 
 from hypershade.cubescript import systemCS, CSCommand
 from hypershade.usersession import UserSessionManager
-from hypershade.util import ipLongToString, modeNumber, mastermodeNumber
+from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller
+
+from hypershade.bandatabase import bandatabase
 
 class ServerError(Exception): pass
 
@@ -40,6 +44,8 @@ def setAdmin(caller):
 def kick(caller,cn):
 	cn=int(cn)
 	UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
+	
+	ban(caller,sbserver.playerName(cn),"kicked by %s" % formatCaller(caller))
 	triggerServerEvent("player_kicked",[caller,cn])
 	return sbserver.playerKick(cn)
 
@@ -113,3 +119,22 @@ def echo(caller,*what):
 	string=' '.join(map(str,what))
 	triggerServerEvent("echo",[caller,string])
 	return string
+
+@CSCommand("ban","trusted")
+def ban(caller,who=None,reason="",time="60"):
+	if who is None:
+		bans(caller)
+	if time[-1]=="d":
+		time=int(time[:1])*1440
+	else:
+		time=int(time)
+	expires=datetime.utcnow()+timedelta(0,time*60)
+	bandatabase[who]=(expires,reason)
+
+@CSCommand("bans","master")
+def bans(caller):
+	return bandatabase
+
+@CSCommand("delban","trusted")
+def delban(caller,who):
+	del bandatabase[who]

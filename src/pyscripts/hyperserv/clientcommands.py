@@ -14,6 +14,7 @@ from hypershade.usercommands import succeedLogin
 def clientSetMaster(caller,text):
 	caller=("ingame",caller)
 	if UserSessionManager[caller][0]=="notloggedin":
+		#TODO: see http://github.com/SirAlex/hyperserv/issues#issue/23
 		simpleMasterRequest(caller)
 	else:
 		checkforCS(caller,"@master")
@@ -74,4 +75,8 @@ def setSimpleMaster(caller):
 
 @CSCommand("givemaster","master")
 def giveMaster(caller,cn):
-	setSimpleMaster(("ingame",int(cn)))
+	target=("ingame",int(cn))
+	if UserSessionManager[target][0]=="notloggedin":
+		setSimpleMaster(target)
+	else:
+		raise ServerError("That player already has %s privileges." % UserSessionManager[target][0])
