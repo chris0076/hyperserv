@@ -124,11 +124,20 @@ def echo(caller,*what):
 def ban(caller,who=None,reason="",time="60"):
 	if who is None:
 		bans(caller)
+	
+	try:
+		who=sbserver.playerName(int(who))
+	except ValueError:
+		pass
+	
 	if time[-1]=="d":
 		time=int(time[:1])*1440
+	
+	if time in ["perm","permanent","permanently","0",0]:
+		expires=None
 	else:
-		time=int(time)
-	expires=datetime.utcnow()+timedelta(0,time*60)
+		expires=datetime.utcnow()+timedelta(0,int(time)*60)
+	
 	bandatabase[who]=(expires,reason)
 
 @CSCommand("bans","master")
