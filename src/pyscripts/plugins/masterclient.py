@@ -6,6 +6,7 @@ from hypershade.config import config
 from hyperserv.notices import serverNotice
 from hyperserv.events import triggerServerEvent, eventHandler
 from hypershade.util import ipLongToString
+from hypershade.bandatabase import bandatabase
 
 import sbserver
 import time
@@ -54,9 +55,11 @@ class ResponseHandler(object):
 		serverNotice('Master server registration failed: %s' % args)
 		triggerServerEvent('master_registration_failed', ())
 	def cleargbans(self, args):
-		triggerServerEvent('master_cleargbans', ())
+		#triggerServerEvent('master_cleargbans', ())
+		bandatabase.cleargbans()
 	def addgban(self, args):
-		triggerServerEvent('master_addgban', (args,))
+		#triggerServerEvent('master_addgban', (args,))
+		bandatabase[args[0]]=(None,"gban")
 	def pop_auth(self, auth_id):
 		auth = self.auth_id_map[auth_id]
 		del self.auth_id_map[auth_id]

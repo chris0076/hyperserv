@@ -55,6 +55,9 @@ class BanDatabase():
 	def __delitem__(self,name):
 		database.query('DELETE FROM `bans` WHERE `id` = "%s"' % (name))
 	
+	def cleargbans(self):
+		database.query('DELETE FROM `bans` WHERE `reason` = "gban"')
+	
 	def __repr__(self):
 		return repr(self.items())
 	
