@@ -15,7 +15,11 @@ def clientSetMaster(caller,text):
 	caller=("ingame",caller)
 	if UserSessionManager[caller][0]=="notloggedin":
 		#TODO: see http://github.com/SirAlex/hyperserv/issues#issue/23
-		simpleMasterRequest(caller)
+		if(config["serverpublic"]!="1"):
+			simpleMasterRequest(caller)
+		else:
+			playerCS.executeby(caller,"echo PermissionError: You cannot claim master on this server without an account or auth.")
+			raise PermissionError("You cannot claim master on this server without an account or auth.")
 	else:
 		checkforCS(caller,"@master")
 
@@ -79,4 +83,8 @@ def giveMaster(caller,cn):
 	if UserSessionManager[target][0]=="notloggedin":
 		setSimpleMaster(target)
 	else:
-		raise ServerError("That player already has %s privileges." % UserSessionManager[target][0])
+		raise ServerError("That player already has %s privileges." % UserSessionManager[target][1])
+
+@CSCommand("public")
+def public(caller):
+	return config["serverpublic"]

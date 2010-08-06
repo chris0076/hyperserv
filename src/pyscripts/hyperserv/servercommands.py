@@ -5,6 +5,7 @@ from datetime import timedelta, datetime
 
 from hyperserv.events import eventHandler, triggerServerEvent
 
+from hypershade.config import config
 from hypershade.cubescript import systemCS, CSCommand
 from hypershade.usersession import UserSessionManager
 from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller
@@ -82,7 +83,16 @@ def spectatorHelpler(boolean,cn):
 def masterMode(caller,name=None):
 	if name==None:
 		return sbserver.masterMode()
-	return sbserver.setMasterMode(mastermodeNumber(name))
+	mastermode=mastermodeNumber(name)
+	
+	if config["serverpublic"]=="1":
+		if mastermode>=2:
+			UserSessionManager.checkPermissions(caller,"trusted")
+	if config["serverpublic"]=="2":
+		if mastermode>=3:
+			UserSessionManager.checkPermissions(caller,"trusted")
+	
+	return sbserver.setMasterMode(mastermode)
 
 @CSCommand("who")
 def who(caller,where="ingame"):
