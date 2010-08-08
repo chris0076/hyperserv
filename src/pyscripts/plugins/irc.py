@@ -18,7 +18,7 @@ class IrcBot(irc.IRCClient):
 		self.joined_channels = []
 	def signedOn(self):
 		for channel in self.factory.channels:
-			self.join(channel)
+			self.join(channel,config["ircchannelpass"])
 		self.factory.signedOn(self)
 	def connectionLost(self, reason):
 		self.factory.signedOut(self)
