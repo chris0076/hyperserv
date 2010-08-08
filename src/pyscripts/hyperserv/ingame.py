@@ -4,16 +4,26 @@ import sbserver
 
 from hyperserv.events import eventHandler, policyHandler, triggerServerEvent, registerPolicyEventHandler
 
-from hypershade.cubescript import checkforCS, playerCS
+from hypershade.cubescript import checkforCS, playerCS, systemCS
 from hypershade.usersession import UserSessionManager
 
 from hyperserv.notices import serverNotice
+
+from hypershade.config import config
 from hypershade.bandatabase import bandatabase
 
 from hypershade.util import formatCaller, ipLongToString
 
 #process cubescript
 registerPolicyEventHandler('allow_message', lambda cn, msg: checkforCS(("ingame",cn),msg)==0)
+
+systemCS.executestring("map %s %s" % (config["defaultmap"],config["defaultmode"]))
+systemCS.executestring("mastermode %s" % config["defaultmastermode"])
+
+@eventHandler('no_clients')
+def noclients():
+	serverNotice("Server is now empty.")
+	systemCS.executestring("mastermode %s" % (config["defaultmastermode"]))
 
 @eventHandler('player_message')
 def PlayerMessage(cn,msg):

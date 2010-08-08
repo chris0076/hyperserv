@@ -2,10 +2,10 @@ import os, sys
 
 import hypershade
 
-import hyperserv.ingame
 import hyperserv.clientcommands
 import hyperserv.servercommands
 import hyperserv.notices
+import hyperserv.ingame
 
 class PluginManager(object):
 	def __init__(self, plugins_path='plugins'):
