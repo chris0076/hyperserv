@@ -157,3 +157,10 @@ def bans(caller):
 @CSCommand("delban","trusted")
 def delban(caller,who):
 	del bandatabase[who]
+
+@CSCommand("minsleft")
+def minsleft(caller,time=None):
+	if time is not None:
+		UserSessionManager.checkPermissions(caller,"trusted")
+		sbserver.setMinsRemaining(int(time))
+	return sbserver.minutesRemaining()/60 #todo, fix the api, it shouldn't return seconds...
