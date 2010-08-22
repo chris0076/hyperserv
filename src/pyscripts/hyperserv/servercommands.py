@@ -96,15 +96,18 @@ def masterMode(caller,name=None):
 
 @CSCommand("who")
 def who(caller,where="ingame"):
+	def cndetails(cn):
+		return sbserver.playerName(cn)+" (cn"+str(cn)+"/"+ipLongToString(sbserver.playerIpLong(cn))+")"
+	
+	clientlist=[session[1] for session in UserSessionManager.keys() if session[0] == where]
+	
 	if where=="ingame":
-		def cndetails(cn):
-			return sbserver.playerName(cn)+" (cn"+str(cn)+"/"+ipLongToString(sbserver.playerIpLong(cn))+")"
-		
-		string='; '.join(map(cndetails,sbserver.clients()))
-		if string is not "":
-			return string
-		else:
-			return "No players on this server."
+		clientlist='; '.join(map(cndetails,clientlist))
+	
+	if clientlist!="" or clientlist!=[]:
+		return str(clientlist)
+	else:
+		return "No clients for %s." % where
 
 @CSCommand("list")
 def listCommands(caller,which="hyperserv"):
