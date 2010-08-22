@@ -54,26 +54,19 @@ class IrcBot(irc.IRCClient):
 	def userRenamed(self, oldname, newname):
 		UserSessionManager.rename(("irc",oldname),("irc",newname))
 
-class IrcBotFactory(protocol.ClientFactory):
+class IrcBotFactory(protocol.ReconnectingClientFactory):
 	protocol = IrcBot
 	def __init__(self, nickname, channels):
 		self.nickname = nickname
 		self.channels = channels
 		self.bots = []
-		self.reconnect_count = 0
-	def doConnect(self):
-		reactor.connectTCP(config['ircserver'], 6667, factory)
-	def doReconnect(self):
-		if self.reconnect_count < 5:
-			self.reconnect_count += 1
-			self.doConnect()
+		reactor.connectTCP(config['ircserver'], 6667, self)
 	def signedOn(self, bot):
 		if bot not in self.bots:
 			self.bots.append(bot)
 	def signedOut(self, bot):
 		if bot in self.bots:
 			self.bots.remove(bot)
-			addTimer(5000, self.doReconnect, ())
 	def broadcast(self, message):
 		for bot in self.bots:
 			bot.broadcast(message)
@@ -83,7 +76,6 @@ class IrcBotFactory(protocol.ClientFactory):
 
 # create factory protocol and application
 factory = IrcBotFactory(config['ircnick'], [config['ircchannel']])
-factory.doConnect()
 
 @eventHandler('echo')
 def ircecho(caller,msg):
