@@ -910,6 +910,40 @@ static PyObject *suicide(PyObject *self, PyObject *args)
 	return Py_None;
 }
 
+static PyObject *editMute(PyObject *self, PyObject *args)
+{
+	int cn;
+	server::clientinfo *ci;
+	if(!PyArg_ParseTuple(args, "i", &cn))
+		return 0;
+	ci = server::getinfo(cn);
+	if(!ci)
+	{
+		PyErr_SetString(PyExc_ValueError, "Invalid cn specified");
+		return 0;
+	}
+    ci->editmuted = true;
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+static PyObject *editUnmute(PyObject *self, PyObject *args)
+{
+	int cn;
+	server::clientinfo *ci;
+	if(!PyArg_ParseTuple(args, "i", &cn))
+		return 0;
+	ci = server::getinfo(cn);
+	if(!ci)
+	{
+		PyErr_SetString(PyExc_ValueError, "Invalid cn specified");
+		return 0;
+	}
+    ci->editmuted = false;
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
 static PyMethodDef ModuleMethods[] = {
 	{"cseval", cseval, METH_VARARGS, "Execute a string containing CubeScript"},
 	{"triggercsevent", triggercsevent, METH_VARARGS, "Trigger a CubeScript event"},
@@ -937,7 +971,7 @@ static PyMethodDef ModuleMethods[] = {
 	{"playerIsSpectator", playerIsSpectator, METH_VARARGS, "Player is a spectator"},
 	{"spectate", spectate, METH_VARARGS, "Spectate player."},
 	{"unspectate", unspectate, METH_VARARGS, "Set player to unspectated."},
-	{"setPlayerTeam", setPlayerTeam, METH_VARARGS, "Set team of player."},
+    {"setPlayerTeam", setPlayerTeam, METH_VARARGS, "Set team of player."},
 	{"setBotLimit", setBotLimit, METH_VARARGS, "Set server bot limit."},
 	{"hashPassword", hashPass, METH_VARARGS, "Return hash for user + password"},
 	{"setMaster", setMaster, METH_VARARGS, "Set cn to master."},
@@ -974,6 +1008,8 @@ static PyMethodDef ModuleMethods[] = {
     {"demoData", demoData, METH_VARARGS, "Demo data."},
 	{"sendDemo", sendDemo, METH_VARARGS, "Send demo to client."},
 	{"suicide", suicide, METH_VARARGS, "Force client to commit suicide."},
+	{"editMute", editMute, METH_VARARGS, "Edit mute a player."},
+	{"editUnmute", editUnmute, METH_VARARGS, "Edit unmute a player."},
 	{NULL, NULL, 0, NULL}
 };
 

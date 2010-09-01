@@ -1795,6 +1795,11 @@ namespace server
             {
                 int val = getint(p);
                 if(!ci->local && !m_edit) break;
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 if(val ? ci->state.state!=CS_ALIVE && ci->state.state!=CS_DEAD : ci->state.state!=CS_EDITING) break;
                 if(smode)
                 {
@@ -2070,6 +2075,11 @@ namespace server
                 int type = getint(p);
                 loopk(5) getint(p);
                 if(!ci || ci->state.state==CS_SPECTATOR) break;
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 QUEUE_MSG;
                 bool canspawn = canspawnitem(type);
                 if(i<MAXENTS && (sents.inrange(i) || canspawnitem(type)))
@@ -2090,6 +2100,11 @@ namespace server
             {
                 int type = getint(p);
                 getstring(text, p);
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 switch(type)
                 {
                     case ID_VAR: getint(p); break;
@@ -2236,6 +2251,11 @@ namespace server
             {
                 int size = getint(p);
                 if(!ci->privilege && !ci->local && ci->state.state==CS_SPECTATOR) break;
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 if(size>=0)
                 {
                     smapname[0] = '\0';
@@ -2316,16 +2336,31 @@ namespace server
 
             }
             case N_COPY:
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 ci->cleanclipboard();
                 ci->lastclipboard = totalmillis;
                 goto genericmsg;
 
             case N_PASTE:
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 if(ci->state.state!=CS_SPECTATOR) sendclipboard(ci);
                 goto genericmsg;
     
             case N_CLIPBOARD:
             {
+                if(ci->editmuted)
+                {
+                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
+                    break;
+                }
                 int unpacklen = getint(p), packlen = getint(p); 
                 ci->cleanclipboard(false);
                 if(ci->state.state==CS_SPECTATOR)

@@ -79,6 +79,26 @@ def spectatorHelpler(boolean,cn):
 	else:
 		sbserver.unspectate(cn)
 
+@CSCommand("editmute","master")
+def editmute(caller,boolean=None,cn=None):
+	#empty args
+	if boolean is None:
+		boolean=1
+	
+	if cn is None:
+		if(caller[0]=="ingame"):
+			cn=caller[1]
+		else:
+			raise ServerError("You are not ingame. Please specify cn.")
+	cn=int(cn)
+	
+	if int(boolean):
+		print "muting"
+		sbserver.editMute(cn)
+	else:
+		print "unmuting"
+		sbserver.editUnmute(cn)
+
 @CSCommand("mastermode","master")
 def masterMode(caller,name=None):
 	if name==None:
