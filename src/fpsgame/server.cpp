@@ -1639,6 +1639,7 @@ namespace server
 
     void parsepacket(int sender, int chan, packetbuf &p)     // has to parse exactly each byte of the packet
     {
+        bool ignorepacket = false;
         if(sender<0) return;
         char text[MAXTRANS];
         int type;
@@ -1693,7 +1694,7 @@ namespace server
         }
         else if(chan==2)
         {
-            receivefile(sender, p.buf, p.maxlen);
+            if(!ci->editmuted) receivefile(sender, p.buf, p.maxlen);
             return;
         }
 
@@ -2320,14 +2321,20 @@ namespace server
 
             }
             case N_COPY:
-                if(ci->editmuted) break;
-                ci->cleanclipboard();
-                ci->lastclipboard = totalmillis;
+                if(ci->editmuted)
+                    ignorepacket=true;
+                else
+                {
+                    ci->cleanclipboard();
+                    ci->lastclipboard = totalmillis;
+                }
                 goto genericmsg;
 
             case N_PASTE:
-                if(ci->editmuted) break;
-                if(ci->state.state!=CS_SPECTATOR) sendclipboard(ci);
+                if(ci->editmuted)
+                    ignorepacket=true;
+                else
+                    if(ci->state.state!=CS_SPECTATOR) sendclipboard(ci);
                 goto genericmsg;
     
             case N_CLIPBOARD:
@@ -2378,14 +2385,15 @@ namespace server
             case N_DELCUBE:
             case N_REMIP:
             case N_SENDMAP:
-                if(ci->editmuted) break;
+                if(ci->editmuted) ignorepacket=true;
+                goto genericmsg;
 
             default: genericmsg:
             {
                 int size = server::msgsizelookup(type);
                 if(size<=0) { disconnect_client(sender, DISC_TAGT); return; }
                 loopi(size-1) getint(p);
-                if(ci && cq && (ci != cq || ci->state.state!=CS_SPECTATOR)) { QUEUE_AI; QUEUE_MSG; }
+                if(ci && cq && (ci != cq || ci->state.state!=CS_SPECTATOR) && !ci->editmuted && !ignorepacket) { QUEUE_AI; QUEUE_MSG; }
                 break;
             }
         }
