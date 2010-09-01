@@ -1694,7 +1694,10 @@ namespace server
         }
         else if(chan==2)
         {
-            if(!ci->editmuted) receivefile(sender, p.buf, p.maxlen);
+            if(ci->editmuted)
+                SbPy::triggerEventInt("edit_blocked", ci->clientnum);
+            else
+                receivefile(sender, p.buf, p.maxlen);
             return;
         }
 
@@ -1796,7 +1799,6 @@ namespace server
             {
                 int val = getint(p);
                 if(!ci->local && !m_edit) break;
-                //if(ci->editmuted) break;
                 if(val ? ci->state.state!=CS_ALIVE && ci->state.state!=CS_DEAD : ci->state.state!=CS_EDITING) break;
                 if(smode)
                 {
@@ -1805,6 +1807,7 @@ namespace server
                 }
                 if(val)
                 {
+                    if(ci->editmuted) SbPy::triggerEventInt("edit_blocked", ci->clientnum);
                     ci->state.editstate = ci->state.state;
                     ci->state.state = CS_EDITING;
                     ci->events.setsize(0);
@@ -2072,7 +2075,11 @@ namespace server
                 int type = getint(p);
                 loopk(5) getint(p);
                 if(!ci || ci->state.state==CS_SPECTATOR) break;
-                if(ci->editmuted) break;
+                if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
+                    break;
+                }
                 QUEUE_MSG;
                 bool canspawn = canspawnitem(type);
                 if(i<MAXENTS && (sents.inrange(i) || canspawnitem(type)))
@@ -2099,7 +2106,11 @@ namespace server
                     case ID_FVAR: getfloat(p); break;
                     case ID_SVAR: getstring(text, p);
                 }
-                if(ci->editmuted) break;
+                if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
+                    break;
+                }
                 if(ci && ci->state.state!=CS_SPECTATOR) QUEUE_MSG;
                 break;
             }
@@ -2240,7 +2251,11 @@ namespace server
             {
                 int size = getint(p);
                 if(!ci->privilege && !ci->local && ci->state.state==CS_SPECTATOR) break;
-                if(ci->editmuted) break;
+                if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
+                    break;
+                }
                 if(size>=0)
                 {
                     smapname[0] = '\0';
@@ -2322,7 +2337,10 @@ namespace server
             }
             case N_COPY:
                 if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
                     ignorepacket=true;
+                }
                 else
                 {
                     ci->cleanclipboard();
@@ -2332,7 +2350,10 @@ namespace server
 
             case N_PASTE:
                 if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
                     ignorepacket=true;
+                }
                 else
                     if(ci->state.state!=CS_SPECTATOR) sendclipboard(ci);
                 goto genericmsg;
@@ -2340,7 +2361,11 @@ namespace server
             case N_CLIPBOARD:
             {
                 int unpacklen = getint(p), packlen = getint(p);
-                if(ci->editmuted) break;
+                if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
+                    break;
+                }
                 ci->cleanclipboard(false);
                 if(ci->state.state==CS_SPECTATOR)
                 {
@@ -2385,7 +2410,11 @@ namespace server
             case N_DELCUBE:
             case N_REMIP:
             case N_SENDMAP:
-                if(ci->editmuted) ignorepacket=true;
+                if(ci->editmuted)
+                {
+                    SbPy::triggerEventInt("edit_blocked", ci->clientnum);
+                    ignorepacket=true;
+                }
                 goto genericmsg;
 
             default: genericmsg:

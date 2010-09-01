@@ -2,7 +2,7 @@
 from hyperserv.events import eventHandler, triggerServerEvent
 
 import hypershade
-from hypershade.cubescript import CSCommand
+from hypershade.cubescript import CSCommand, playerCS
 from hypershade.util import modeName, mastermodeName, formatCaller
 
 def serverNotice(string):
@@ -63,6 +63,14 @@ def noticePlayerSpectated(cn):
 def noticePlayerUnSpectated(cn):
 	serverNotice("%s is no longer a spectator." % (formatCaller(("ingame",cn)),))
 
+@eventHandler("player_editmuted")
+def noticePlayerEditMuted(cn):
+	serverNotice("%s is now edit muted." % (formatCaller(("ingame",cn)),))
+
+@eventHandler("player_editunmuted")
+def noticePlayerEditUnMuted(cn):
+	serverNotice("%s is no longer edit muted." % (formatCaller(("ingame",cn)),))
+
 @eventHandler("player_kicked")
 def noticePlayerUnSpectated(caller,cn):
 	serverNotice("%s got kicked by %s." % (formatCaller(("ingame",cn)),formatCaller(caller)))
@@ -82,3 +90,8 @@ def noticeNameChange(cn,namefrom,nameto):
 @eventHandler('player_auth_succeed')
 def noticeAuth(cn,name):
 	serverNotice("%s authed as '%s'." % (formatCaller(("ingame",cn)),name))
+
+@eventHandler('edit_blocked')
+def noticeEditMute(cn):
+	caller=("ingame",cn)
+	playerCS.executeby(caller,"echo \"%s is edit muted.\"" % (formatCaller(caller)))

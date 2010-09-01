@@ -91,13 +91,15 @@ def editmute(caller,boolean=None,cn=None):
 		else:
 			raise ServerError("You are not ingame. Please specify cn.")
 	cn=int(cn)
+	boolean=int(boolean)
 	
-	if int(boolean):
-		print "muting"
+	if boolean:
+		spectator(caller,0,cn)
 		sbserver.editMute(cn)
+		triggerServerEvent("player_editmuted",[cn])
 	else:
-		print "unmuting"
 		sbserver.editUnmute(cn)
+		triggerServerEvent("player_editunmuted",[cn])
 
 @CSCommand("mastermode","master")
 def masterMode(caller,name=None):
