@@ -1795,11 +1795,7 @@ namespace server
             {
                 int val = getint(p);
                 if(!ci->local && !m_edit) break;
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
+                //if(ci->editmuted) break;
                 if(val ? ci->state.state!=CS_ALIVE && ci->state.state!=CS_DEAD : ci->state.state!=CS_EDITING) break;
                 if(smode)
                 {
@@ -2075,11 +2071,7 @@ namespace server
                 int type = getint(p);
                 loopk(5) getint(p);
                 if(!ci || ci->state.state==CS_SPECTATOR) break;
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
+                if(ci->editmuted) break;
                 QUEUE_MSG;
                 bool canspawn = canspawnitem(type);
                 if(i<MAXENTS && (sents.inrange(i) || canspawnitem(type)))
@@ -2100,17 +2092,13 @@ namespace server
             {
                 int type = getint(p);
                 getstring(text, p);
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
                 switch(type)
                 {
                     case ID_VAR: getint(p); break;
                     case ID_FVAR: getfloat(p); break;
                     case ID_SVAR: getstring(text, p);
                 }
+                if(ci->editmuted) break;
                 if(ci && ci->state.state!=CS_SPECTATOR) QUEUE_MSG;
                 break;
             }
@@ -2251,11 +2239,7 @@ namespace server
             {
                 int size = getint(p);
                 if(!ci->privilege && !ci->local && ci->state.state==CS_SPECTATOR) break;
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
+                if(ci->editmuted) break;
                 if(size>=0)
                 {
                     smapname[0] = '\0';
@@ -2331,37 +2315,25 @@ namespace server
             case N_PAUSEGAME:
             {
                 int val = getint(p);
-				SbPy::triggerEventIntBool("player_pause", ci->clientnum, val != 0);
+                SbPy::triggerEventIntBool("player_pause", ci->clientnum, val != 0);
                 break;
 
             }
             case N_COPY:
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
+                if(ci->editmuted) break;
                 ci->cleanclipboard();
                 ci->lastclipboard = totalmillis;
                 goto genericmsg;
 
             case N_PASTE:
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
+                if(ci->editmuted) break;
                 if(ci->state.state!=CS_SPECTATOR) sendclipboard(ci);
                 goto genericmsg;
     
             case N_CLIPBOARD:
             {
-                if(ci->editmuted)
-                {
-                    sendf(ci->clientnum, 1, "ris", N_SERVMSG, "You are edit muted.");
-                    break;
-                }
-                int unpacklen = getint(p), packlen = getint(p); 
+                int unpacklen = getint(p), packlen = getint(p);
+                if(ci->editmuted) break;
                 ci->cleanclipboard(false);
                 if(ci->state.state==CS_SPECTATOR)
                 {
@@ -2396,6 +2368,17 @@ namespace server
             case -2:
                 disconnect_client(sender, DISC_OVERFLOW);
                 return;
+
+            case N_EDITF:
+            case N_EDITT:
+            case N_EDITM:
+            case N_FLIP:
+            case N_ROTATE:
+            case N_REPLACE:
+            case N_DELCUBE:
+            case N_REMIP:
+            case N_SENDMAP:
+                if(ci->editmuted) break;
 
             default: genericmsg:
             {
