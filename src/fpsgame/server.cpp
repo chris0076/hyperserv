@@ -1668,6 +1668,7 @@ namespace server
                 }
 
                 ci->playermodel = getint(p);
+                ci->editmuted = false;
 
                 if(m_demo) enddemoplayback();
 
