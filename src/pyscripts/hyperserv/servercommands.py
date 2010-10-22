@@ -143,7 +143,7 @@ def listCommands(caller,which="hyperserv"):
 	commands.sort()
 	return ' '.join(commands)
 
-@CSCommand("say","trusted")
+@CSCommand("say","admin")
 def say(caller,*what):
 	string=' '.join(map(str,what))
 	triggerServerEvent("say",[string])
