@@ -203,8 +203,10 @@ def team(caller,*args):
 			cn=caller[1]
 		else:
 			raise ServerError("You are not ingame. Please specify cn.")
-	else:
+	elif(len(args)==1):
 		cn=args[0]
+	else:
+		raise TypeError("team takes either 1 or 2 arguments.")
 	cn=int(cn)
 	
 	teamname=args[-1]
@@ -214,3 +216,18 @@ def team(caller,*args):
 		UserSessionManager.checkPermissions(caller,"master")
 	
 	sbserver.setTeam(cn,teamname)
+
+@CSCommand("mute","master")
+def mute(caller,*args):
+	if(len(args)==1):
+		boolean=1
+		cn=args[0]
+	elif(len(args)==1):
+		boolean=args[0]
+		cn=args[1]
+	else:
+		raise TypeError("mute takes either 1 or 2 arguments.")
+	boolean=int(boolean)
+	cn=int(cn)
+	
+	triggerServerEvent("player_muted",[caller,boolean,cn])

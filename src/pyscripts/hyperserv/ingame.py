@@ -14,8 +14,16 @@ from hypershade.bandatabase import bandatabase
 
 from hypershade.util import formatCaller, ipLongToString
 
-#process cubescript
-registerPolicyEventHandler('allow_message', lambda cn, msg: checkforCS(("ingame",cn),msg)==0)
+muted_cns=[]
+
+def allow_message(cn,msg):
+	if checkforCS(("ingame",cn),msg):
+		return False
+	if cn in muted_cns:
+		triggerServerEvent("talk_blocked",[cn])
+		return False
+	return True
+registerPolicyEventHandler('allow_message', allow_message)
 
 systemCS.executestring("map %s %s" % (config["defaultmap"],config["defaultmode"]))
 systemCS.executestring("mastermode %s" % config["defaultmastermode"])
@@ -52,10 +60,14 @@ def noticeingame(msg):
 @eventHandler('player_connect')
 def playerconnect(cn):
 	UserSessionManager.create(("ingame",cn))
+	if cn in muted_cns:
+		muted_cns.remove(cn)
 	
 @eventHandler('player_disconnect')
 def playerdisconnect(cn):
 	UserSessionManager.destroy(("ingame",cn))
+	if cn in muted_cns:
+		muted_cns.remove(cn)
 
 #Connection denied handling
 @policyHandler('check_connect_password')
@@ -87,3 +99,12 @@ def voteMap(caller,mode,name):
 	otherplayers=[(session,user) for session,user in UserSessionManager.items() if session[0]=='ingame' and session!=caller]
 	if len(otherplayers)==0:
 		sbserver.setMap(name,mode)
+
+@eventHandler("player_muted")
+def playerMuted(caller,boolean,target):
+	if boolean:
+		if target not in muted_cns:
+			muted_cns.append(target)
+	else:
+		if target in muted_cns:
+			muted_cns.remove(target)

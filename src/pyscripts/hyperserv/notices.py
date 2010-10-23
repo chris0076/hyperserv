@@ -71,6 +71,13 @@ def noticePlayerEditMuted(cn):
 def noticePlayerEditUnMuted(cn):
 	serverNotice("%s is no longer edit muted." % (formatCaller(("ingame",cn)),))
 
+@eventHandler("player_muted")
+def noticePlayerMuted(caller,boolean,target):
+	if(boolean==1):
+		serverNotice("%s is now muted." % (formatCaller(("ingame",target)),))
+	else:
+		serverNotice("%s is now unmuted." % (formatCaller(("ingame",target)),))
+
 @eventHandler("player_kicked")
 def noticePlayerUnSpectated(caller,cn):
 	serverNotice("%s got kicked by %s." % (formatCaller(("ingame",cn)),formatCaller(caller)))
@@ -95,6 +102,11 @@ def noticeAuth(cn,name):
 def noticeEditMute(cn):
 	caller=("ingame",cn)
 	playerCS.executeby(caller,"echo \"%s is edit muted.\"" % (formatCaller(caller)))
+
+@eventHandler('talk_blocked')
+def noticeMute(cn):
+	caller=("ingame",cn)
+	playerCS.executeby(caller,"echo \"%s is muted. You cannot talk.\"" % (formatCaller(caller)))
 
 @eventHandler('player_team_changed')
 def noticePlayerTeamChanged(cn):
