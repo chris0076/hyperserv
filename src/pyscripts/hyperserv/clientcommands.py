@@ -1,7 +1,7 @@
 """ handle '/' type requests from clients and translate them into cubescript"""
 
 import sbserver
-from hyperserv.events import eventHandler
+from hyperserv.events import eventHandler, triggerServerEvent
 from hyperserv.servercommands import ServerError
 
 from hypershade.config import config
@@ -37,7 +37,12 @@ def clientUnspectate(caller,who):
 
 @eventHandler("player_map_vote")
 def clientMapVote(caller,mapname,mode):
-	checkforCS(("ingame",caller),"@map %s %s" % (mapname,mode))
+	caller=("ingame",caller)
+	try:
+		playerCS.executeby(caller,"map %s %s" % (mapname,mode))
+	except PermissionError:
+		triggerServerEvent("vote_map",[caller,mode,mapname])
+	
 
 @eventHandler("player_set_mastermode")
 def clientMastermode(caller,mastermode):
@@ -50,6 +55,14 @@ def clientAuth(caller,name):
 @eventHandler("player_kick")
 def clientKick(caller,who):
 	checkforCS(("ingame",caller),"@kick %s" % who)
+
+@eventHandler('player_set_team')
+def playerSetTeam(caller,target,team):
+	checkforCS(("ingame",caller),"@team %s %s" % (target,team))
+
+@eventHandler('player_switch_team')
+def playerSwitchTeam(caller,team):
+	playerSetTeam(caller,caller,team)
 
 ##
 #Auth and simple setmaster

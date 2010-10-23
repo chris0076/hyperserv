@@ -81,3 +81,9 @@ def checkConnectBanned(cn):
 		return True
 	
 	return False
+
+@eventHandler('vote_map')
+def voteMap(caller,mode,name):
+	otherplayers=[(session,user) for session,user in UserSessionManager.items() if session[0]=='ingame' and session!=caller]
+	if len(otherplayers)==0:
+		sbserver.setMap(name,mode)

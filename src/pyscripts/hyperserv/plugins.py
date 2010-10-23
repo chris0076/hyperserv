@@ -2,9 +2,9 @@ import os, sys
 
 import hypershade
 
+import hyperserv.notices
 import hyperserv.clientcommands
 import hyperserv.servercommands
-import hyperserv.notices
 import hyperserv.ingame
 
 class PluginManager(object):

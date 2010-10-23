@@ -14,8 +14,14 @@ from hypershade.bandatabase import bandatabase
 
 class ServerError(Exception): pass
 
-@CSCommand("map","master")
+@CSCommand("vote")
 def changeMap(caller,name,mode=None):
+	if mode is None:
+		mode=sbserver.gameMode()
+	triggerServerEvent("vote_map",[caller,mode,name])
+
+@CSCommand("map","master")
+def voteMap(caller,name,mode=None):
 	if mode is None:
 		mode=sbserver.gameMode()
 	return sbserver.setMap(name,modeNumber(mode))
@@ -189,3 +195,22 @@ def minsleft(caller,time=None):
 		UserSessionManager.checkPermissions(caller,"trusted")
 		sbserver.setMinsRemaining(int(time))
 	return sbserver.minutesRemaining()/60 #todo, fix the api, it shouldn't return seconds...
+
+@CSCommand("team")
+def team(caller,*args):
+	if(len(args)==1):
+		if(caller[0]=="ingame"):
+			cn=caller[1]
+		else:
+			raise ServerError("You are not ingame. Please specify cn.")
+	else:
+		cn=args[0]
+	cn=int(cn)
+	
+	teamname=args[-1]
+	
+	if cn!=caller[1]:
+		raise ServerError("%s"%((cn,caller[1]),))
+		UserSessionManager.checkPermissions(caller,"master")
+	
+	sbserver.setTeam(cn,teamname)

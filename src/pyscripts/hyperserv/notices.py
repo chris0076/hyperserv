@@ -95,3 +95,12 @@ def noticeAuth(cn,name):
 def noticeEditMute(cn):
 	caller=("ingame",cn)
 	playerCS.executeby(caller,"echo \"%s is edit muted.\"" % (formatCaller(caller)))
+
+@eventHandler('player_team_changed')
+def noticePlayerTeamChanged(cn):
+	caller=("ingame",cn)
+	serverNotice("%s changed team." % (formatCaller(caller)))
+
+@eventHandler('vote_map')
+def noticeVoteMap(caller,mode,name):
+	serverNotice("%s votes to play on %s(%s)." % (formatCaller(caller),name,modeName(mode)))
