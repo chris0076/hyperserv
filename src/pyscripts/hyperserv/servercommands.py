@@ -212,7 +212,6 @@ def team(caller,*args):
 	teamname=args[-1]
 	
 	if cn!=caller[1]:
-		raise ServerError("%s"%((cn,caller[1]),))
 		UserSessionManager.checkPermissions(caller,"master")
 	
 	sbserver.setTeam(cn,teamname)
