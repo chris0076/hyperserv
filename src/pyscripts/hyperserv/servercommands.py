@@ -18,7 +18,7 @@ class ServerError(Exception): pass
 def changeMap(caller,name,mode=None):
 	if mode is None:
 		mode=sbserver.gameMode()
-	triggerServerEvent("vote_map",[caller,mode,name])
+	triggerServerEvent("vote_map",[caller,modeNumber(mode),name])
 
 @CSCommand("map","master")
 def voteMap(caller,name,mode=None):

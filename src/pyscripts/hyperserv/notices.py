@@ -103,4 +103,4 @@ def noticePlayerTeamChanged(cn):
 
 @eventHandler('vote_map')
 def noticeVoteMap(caller,mode,name):
-	serverNotice("%s votes to play on %s(%s)." % (formatCaller(caller),name,modeName(mode)))
+	serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
