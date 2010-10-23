@@ -203,7 +203,7 @@ def team(caller,*args):
 			cn=caller[1]
 		else:
 			raise ServerError("You are not ingame. Please specify cn.")
-	elif(len(args)==1):
+	elif(len(args)==2):
 		cn=args[0]
 	else:
 		raise TypeError("team takes either 1 or 2 arguments.")
@@ -222,7 +222,7 @@ def mute(caller,*args):
 	if(len(args)==1):
 		boolean=1
 		cn=args[0]
-	elif(len(args)==1):
+	elif(len(args)==2):
 		boolean=args[0]
 		cn=args[1]
 	else:
