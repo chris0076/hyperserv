@@ -979,7 +979,8 @@ static PyObject *getMapDataFile(PyObject *self, PyObject *args)
 	}
 	else
 	{
-		PyErr_SetString(PyExc_ValueError, "No map to open.");
+		//TODO: make it open the file instead
+		PyErr_SetString(PyExc_ValueError, "No map to open. TODO");
 		return 0;
 	}
 }

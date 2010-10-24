@@ -55,9 +55,9 @@ def kick(caller,cn):
 	ban(caller,sbserver.playerName(cn),"kicked by %s" % formatCaller(caller))
 	triggerServerEvent("player_kicked",[caller,cn])
 	return sbserver.playerKick(cn)
-	
+
 @CSCommand("sendto","master")
-def kick(caller,cn):
+def sendto(caller,cn):
 	cn=int(cn)
 	return sbserver.sendMapTo(cn)
 
@@ -235,3 +235,33 @@ def mute(caller,*args):
 	cn=int(cn)
 	
 	triggerServerEvent("player_muted",[caller,boolean,cn])
+
+@CSCommand("testmapdata","admin")
+def testmapdata(caller):
+	mapdata=sbserver.getMapDataFile()
+	mapdata.seek(0)
+	print mapdata.read(1000)
+
+@CSCommand("savemap","trusted")
+def savemap(caller,name=None):
+	if name is None:
+		name=sbserver.mapName()
+	ogz=open("/tmp/%s.ogz" % name,"wb")
+	mapdata=sbserver.getMapDataFile()
+	mapdata.seek(0)
+	ogz.write(mapdata.read())
+	ogz.close()
+	print "done saving /tmp/%s.ogz" % name
+
+@CSCommand("loadmap","trusted")
+def loadmap(caller,name=None):
+	if name is None:
+		name=sbserver.mapName()
+	ogz=open("/tmp/%s.ogz" % name,"rb")
+	mapdata=sbserver.getMapDataFile()
+	mapdata.seek(0)
+	mapdata.truncate(0)
+	mapdata.write(ogz.read())
+	mapdata.flush()
+	ogz.close()
+	print "done loading /tmp/%s.ogz" % name
