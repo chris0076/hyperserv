@@ -8,7 +8,7 @@ from hyperserv.events import eventHandler, triggerServerEvent
 from hypershade.config import config
 from hypershade.cubescript import systemCS, CSCommand
 from hypershade.usersession import UserSessionManager
-from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller
+from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller, safefilename
 
 from hypershade.bandatabase import bandatabase
 
@@ -257,7 +257,7 @@ def testmapdata(caller):
 def savemap(caller,name=None):
 	if name is None:
 		name=sbserver.mapName()
-	ogzfilename="%s/%s.ogz" % (config["mapsdir"],name)
+	ogzfilename=safefilename(config["mapsdir"],name,".ogz")
 	ogz=open(ogzfilename,"wb")
 	
 	mapdata=sbserver.getMapDataFile()
@@ -271,7 +271,7 @@ def savemap(caller,name=None):
 def loadmap(caller,name=None):
 	if name is None:
 		name=sbserver.mapName()
-	ogzfilename="%s/%s.ogz" % (config["mapsdir"],name)
+	ogzfilename=safefilename(config["mapsdir"],name,".ogz")
 	ogz=open(ogzfilename,"rb")
 	
 	mapdata=sbserver.getMapDataFile()

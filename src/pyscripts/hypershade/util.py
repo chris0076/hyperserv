@@ -1,5 +1,5 @@
 """Utility functions that do misc stuff(ex. convert between formats)"""
-import struct, socket
+import struct, socket, os
 
 def ipLongToString(num):
 	return '%d.%d.%d.%d' % ((num & 0xff),
@@ -104,3 +104,12 @@ def mastermodeNumber(modename):
 		raise ValueError('Invalid mastermode')
 	except ValueError:
 		raise ValueError('Invalid mastermode')
+
+def safefilename(folder,filename,suffix):
+	filename+=suffix
+	folder=os.path.abspath(folder)
+	path="%s/%s" % (folder,filename)
+	if os.path.split(path)[1]!=filename:
+		print path,os.path.split(path)[1],filename
+		raise IOError("Cannot save out of %s" % (folder))
+	return path
