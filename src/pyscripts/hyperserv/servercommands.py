@@ -246,22 +246,28 @@ def testmapdata(caller):
 def savemap(caller,name=None):
 	if name is None:
 		name=sbserver.mapName()
-	ogz=open("/tmp/%s.ogz" % name,"wb")
+	ogzfilename="%s/%s.ogz" % (config["mapsdir"],name)
+	ogz=open(ogzfilename,"wb")
+	
 	mapdata=sbserver.getMapDataFile()
 	mapdata.seek(0)
 	ogz.write(mapdata.read())
 	ogz.close()
-	print "done saving /tmp/%s.ogz" % name
+	
+	print "saved",ogzfilename
 
 @CSCommand("loadmap","trusted")
 def loadmap(caller,name=None):
 	if name is None:
 		name=sbserver.mapName()
-	ogz=open("/tmp/%s.ogz" % name,"rb")
+	ogzfilename="%s/%s.ogz" % (config["mapsdir"],name)
+	ogz=open(ogzfilename,"rb")
+	
 	mapdata=sbserver.getMapDataFile()
 	mapdata.seek(0)
 	mapdata.truncate(0)
 	mapdata.write(ogz.read())
 	mapdata.flush()
 	ogz.close()
-	print "done loading /tmp/%s.ogz" % name
+	
+	print "loaded",ogzfilename
