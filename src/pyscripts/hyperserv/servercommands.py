@@ -55,6 +55,11 @@ def kick(caller,cn):
 	ban(caller,sbserver.playerName(cn),"kicked by %s" % formatCaller(caller))
 	triggerServerEvent("player_kicked",[caller,cn])
 	return sbserver.playerKick(cn)
+	
+@CSCommand("sendto","master")
+def kick(caller,cn):
+	cn=int(cn)
+	return sbserver.sendMapTo(cn)
 
 @CSCommand("spectator")
 def spectator(caller,boolean=None,cn=None):
