@@ -12,6 +12,7 @@
 namespace server
 {
     extern int nextexceeded, gamemillis;
+    extern stream *mapdata;
 
     struct server_entity            // server side version of "entity" type
     {

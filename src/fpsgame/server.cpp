@@ -2243,7 +2243,7 @@ namespace server
                 {
                     sendfile(sender, 2, mapdata, "ri", N_SENDMAP);
                     SbPy::triggerEventInt("player_get_map", ci->clientnum);
-		    ci->connectmillis = totalmillis;
+                    ci->connectmillis = totalmillis;
                 }
                 else sendf(sender, 1, "ris", N_SERVMSG, "no map to send");
                 break;

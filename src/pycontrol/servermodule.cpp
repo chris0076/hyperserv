@@ -944,6 +944,27 @@ static PyObject *editUnmute(PyObject *self, PyObject *args)
 	return Py_None;
 }
 
+static PyObject *sendMapTo(PyObject *self, PyObject *args)
+{
+	int cn;
+	server::clientinfo *ci;
+	if(!PyArg_ParseTuple(args, "i", &cn))
+		return 0;
+	ci = server::getinfo(cn);
+	if(!ci)
+	{
+		PyErr_SetString(PyExc_ValueError, "Invalid cn specified");
+		return 0;
+	}
+	if(server::mapdata)
+	{
+		sendfile(ci->clientnum, 2, server::mapdata, "ri", N_SENDMAP);
+		SbPy::triggerEventInt("player_get_map", ci->clientnum);
+	}
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
 static PyMethodDef ModuleMethods[] = {
 	{"cseval", cseval, METH_VARARGS, "Execute a string containing CubeScript"},
 	{"triggercsevent", triggercsevent, METH_VARARGS, "Trigger a CubeScript event"},
@@ -1010,6 +1031,7 @@ static PyMethodDef ModuleMethods[] = {
 	{"suicide", suicide, METH_VARARGS, "Force client to commit suicide."},
 	{"editMute", editMute, METH_VARARGS, "Edit mute a player."},
 	{"editUnmute", editUnmute, METH_VARARGS, "Edit unmute a player."},
+	{"sendMapTo", sendMapTo, METH_VARARGS, "Force a getmap on someone."},
 	{NULL, NULL, 0, NULL}
 };
 
