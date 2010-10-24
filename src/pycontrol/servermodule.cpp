@@ -961,6 +961,11 @@ static PyObject *sendMapTo(PyObject *self, PyObject *args)
 		sendfile(ci->clientnum, 2, server::mapdata, "ri", N_SENDMAP);
 		SbPy::triggerEventInt("player_get_map", ci->clientnum);
 	}
+	else
+	{
+		PyErr_SetString(PyExc_ValueError, "No map to send.");
+		return 0;
+	}
 	Py_INCREF(Py_None);
 	return Py_None;
 }
