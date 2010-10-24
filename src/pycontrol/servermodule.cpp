@@ -20,6 +20,7 @@
 #include "servermodule.h"
 #include "server.h"
 #include "sbcs.h"
+#include "stream.cpp"
 
 #include <iostream>
 
@@ -970,6 +971,19 @@ static PyObject *sendMapTo(PyObject *self, PyObject *args)
 	return Py_None;
 }
 
+static PyObject *getMapDataFile(PyObject *self, PyObject *args)
+{
+	if(server::mapdata)
+	{
+		return PyFile_FromFile(((filestream *) server::mapdata)->file,"mapdata","w+b",NULL);
+	}
+	else
+	{
+		PyErr_SetString(PyExc_ValueError, "No map to open.");
+		return 0;
+	}
+}
+
 static PyMethodDef ModuleMethods[] = {
 	{"cseval", cseval, METH_VARARGS, "Execute a string containing CubeScript"},
 	{"triggercsevent", triggercsevent, METH_VARARGS, "Trigger a CubeScript event"},
@@ -1037,6 +1051,7 @@ static PyMethodDef ModuleMethods[] = {
 	{"editMute", editMute, METH_VARARGS, "Edit mute a player."},
 	{"editUnmute", editUnmute, METH_VARARGS, "Edit unmute a player."},
 	{"sendMapTo", sendMapTo, METH_VARARGS, "Force a getmap on someone."},
+	{"getMapDataFile", getMapDataFile, METH_VARARGS, "Get file descriptor for the mapdata stream."},
 	{NULL, NULL, 0, NULL}
 };
 
