@@ -24,7 +24,18 @@ def changeMap(caller,name,mode=None):
 def voteMap(caller,name,mode=None):
 	if mode is None:
 		mode=sbserver.gameMode()
-	return sbserver.setMap(name,modeNumber(mode))
+	mode=modeNumber(mode)
+	
+	sbserver.setMap(name,mode)
+	
+	#load the map if it exists and mode is coop
+	if modeNumber("coop")==mode:
+		try:
+			loadmap(caller,name)
+		except:
+			pass
+	
+	return name
 
 @CSCommand("master","master")
 def setMaster(caller):
@@ -254,7 +265,7 @@ def savemap(caller,name=None):
 	ogz.write(mapdata.read())
 	ogz.close()
 	
-	print "saved",ogzfilename
+	triggerServerEvent("savemap",[caller,name,ogzfilename])
 
 @CSCommand("loadmap","trusted")
 def loadmap(caller,name=None):
@@ -270,4 +281,4 @@ def loadmap(caller,name=None):
 	mapdata.flush()
 	ogz.close()
 	
-	print "loaded",ogzfilename
+	triggerServerEvent("loadmap",[caller,name,ogzfilename])

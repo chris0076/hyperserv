@@ -116,3 +116,11 @@ def noticePlayerTeamChanged(cn):
 @eventHandler('vote_map')
 def noticeVoteMap(caller,mode,name):
 	serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
+
+@eventHandler('savemap')
+def noticeSavemap(caller,mapname,ogzfilename):
+	serverNotice("Saved map as %s." % (ogzfilename))
+
+@eventHandler('loadmap')
+def noticeLoadmap(caller,mapname,ogzfilename):
+	serverNotice("Loaded map from %s." % (ogzfilename))
