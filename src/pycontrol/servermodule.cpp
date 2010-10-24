@@ -973,16 +973,9 @@ static PyObject *sendMapTo(PyObject *self, PyObject *args)
 
 static PyObject *getMapDataFile(PyObject *self, PyObject *args)
 {
-	if(server::mapdata)
-	{
-		return PyFile_FromFile(((filestream *) server::mapdata)->file,"mapdata","w+b",NULL);
-	}
-	else
-	{
-		//TODO: make it open the file instead
-		PyErr_SetString(PyExc_ValueError, "No map to open. TODO");
-		return 0;
-	}
+	if(!server::mapdata)
+		server::mapdata = opentempfile("mapdata", "w+b");
+	return PyFile_FromFile(((filestream *) server::mapdata)->file,"mapdata","w+b",NULL);
 }
 
 static PyMethodDef ModuleMethods[] = {
