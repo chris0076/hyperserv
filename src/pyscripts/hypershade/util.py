@@ -33,6 +33,10 @@ def formatCaller(owner):
 		return sbserver.playerName(owner[1])
 	if owner[0]=="irc":
 		return owner[1].rstrip("_")
+	if owner[0]=="console":
+		return "Console:"+owner[1]
+	if owner[0]=="ssh":
+		return "SSH:"+owner[1]
 	return ""
 
 #Mode name converters

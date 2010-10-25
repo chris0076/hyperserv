@@ -21,6 +21,8 @@ PREREQUISITES
 =============
 Before you can build and install the server, you must have the following installed on your computer.
  - Python 2.4 or greater (Python 2.6 recommended)
+ - One of: python-mysqldb, python sqlite3
+ - python-urwid
  - Twisted python framework
  - Zlib
  - CMake

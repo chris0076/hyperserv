@@ -12,7 +12,7 @@ class UserSessionManagerClass(dict):
 		return self.create(key)
 	
 	def checkPermissions(self,caller,level):
-		if caller==("system",""): #allow system do do everything
+		if caller==("system",""): #allow system to do everything
 			return
 		
 		session=self[caller]
