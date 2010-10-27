@@ -35,3 +35,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`user`, `key`, `value`) VALUES
 ('firstuser', 'privileges', 'admin'),
 ('firstuser', 'password', '25dcea7702a33590fbc3b77fca5c7e4185bf695016c6aac206732f2f');
+
+CREATE TABLE IF NOT EXISTS `bans` (
+  `id` varchar(256) NOT NULL,
+  `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `reason` tinytext NOT NULL
+);

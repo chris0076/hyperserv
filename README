@@ -21,6 +21,7 @@ PREREQUISITES
 =============
 Before you can build and install the server, you must have the following installed on your computer.
  - Python 2.4 or greater (Python 2.6 recommended)
+ - One of: python-mysqldb, python sqlite3
  - Twisted python framework
  - Zlib
  - CMake
@@ -28,14 +29,18 @@ Before you can build and install the server, you must have the following install
 
 INSTALL
 =======
-cd into hyperserv folder
-cmake .
-make
+ - cd into hyperserv folder
+ - pick a database of choice(local instalation: sqlite3, multiple servers: mysql) then install the proper python package
+ - cp samplecfg/*.cfg .
+ - edit the cfg files with the proper settings
+ - if using sqlite: cp samplecfg/hyperserv.sqlite .
+ - cmake .
+ - make
 
 RUN HyperServ
 =============
-cd into hyperserv folder
-./start_server.py
+ - cd into hyperserv folder
+ - ./start_server.py
 
 SUPPORT
 =======
