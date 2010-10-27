@@ -1,6 +1,6 @@
 import sys,traceback
 
-from lib.cubescript import CSParser, CSInterpreter, CSError
+from cubescriptlib import CSParser, CSInterpreter, CSError
 
 from hypershade.usersession import UserSessionManager, PermissionError
 
