@@ -249,11 +249,11 @@ def mute(caller,*args):
 
 @CSCommand("sendpacket","admin")
 def sendpacket(caller,*args):
-    def number(arg):
-        for number,name in enumerate(packettypes):
-            if name==arg:
-                return number
-        return int(arg)
+	def number(arg):
+		for number,name in enumerate(packettypes):
+			if name==arg:
+				return number
+		return int(arg)
 	mapdata=sbserver.sendPacket(*map(number,args))
 
 @CSCommand("savemap","trusted")

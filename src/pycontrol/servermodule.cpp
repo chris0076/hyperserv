@@ -918,16 +918,18 @@ static PyObject *sendPacket(PyObject *self, PyObject *args)
     
     packetbuf p(MAXTRANS,ENET_PACKET_FLAG_RELIABLE);
     putint(p, N_CLIENT);
+	std::cout<<"N_CLIENT ";
     
     loopv(server::clients) {
         int cn = server::clients[i]->clientnum;
         if(goodcn < 0) goodcn = cn; // find a good cn
     }
     
-    std::cout<<"cn "<<goodcn;
-    
     putint(p, goodcn);
+    std::cout<<goodcn<<" ";
+    
     putuint(p, (unsigned int)PyTuple_Size(args));
+    std::cout<<(unsigned int)PyTuple_Size(args)<<" [ ";
     
     for(Py_ssize_t i=0;i<PyTuple_Size(args);i++)
     {
