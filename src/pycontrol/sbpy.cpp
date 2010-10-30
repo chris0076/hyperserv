@@ -217,6 +217,16 @@ bool triggerFuncEvent(const char *name, std::vector<PyObject*> *args, PyObject *
 
 #undef SBPY_ERR
 
+bool triggerFuncEventVectorInt(const char *name, std::vector<int> vector, PyObject *func)
+{
+    std::vector<PyObject*> args;
+    for(int i=0;i<(int)vector.size();i++)
+    {
+        args.push_back(PyInt_FromLong(vector.at(i)));
+    }
+    return triggerFuncEvent(name, &args, func);
+}
+
 bool triggerFuncEventInt(const char *name, int cn, PyObject *func)
 {
 	std::vector<PyObject*> args;
@@ -289,7 +299,12 @@ bool triggerEvent(const char*name, std::vector<PyObject*>* args)
 
 bool triggerEventInt(const char *name, int cn)
 {
-	return triggerFuncEventInt(name, cn, triggerEventFunc);
+    return triggerFuncEventInt(name, cn, triggerEventFunc);
+}
+
+bool triggerEventVectorInt(const char *name, std::vector<int> vector)
+{
+    return triggerFuncEventVectorInt(name, vector, triggerEventFunc);
 }
 
 bool triggerEventIntBool(const char *name, int cn, bool b)

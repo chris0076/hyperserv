@@ -124,3 +124,7 @@ def noticeSavemap(caller,mapname,ogzfilename):
 @eventHandler('loadmap')
 def noticeLoadmap(caller,mapname,ogzfilename):
 	serverNotice("Loaded map from %s." % (ogzfilename))
+
+@eventHandler("edit_packet")
+def noticeEditPacket(cn,packettype,*data):
+    serverNotice("Edit Packet from %s type %s: %s" % (formatCaller(("ingame",cn)),packettype,data))

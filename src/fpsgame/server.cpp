@@ -1636,6 +1636,20 @@ namespace server
             }
         }
     }
+    
+    void editpackethook(int cn, int type, packetbuf p)
+    {
+        int size = msgsizelookup(type);
+        
+        std::vector<int> packet;
+        packet.push_back(cn);
+        packet.push_back(type);
+        
+        for(int i=0;i<size;i++)
+            packet.push_back(cn);
+        
+        SbPy::triggerEventVectorInt("edit_packet",packet);
+    }
 
     void parsepacket(int sender, int chan, packetbuf &p)     // has to parse exactly each byte of the packet
     {
@@ -2415,6 +2429,13 @@ namespace server
                 {
                     SbPy::triggerEventInt("edit_blocked", ci->clientnum);
                     ignorepacket=true;
+                }
+                else
+                {
+                    if(type!=N_SENDMAP)
+                    {
+                        editpackethook(ci->clientnum,type,p);
+                    }
                 }
                 goto genericmsg;
 
