@@ -128,4 +128,4 @@ def noticeLoadmap(caller,mapname,ogzfilename):
 from hypershade.util import packettypes
 @eventHandler("edit_packet")
 def noticeEditPacket(cn,packettype,*data):
-    serverNotice("Edit Packet from %s type %s: %s" % (formatCaller(("ingame",cn)),packettypes[packettype],' '.join(map(str,data))))
+    serverNotice("Edit Packet from %s: %s %s" % (formatCaller(("ingame",cn)),packettypes[packettype],' '.join(map(str,data))))
