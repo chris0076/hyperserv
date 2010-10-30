@@ -896,19 +896,55 @@ static PyObject *sendDemo(PyObject *self, PyObject *args)
 
 static PyObject *suicide(PyObject *self, PyObject *args)
 {
-	int cn;
-	server::clientinfo *ci;
-	if(!PyArg_ParseTuple(args, "i", &cn))
-		return 0;
-	ci = server::getinfo(cn);
-	if(!ci)
-	{
-		PyErr_SetString(PyExc_ValueError, "Invalid cn");
-		return 0;
-	}
-	server::suicide(ci);
-	Py_INCREF(Py_None);
-	return Py_None;
+    int cn;
+    server::clientinfo *ci;
+    if(!PyArg_ParseTuple(args, "i", &cn))
+        return 0;
+    ci = server::getinfo(cn);
+    if(!ci)
+    {
+        PyErr_SetString(PyExc_ValueError, "Invalid cn");
+        return 0;
+    }
+    server::suicide(ci);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *sendPacket(PyObject *self, PyObject *args)
+{
+    packetbuf p(MAXTRANS,ENET_PACKET_FLAG_RELIABLE);
+    
+    int goodcn = -1;
+    vector <uchar> q;
+    ucharbuf qb = q.reserve(64);
+    
+    loopv(server::clients) {
+        int cn = server::clients[i]->clientnum;
+        if(goodcn < 0) goodcn = cn; // find a good cn
+    }
+    
+    for(Py_ssize_t i=0;i<PyTuple_Size(args);i++)
+    {
+        int data=PyInt_AsLong(PyTuple_GetItem(args,i));
+        std::cout<<data<<" ";
+        putint(qb, data);
+    }
+    
+    q.addbuf(qb);
+    if(q.length() > 0) {
+        vector <uchar> pv;
+        ucharbuf p = pv.reserve(64);
+        putint(p, N_CLIENT);
+        putint(p, goodcn);
+        putuint(p, q.length());
+    }
+        
+    sendpacket(-1, 1, p.finalize(), -1);
+    std::cout<<"- sent\n";
+    
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject *editMute(PyObject *self, PyObject *args)
@@ -1045,6 +1081,7 @@ static PyMethodDef ModuleMethods[] = {
 	{"editMute", editMute, METH_VARARGS, "Edit mute a player."},
 	{"editUnmute", editUnmute, METH_VARARGS, "Edit unmute a player."},
 	{"sendMapTo", sendMapTo, METH_VARARGS, "Force a getmap on someone."},
+    {"sendPacket", sendPacket, METH_VARARGS, "Sends a packet to everyone."},
 	{"getMapDataFile", getMapDataFile, METH_VARARGS, "Get file descriptor for the mapdata stream."},
 	{NULL, NULL, 0, NULL}
 };

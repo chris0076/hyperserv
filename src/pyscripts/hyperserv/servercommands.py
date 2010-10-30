@@ -247,11 +247,9 @@ def mute(caller,*args):
 	
 	triggerServerEvent("player_muted",[caller,boolean,cn])
 
-@CSCommand("testmapdata","admin")
-def testmapdata(caller):
-	mapdata=sbserver.getMapDataFile()
-	mapdata.seek(0)
-	print mapdata.read(1000)
+@CSCommand("sendpacket","admin")
+def sendpacket(caller,*args):
+	mapdata=sbserver.sendPacket(*map(int,args))
 
 @CSCommand("savemap","trusted")
 def savemap(caller,name=None):
