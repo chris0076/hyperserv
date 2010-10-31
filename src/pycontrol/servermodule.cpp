@@ -928,8 +928,8 @@ static PyObject *sendPacket(PyObject *self, PyObject *args)
     putint(p, goodcn);
     std::cout<<goodcn<<" ";
     
-    putuint(p, (unsigned int)PyTuple_Size(args));
-    std::cout<<(unsigned int)PyTuple_Size(args)<<" [ ";
+    putuint(p, (((unsigned int)PyTuple_Size(args)))*2);
+    std::cout<<(((unsigned int)PyTuple_Size(args))*2)<<" [ ";
     
     for(Py_ssize_t i=0;i<PyTuple_Size(args);i++)
     {

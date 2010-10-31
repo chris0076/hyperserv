@@ -1645,7 +1645,7 @@ namespace server
         packet.push_back(cn);
         packet.push_back(type);
         
-        for(int i=0;i<size;i++)
+        for(int i=0;i<size-1;i++)
             packet.push_back(getint(p));
         
         SbPy::triggerEventVectorInt("edit_packet",packet);
