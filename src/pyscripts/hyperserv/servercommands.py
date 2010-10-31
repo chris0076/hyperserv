@@ -8,7 +8,7 @@ from hyperserv.events import eventHandler, triggerServerEvent
 from hypershade.config import config
 from hypershade.cubescript import systemCS, CSCommand
 from hypershade.usersession import UserSessionManager
-from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller, safefilename, packettypes
+from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller, safefilename
 
 from hypershade.bandatabase import bandatabase
 
@@ -246,15 +246,6 @@ def mute(caller,*args):
 	cn=int(cn)
 	
 	triggerServerEvent("player_muted",[caller,boolean,cn])
-
-@CSCommand("sendpacket","admin")
-def sendpacket(caller,*args):
-	def number(arg):
-		for number,name in enumerate(packettypes):
-			if name==arg:
-				return number
-		return int(arg)
-	mapdata=sbserver.sendPacket(*map(number,args))
 
 @CSCommand("savemap","trusted")
 def savemap(caller,name=None):

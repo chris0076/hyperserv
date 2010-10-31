@@ -124,8 +124,3 @@ def noticeSavemap(caller,mapname,ogzfilename):
 @eventHandler('loadmap')
 def noticeLoadmap(caller,mapname,ogzfilename):
 	serverNotice("Loaded map from %s." % (ogzfilename))
-
-from hypershade.util import packettypes
-@eventHandler("edit_packet")
-def noticeEditPacket(cn,packettype,*data):
-    serverNotice("Edit Packet from %s: %s %s" % (formatCaller(("ingame",cn)),packettypes[packettype],' '.join(map(str,data))))

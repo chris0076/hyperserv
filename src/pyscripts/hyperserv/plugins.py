@@ -7,6 +7,8 @@ import hyperserv.clientcommands
 import hyperserv.servercommands
 import hyperserv.ingame
 
+import editing
+
 class PluginManager(object):
 	def __init__(self, plugins_path='plugins'):
 		self.plugins_path = plugins_path
