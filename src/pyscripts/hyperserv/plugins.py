@@ -8,6 +8,7 @@ import hyperserv.servercommands
 import hyperserv.ingame
 
 import editing
+import editing.cubes
 
 class PluginManager(object):
 	def __init__(self, plugins_path='plugins'):
