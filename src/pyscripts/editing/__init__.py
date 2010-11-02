@@ -1,6 +1,9 @@
 """This file contains the required functions for the editing features"""
 
 import sbserver
+
+from twisted.internet import reactor
+
 from hypershade.cubescript import playerCS, CSCommand
 from hypershade.config import config
 from hyperserv.events import eventHandler, triggerServerEvent
@@ -29,6 +32,40 @@ packettypes = [
 ('INITAI', -1), ('FROMAI', -1), ('BOTLIMIT', -1), ('BOTBALANCE', -1), ('MAPCRC', -1), ('CHECKMAPS', -1),
 ('SWITCHNAME', -1), ('SWITCHMODEL', -1), ('SWITCHTEAM', -1)]
 
+class packetSendingQueue:
+	consuming=False
+	data=[]
+	
+	def consume(self):
+		if self.consuming==True:
+			return
+		self.consuming=True
+		self.consumer()
+	
+	def consumer(self):
+		try:
+			sbserver.sendPacket(*self.get())
+			reactor.callLater(float(config["editpacketinterval"]),self.consumer)
+		except IndexError:
+			self.stop()
+	
+	def get(self):
+		return self.data.pop(-1)
+	
+	def put(self,packet):
+		self.data.insert(0,packet)
+		self.consume()
+	
+	def stop(self):
+		self.consuming=False
+		self.data=[]
+packetSendingQueue=packetSendingQueue()
+
+@CSCommand("clearpackets","admin")
+@eventHandler('no_clients')
+def stopSendingPackets(caller=None):
+	packetSendingQueue.stop()
+
 def packettypename(number):
 	return packettypes[int(number)][0]
 
@@ -48,7 +85,7 @@ def sendpacket(*args):
 	packettype=packettypes[packettypenumber(args[0])]
 	if (packettype[1]!=-1 and len(args)!=packettype[1]):
 		raise ServerError("%s must have %s arguments." % packettype)
-	mapdata=sbserver.sendPacket(*map(packettypenumber,args))
+	packetSendingQueue.put(map(packettypenumber,args))
 
 @eventHandler("edit_packet")
 def noticeEditPacket(cn,packettype,*data):
