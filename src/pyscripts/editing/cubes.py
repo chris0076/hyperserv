@@ -1,12 +1,12 @@
 """This file contains the required functions for the editing features"""
 
-import editing
+import base
 from hypershade.cubescript import playerCS, CSCommand
 from hyperserv.servercommands import ServerError
 
 @CSCommand("editf","trusted")
 def editf(caller,*args):
-	editing.sendpacket("EDITF",*args)
+	base.sendpacket("EDITF",*args)
 
 @CSCommand("makecube","trusted")
 def makecube(caller,x,y,z,s=16):
