@@ -9,7 +9,7 @@ from hypershade.cubescript import playerCS, CSCommand
 from hyperserv.servercommands import ServerError
 
 @CSCommand("loadimage","trusted")
-def loadimage(caller,imagename,s=16,hf=1):
+def loadimage(caller,imagename,s=4,hf=0.1):
 	s=int(s)
 	hf=float(hf)
 	im = Image.open(imagename)
@@ -17,6 +17,4 @@ def loadimage(caller,imagename,s=16,hf=1):
 	(xsize, ysize) = im.size
 	for y in xrange(ysize):
 		for x in xrange(xsize):
-			h=int((sum(pixels[x,y])*hf)/3)
-			print x,y,0,h,s
-			cubes.makecolumn(caller,x,y,0,h,s)
+			cubes.makecolumn(caller,x,y,0,int((sum(pixels[x,y])*hf)/3),s)

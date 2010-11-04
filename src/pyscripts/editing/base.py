@@ -11,26 +11,7 @@ from hyperserv.servercommands import ServerError
 from hyperserv.notices import serverNotice
 from hypershade.util import formatCaller
 
-packettypes = [
-('CONNECT', 0), ('SERVINFO', 0), ('WELCOME', 2), ('INITCLIENT', 0), ('POS', 0), ('TEXT', 0), 
-('SOUND', 2), ('CDIS', 2), ('SHOOT', 0), ('EXPLODE', 0), ('SUICIDE', 1), ('DIED', 4),
-('DAMAGE', 6), ('HITPUSH', 7), ('SHOTFX', 10), ('EXPLODEFX', 4), ('TRYSPAWN', 1), ('SPAWNSTATE', 14),
-('SPAWN', 3), ('FORCEDEATH', 2), ('GUNSELECT', 2), ('TAUNT', 1), ('MAPCHANGE', 0), ('MAPVOTE', 0),
-('ITEMSPAWN', 2), ('ITEMPICKUP', 2), ('ITEMACC', 3), ('TELEPORT', -1), ('JUMPPAD', -1), ('PING', 2),
-('PONG', 2), ('CLIENTPING', 2), ('TIMEUP', 2), ('MAPRELOAD', 1), ('FORCEINTERMISSION', 1), ('SERVMSG', 0),
-('ITEMLIST', 0), ('RESUME', 0), ('EDITMODE', 2), ('EDITENT', 11), ('EDITF', 16), ('EDITT', 16),
-('EDITM', 16), ('FLIP', 14), ('COPY', 14), ('PASTE', 14), ('ROTATE', 15), ('REPLACE', 17),
-('DELCUBE', 14), ('REMIP', 1), ('NEWMAP', 2), ('GETMAP', 1), ('SENDMAP', 0), ('CLIPBOARD', -1),
-('EDITVAR', 0), ('MASTERMODE', 2), ('KICK', 2), ('CLEARBANS', 1), ('CURRENTMASTER', 4), ('SPECTATOR', 3),
-('SETMASTER', 0), ('SETTEAM', 0), ('BASES', 0), ('BASEINFO', 0), ('BASESCORE', 0), ('REPAMMO', 1),
-('BASEREGEN', 6), ('ANNOUNCE', 2), ('LISTDEMOS', 1), ('SENDDEMOLIST', 0), ('GETDEMO', 2), ('SENDDEMO', 0),
-('DEMOPLAYBACK', 3), ('RECORDDEMO', 2), ('STOPDEMO', 1), ('CLEARDEMOS', 2), ('TAKEFLAG', 3), ('RETURNFLAG', 4),
-('RESETFLAG', 6), ('INVISFLAG', 3), ('TRYDROPFLAG', 1), ('DROPFLAG', 7), ('SCOREFLAG', 10), ('INITFLAGS', 0),
-('SAYTEAM', 0), ('CLIENT', 0), ('AUTHTRY', 0), ('AUTHCHAL', 0), ('AUTHANS', 0), ('REQAUTH', 0),
-('PAUSEGAME', 2), ('ADDBOT', 2), ('DELBOT', 1), ('INITAI', 0), ('FROMAI', 2), ('BOTLIMIT', 2),
-('BOTBALANCE', 2), ('MAPCRC', 0), ('CHECKMAPS', 1), ('SWITCHNAME', 0), ('SWITCHMODEL', 2), ('SWITCHTEAM', 0),
-('INITAI', -1), ('FROMAI', -1), ('BOTLIMIT', -1), ('BOTBALANCE', -1), ('MAPCRC', -1), ('CHECKMAPS', -1),
-('SWITCHNAME', -1), ('SWITCHMODEL', -1), ('SWITCHTEAM', -1)]
+packettypes = [('CONNECT', -1), ('SERVINFO', -1), ('WELCOME', 1), ('INITCLIENT', -1), ('POS', -1), ('TEXT', -1), ('SOUND', 1), ('CDIS', 1), ('SHOOT', -1), ('EXPLODE', -1), ('SUICIDE', 0), ('DIED', 3), ('DAMAGE', 5), ('HITPUSH', 6), ('SHOTFX', 9), ('EXPLODEFX', 3), ('TRYSPAWN', 0), ('SPAWNSTATE', 13), ('SPAWN', 2), ('FORCEDEATH', 1), ('GUNSELECT', 1), ('TAUNT', 0), ('MAPCHANGE', -1), ('MAPVOTE', -1), ('ITEMSPAWN', 1), ('ITEMPICKUP', 1), ('ITEMACC', 2), ('TELEPORT', -1), ('JUMPPAD', -1), ('PING', 1), ('PONG', 1), ('CLIENTPING', 1), ('TIMEUP', 1), ('MAPRELOAD', 0), ('FORCEINTERMISSION', 0), ('SERVMSG', -1), ('ITEMLIST', -1), ('RESUME', -1), ('EDITMODE', 1), ('EDITENT', 10), ('EDITF', 15), ('EDITT', 15), ('EDITM', 15), ('FLIP', 13), ('COPY', 13), ('PASTE', 13), ('ROTATE', 14), ('REPLACE', 16), ('DELCUBE', 13), ('REMIP', 0), ('NEWMAP', 1), ('GETMAP', 0), ('SENDMAP', -1), ('CLIPBOARD', -1), ('EDITVAR', -1), ('MASTERMODE', 1), ('KICK', 1), ('CLEARBANS', 0), ('CURRENTMASTER', 3), ('SPECTATOR', 2), ('SETMASTER', -1), ('SETTEAM', -1), ('BASES', -1), ('BASEINFO', -1), ('BASESCORE', -1), ('REPAMMO', 0), ('BASEREGEN', 5), ('ANNOUNCE', 1), ('LISTDEMOS', 0), ('SENDDEMOLIST', -1), ('GETDEMO', 1), ('SENDDEMO', -1), ('DEMOPLAYBACK', 2), ('RECORDDEMO', 1), ('STOPDEMO', 0), ('CLEARDEMOS', 1), ('TAKEFLAG', 2), ('RETURNFLAG', 3), ('RESETFLAG', 5), ('INVISFLAG', 2), ('TRYDROPFLAG', 0), ('DROPFLAG', 6), ('SCOREFLAG', 9), ('INITFLAGS', -1), ('SAYTEAM', -1), ('CLIENT', -1), ('AUTHTRY', -1), ('AUTHCHAL', -1), ('AUTHANS', -1), ('REQAUTH', -1), ('PAUSEGAME', 1), ('ADDBOT', 1), ('DELBOT', 0), ('INITAI', -1), ('FROMAI', 1), ('BOTLIMIT', 1), ('BOTBALANCE', 1), ('MAPCRC', -1), ('CHECKMAPS', 0), ('SWITCHNAME', -1), ('SWITCHMODEL', 1), ('SWITCHTEAM', -1), ('INITAI', -1), ('FROMAI', -1), ('BOTLIMIT', -1), ('BOTBALANCE', -1), ('MAPCRC', -1), ('CHECKMAPS', -1), ('SWITCHNAME', -1), ('SWITCHMODEL', -1), ('SWITCHTEAM', -1)]
 
 class packetSendingQueue:
 	consuming=False
@@ -76,14 +57,11 @@ def packettypenumber(name):
 	return int(name)
  
 @CSCommand("sendpacket","admin")
-def sendpacketcommand(caller,*args):
-	sendpacket(*args)
-
-def sendpacket(*args):
+def sendpacket(caller,*args):
 	if len(args)==0:
 		return
 	packettype=packettypes[packettypenumber(args[0])]
-	if (packettype[1]!=-1 and len(args)!=packettype[1]):
+	if (packettype[1]!=-1 and len(args)!=(packettype[1]+1)):
 		raise ServerError("%s must have %s arguments." % packettype)
 	packetSendingQueue.put(map(packettypenumber,args))
 

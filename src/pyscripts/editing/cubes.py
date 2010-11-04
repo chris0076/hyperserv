@@ -4,9 +4,14 @@ import base
 from hypershade.cubescript import playerCS, CSCommand
 from hyperserv.servercommands import ServerError
 
+editfnumber=base.packettypenumber("EDITF")
+editflength=base.packettypes[editfnumber][1]
+
 @CSCommand("editf","trusted")
 def editf(caller,*args):
-	base.sendpacket("EDITF",*args)
+	if len(args)!=editflength:
+		raise ServerError("EDITF must have %s arguments." % editflength)
+	base.packetSendingQueue.put((editfnumber,)+args)
 
 @CSCommand("makecube","trusted")
 def makecube(caller,x,y,z,s=16):
