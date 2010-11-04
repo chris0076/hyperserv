@@ -9,7 +9,7 @@ from hypershade.cubescript import playerCS, CSCommand
 from hyperserv.servercommands import ServerError
 
 @CSCommand("loadimage","trusted")
-def loadimage(caller,imagename,s=4,hf=0.1):
+def loadimage(caller,imagename,s=16,hf=0.15):
 	s=int(s)
 	hf=float(hf)
 	im = Image.open(imagename)
