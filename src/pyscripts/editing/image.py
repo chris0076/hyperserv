@@ -12,19 +12,19 @@ from hyperserv.servercommands import ServerError
 @CSCommand("loadimage1","trusted")
 def loadimage1(caller,imagename,s=16,maxh=20):
 	s=int(s)
-	(xsize, ysize, heights)=loadimage(imagename,int(maxh))
+	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh))
 	
 	mapsize=base.newmap(caller,math.ceil(max(math.log(xsize*s,2),math.log(ysize*s,2))))
 	middleheight=2**(mapsize-1)/s
 	
 	for y in xrange(ysize):
 		for x in xrange(xsize):
-			cubes.makecolumn(caller,x,y,middleheight,int((sum(pixels[x,y])*hf)/3),s)
+			cubes.makecolumn(caller,x,y,middleheight,heights[x][y],s)
 
 @CSCommand("loadimage2","trusted")
-def loadimage1(caller,imagename,s=16,maxh=20):
+def loadimage2(caller,imagename,s=16,maxh=20):
 	s=int(s)
-	(xsize, ysize, heights)=loadimage(imagename,int(maxh)*8)
+	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh)*8)
 	
 	mapsize=base.newmap(caller,math.ceil(max(math.log(xsize*s,2),math.log(ysize*s,2))))
 	middleheight=2**(mapsize-1)/s
@@ -36,7 +36,7 @@ def loadimage1(caller,imagename,s=16,maxh=20):
 			cubes.makecolumn(caller,x,y,middleheight,cubeheight,s)
 			cubes.corners(x,y,middleheight+cubeheight-1,(cubeheight*8-h for h in neighbourheights),s)
 
-def loadimage(imagename,maxh):
+def loadheightmap(imagename,maxh):
 	im = Image.open(imagename)
 	pixels = im.load()
 	(xsize, ysize) = im.size
