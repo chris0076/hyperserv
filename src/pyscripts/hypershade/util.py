@@ -1,5 +1,6 @@
 """Utility functions that do misc stuff(ex. convert between formats)"""
 import struct, socket, os
+import threading
 
 def ipLongToString(num):
 	return '%d.%d.%d.%d' % ((num & 0xff),
@@ -113,3 +114,10 @@ def safefilename(folder,filename,suffix):
 		print path,os.path.split(path)[1],filename
 		raise IOError("Cannot save out of %s" % (folder))
 	return path
+
+def threaded(function):
+	def wrapper(*args):
+		thread=threading.Thread()
+		thread.run=lambda:function(*args)
+		thread.start()
+	return wrapper

@@ -8,9 +8,14 @@ import cubes
 
 from hypershade.cubescript import playerCS, CSCommand
 from hyperserv.servercommands import ServerError
+from hypershade.util import threaded
+from hyperserv.notices import serverNotice
 
 @CSCommand("loadimage1","trusted")
+@threaded
 def loadimage1(caller,imagename,s=16,maxh=20):
+	serverNotice("Loading image %s for blocky heightmaps." % (imagename,))
+	
 	s=int(s)
 	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh))
 	
@@ -20,9 +25,14 @@ def loadimage1(caller,imagename,s=16,maxh=20):
 	for y in xrange(ysize):
 		for x in xrange(xsize):
 			cubes.makecolumn(caller,x,y,middleheight,heights[x][y],s)
+		
+	serverNotice("Done filling packet queue with heightmap.")
 
 @CSCommand("loadimage2","trusted")
+@threaded
 def loadimage2(caller,imagename,s=16,maxh=20):
+	serverNotice("Loading image %s for smooth heightmaps." % (imagename,))
+	
 	s=int(s)
 	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh)*8)
 	
@@ -35,6 +45,8 @@ def loadimage2(caller,imagename,s=16,maxh=20):
 			cubeheight=(max(neighbourheights)-1)/8+1
 			cubes.makecolumn(caller,x,y,middleheight,cubeheight,s)
 			cubes.corners(x,y,middleheight+cubeheight-1,(cubeheight*8-h for h in neighbourheights),s)
+	
+	serverNotice("Done filling packet queue with heightmap.")
 
 def loadheightmap(imagename,maxh):
 	im = Image.open(imagename)
