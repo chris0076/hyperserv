@@ -69,3 +69,13 @@ def sendpacket(caller,*args):
 def noticeEditPacket(cn,packettype,*data):
 	if config["editpacketnotices"]=="yes":
 		serverNotice("Edit Packet from %s: %s %s" % (formatCaller(("ingame",cn)),packettypes[packettype][0],' '.join(map(str,data))))
+
+@CSCommand("newmap","trusted")
+def newmap(caller,size):
+	size=int(size)
+	if size<10:
+		size=10
+	if size>16:
+		size=16
+	packetSendingQueue.put((packettypenumber("NEWMAP"),size))
+	return size
