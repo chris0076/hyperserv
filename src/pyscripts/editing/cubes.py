@@ -37,9 +37,9 @@ def makecolumn(caller,x,y,z=0,h=16,s=16):
 def cornerscommand(caller,x,y,z,c0,c1,c2,c3,s=16):
 	s=int(s)
 	
-	x=int(x)*s
-	y=int(y)*s
-	z=int(z)*s
+	x=int(x)
+	y=int(y)
+	z=int(z)
 	
 	c0=int(c0)
 	c1=int(c1)
@@ -49,6 +49,9 @@ def cornerscommand(caller,x,y,z,c0,c1,c2,c3,s=16):
 	corners(x,y,z,(c0,c1,c2,c3),s)
 
 def corners(x,y,z,cornerslist,s=16):
+	x=x*s
+	y=y*s
+	z=z*s
 	for index,depth in enumerate(cornerslist):
-		if depth!=8:
-			editf(x,y,z,1,1,1,s,5,(index%2),1,(index/2),1,1,(8-depth),0)
+		if depth!=0:
+			editf(x,y,z,1,1,1,s,5,(index%2),1,(index/2),1,1,depth,0)
