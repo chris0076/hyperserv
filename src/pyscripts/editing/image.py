@@ -6,18 +6,18 @@ import math
 import base
 import cubes
 
-from hypershade.cubescript import playerCS, CSCommand
+from hypershade.cubescript import playerCS, CSCommand, threaded
 from hyperserv.servercommands import ServerError
-from hypershade.util import threaded
 from hyperserv.notices import serverNotice
+from hypershade.files import openfile
 
 @CSCommand("loadimage1","trusted")
 @threaded
 def loadimage1(caller,imagename,s=16,maxh=20):
-	serverNotice("Loading image %s for blocky heightmaps." % (imagename,))
-	
 	s=int(s)
 	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh))
+	
+	serverNotice("Loading image %s for blocky heightmaps. %sx%sx%s" % (imagename,xsize,ysize,s))
 	
 	mapsize=base.newmap(caller,math.ceil(max(math.log(xsize*s,2),math.log(ysize*s,2))))
 	middleheight=2**(mapsize-1)/s
@@ -31,10 +31,10 @@ def loadimage1(caller,imagename,s=16,maxh=20):
 @CSCommand("loadimage2","trusted")
 @threaded
 def loadimage2(caller,imagename,s=16,maxh=20):
-	serverNotice("Loading image %s for smooth heightmaps." % (imagename,))
-	
 	s=int(s)
 	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh)*8)
+	
+	serverNotice("Loading image %s for smooth heightmaps. %sx%sx%s" % (imagename,xsize,ysize,s))
 	
 	mapsize=base.newmap(caller,math.ceil(max(math.log(xsize*s,2),math.log(ysize*s,2))))
 	middleheight=2**(mapsize-1)/s
@@ -49,7 +49,7 @@ def loadimage2(caller,imagename,s=16,maxh=20):
 	serverNotice("Done filling packet queue with heightmap.")
 
 def loadheightmap(imagename,maxh):
-	im = Image.open(imagename)
+	im = Image.open(openfile("heightmaps",imagename))
 	pixels = im.load()
 	(xsize, ysize) = im.size
 	heights=[]
