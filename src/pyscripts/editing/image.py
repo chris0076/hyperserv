@@ -25,7 +25,7 @@ def loadimage1(caller,imagename,s=16,maxh=20):
 	for y in xrange(ysize):
 		for x in xrange(xsize):
 			cubes.makecolumn(caller,x,y,middleheight,heights[x][y],s)
-		
+	
 	serverNotice("Done filling packet queue with heightmap.")
 
 @CSCommand("loadimage2","trusted")
@@ -49,7 +49,7 @@ def loadimage2(caller,imagename,s=16,maxh=20):
 	serverNotice("Done filling packet queue with heightmap.")
 
 def loadheightmap(imagename,maxh):
-	im = Image.open(openfile("heightmaps",imagename))
+	im = Image.open(openfile("heightmaps",imagename)[1])
 	pixels = im.load()
 	(xsize, ysize) = im.size
 	heights=[]
