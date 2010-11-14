@@ -1,4 +1,6 @@
-import sys,traceback
+import sys
+import traceback
+import threading
 
 from lib.cubescript import CSParser, CSInterpreter, CSError
 
@@ -66,3 +68,20 @@ def checkforCS(caller,string):
 
 def escape(string):
 	return string.replace('"','^"')
+
+def threaded(function):
+	def threadwrapper(caller,*args):
+		try:
+			function(caller,*args)
+		except:
+			exctype,exctext,exctraceback=sys.exc_info()
+			errormsg="%s: %s" % (exctype.__name__, exctext)
+			playerCS.executeby(caller,"echo \"%s\"" % escape(errormsg))
+			traceback.print_exc()
+	
+	def wrapper(*args):
+		thread=threading.Thread()
+		thread.run=lambda:threadwrapper(*args)
+		thread.start()
+	
+	return wrapper
