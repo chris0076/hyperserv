@@ -1,6 +1,8 @@
 """This file contains all the basic commands that the server needs to be playable, this does not handle '/' type requests from clients only server-side cubescript commands"""
 
 import sbserver
+
+import os
 from datetime import timedelta, datetime
 
 from hyperserv.events import eventHandler, triggerServerEvent
@@ -252,7 +254,7 @@ def mute(caller,*args):
 def savemap(caller,name=None):
 	if name is None:
 		name=sbserver.mapName()
-	ogzfilename,ogz=openfile("maps",name+".ogz","wb")
+	ogzfilename,ogz=openfile(os.path.join("maps",name+".ogz"),"wb")
 	
 	mapdata=sbserver.getMapDataFile()
 	mapdata.seek(0)
@@ -266,7 +268,7 @@ def loadmap(caller,name=None):
 	if name is None:
 		name=sbserver.mapName()
 	
-	ogzfilename,ogz=openfile("maps",name+".ogz","rb")
+	ogzfilename,ogz=openfile(os.path.join("maps",name+".ogz"),"rb")
 	
 	mapdata=sbserver.getMapDataFile()
 	mapdata.seek(0)

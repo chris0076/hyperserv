@@ -2,6 +2,7 @@
 
 import Image
 import math
+import os
 
 import base
 import cubes
@@ -49,7 +50,7 @@ def loadimage2(caller,imagename,s=16,maxh=20):
 	serverNotice("Done filling packet queue with heightmap.")
 
 def loadheightmap(imagename,maxh):
-	im = Image.open(openfile("heightmaps",imagename)[1])
+	im = Image.open(openfile(os.path.join("heightmaps",imagename))[1])
 	pixels = im.load()
 	(xsize, ysize) = im.size
 	heights=[]
