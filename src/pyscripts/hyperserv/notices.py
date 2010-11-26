@@ -79,7 +79,7 @@ def noticePlayerMuted(caller,boolean,target):
 		serverNotice("%s is now unmuted." % (formatCaller(("ingame",target)),))
 
 @eventHandler("player_kicked")
-def noticePlayerUnSpectated(caller,cn):
+def noticePlayerKicked(caller,cn):
 	serverNotice("%s got kicked by %s." % (formatCaller(("ingame",cn)),formatCaller(caller)))
 
 @eventHandler("player_uploaded_map")
@@ -101,7 +101,7 @@ def noticeAuth(cn,name):
 @eventHandler('edit_blocked')
 def noticeEditMute(cn):
 	caller=("ingame",cn)
-	playerCS.executeby(caller,"echo \"%s is edit muted.\"" % (formatCaller(caller)))
+	playerCS.executeby(caller,"echo \"%s is edit muted. You can not edit.\"" % (formatCaller(caller)))
 
 @eventHandler('talk_blocked')
 def noticeMute(cn):

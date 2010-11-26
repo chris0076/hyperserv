@@ -2,12 +2,20 @@ from hypershade.cubescript import CSCommand, systemCS, playerCS, escape
 
 from hypershade.usersession import UserSessionManager, PermissionError
 from hypershade.userdatabase import userdatabase
+from hyperserv.events import eventHandler, triggerServerEvent
 
 from hypershade.util import formatCaller
 
 import hashlib
 def hashPassword(password):
 	return hashlib.sha224(password).hexdigest()
+
+def serverNotice(string):
+	print "Notice: ",string
+	triggerServerEvent("notice",[string])
+
+def color(number, string):
+        return '\fs\f' + str(number) + string + '\fr'
 
 @CSCommand("login")
 def login(caller,*params):
@@ -87,7 +95,7 @@ def addUser(caller,username,privileges):
 	userdatabase[username]=privileges
 
 @CSCommand("deluser","admin")
-def addUser(caller,username):
+def delUser(caller,username):
 	del userdatabase[username]
 
 @CSCommand("user","trusted")
@@ -135,3 +143,29 @@ def takeMaster(caller):
 	masters=[session for session,user in UserSessionManager.items() if session[0]=='ingame' and user[1]=='master']
 	for master in masters:
 		playerCS.executeby(master,"relinquish; logout")
+
+@CSCommand("action")
+def CSserverAction(caller, cn=None, *strings):
+        try:
+                string=' '.join(strings)
+                cn = int(cn)
+                serverNotice("%s %s %s" % (formatCaller(caller), string, formatCaller(("ingame",cn))))
+        except ValueError:
+                string=' '.join(strings)
+                string=cn + ' '+ string
+                serverNotice("%s %s" % (formatCaller(caller), string))
+	return string
+
+@CSCommand("pm")
+def CSserverPM(caller, cn=None, *strings):
+        try:
+                string=' '.join(strings)
+                cn = int(cn)
+                reciver = ("ingame", cn)
+                string1 = "PM from %s:" %formatCaller(caller)
+                newstring = color(3, string1)
+                newstring1 = color(7, string)
+                playerCS.executeby(reciver,"echo \"%s %s\"" % (newstring, newstring1))
+        except ValueError:
+                playerCS.executeby(caller,"echo \"PM does not work for irc yet\"")
+	return string
