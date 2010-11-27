@@ -15,7 +15,7 @@ HISTORY
 =======
 HyperServ was created by SirAlex because he wanted something like XSBS extensibility but with frogmod functionality.
 He decided upon XSBS but the issue was that it was kind of hard to implement the features that he wanted(editing, consistent irc control) on the already finished foundation.
-He eventually forked XSBS(from commit: 41b8a5d293376a91f76a1dd14dbd5bb58e10c27b) for its C++ fondation and started the python from scratch. Thanks are in need to greghayes, darkf and others for their work so far on XSBS.
+He eventually forked XSBS(from commit: 41b8a5d293376a91f76a1dd14dbd5bb58e10c27b) for its C++ foundation and started the python from scratch. Thanks are in need to greghayes, darkf and others for their work so far on XSBS.
 
 PREREQUISITES
 =============
@@ -23,6 +23,7 @@ Before you can build and install the server, you must have the following install
  - Python 2.4 or greater (Python 2.6 recommended)
  - One of: python-mysqldb, python sqlite3
  - Twisted python framework
+ - Python Image Library 
  - Zlib
  - CMake
  - C++ compiler
@@ -30,10 +31,10 @@ Before you can build and install the server, you must have the following install
 INSTALL
 =======
  - cd into hyperserv folder
- - pick a database of choice(local instalation: sqlite3, multiple servers: mysql) then install the proper python package
+ - pick a database of choice(local installation: sqlite3, multiple servers: mysql) then install the proper python package
  - cp samplecfg/*.cfg .
  - edit the cfg files with the proper settings
- - if using sqlite: cp samplecfg/hyperserv.sqlite .
+ - if using sqlite: cp samplecfg/hypershade.sqlite .
  - cmake .
  - make
 
@@ -41,6 +42,102 @@ RUN HyperServ
 =============
  - cd into hyperserv folder
  - ./start_server.py
+
+COMMON COMMANDS
+========
+Key
+Arguments: [required] <notrequired>
+Permission: everyone < master < trusted < admin
+-----------------
+
+#adduser [username] [permissionlevel]
+Permission: admin
+Creates a user with with the desired name and permission level. After a user has been added then you must use #loginother to log them in so they can add a password.
+
+#admin
+Permission: admin
+Makes you the admin of the server. This is denoted by the gold color of your name.
+
+#ban <username> <reason> <time>
+Permission: trusted
+This bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes.
+
+#deluser [username]
+Permission: admin
+This deletes a username from the database. The most importaints use of this is removing the "firstuser" account from when you first make your server.
+
+#echo <something>
+Permission: everyone
+This is how you can read the output from some commands. Examples: listusersessions, list, user, who, whoami. Note that the command must be in parentheses. #echo (command)
+
+#editmute <0/1> <cn>
+Permission: master
+If there are no arguments other than #editmute then the caller will be editmuted. The first argument is a boolen that says what state of editmuted the player will be (0 for not editmuted and 1 for editmuted), anything other than 0 will result in an editmute. The cn is the client number of the player that you want editmuted. If left off it will apply to the caller.
+
+#kick [cn]
+Permission: master
+This allows the caller to kick another player; however, this will not override players with higher permission. Meaning, a master level permission can not kick someone with admin or trusted permission. To prevent the player from rejoining the server, they will also be banned for the default 60 minutes.
+
+#loadmap <name>
+Permission: master
+This allows loading of maps from the server like with the #map command.
+
+#login <username> [password]
+Permission: everyone
+This allows the caller to login to the server giving them the permission level that is allocated to them by the database.
+
+#loginother [where] [cn] <username>
+Permission: trusted
+This allows a player to use their permissions to login another player, but just like with kicking they can not login someone of higher permissions than themselves.
+
+#logout <everything>
+Permission: master
+This logs the caller out. If everything="everything" then the caller will be logged out in every case of the UserSessionManager.
+
+#map [mapname] <mode>
+Permission: everyone
+This works just like the /map command except for with #map you can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version).
+
+#master
+Permission: admin
+Makes you the master of the server. This is denoted by the green color of your name.
+
+#mastermode [mode]
+Permission: master
+This changes the mastermode in the same way that /mastermode does without the need to have claimed master or admin.
+
+#mute <0/1> <cn>
+Permission: master
+If there are no arguments other than #mute then the caller will be muted. The first argument is a boolen that says what state of muted the player will be (0 for not muted and 1 for muted), anything other than 0 will result in an mute. The cn is the client number of the player that you want muted. If left off it will apply to the caller.
+
+#notice [message]
+Permission: admin
+This allows the caller to make a server notice at the top of the screen of all of the players.
+
+#relinquish
+Permission: master
+This command gives up the level of power that the player has (master or admin).
+
+#savemap <name>
+Permission: trusted
+This allows players to savemaps to the server. This not only allows for easier transfer of files later on, but also allows for partial asynchronous work on a map by saving the map back to the server.
+
+#sendto [cn]
+Permission: master
+This command forces the specified player to /getmap. This is useful when a player is not paying attention, AFK or, for extension, if you wanted everyone to getmap.
+
+#spectator <0/1> <cn>
+Permission: master
+If there are no arguments other than #spectator then the caller will be set to spectator. The first argument is a boolen that says what state of spectating the player will be (0 for not not a spectator and 1 for spectator), anything other than 0 will result in an editmute. The cn is the client number of the player that you want editmuted. If left off it will apply to the caller.
+
+#user <key> <value>
+Permission: trusted
+This allows users to change account details like: "password", "sauerbraten name" and "irc nick". Example being: #username "password" "Th1s@w3s0M3pAsSworDt4aTn0oneCou1dev3rgue55e^en1fth#yknewThePAS5w0rd." . This command can also be used with #echo to show the user his information. 
+
+#vote [mapname] <mode>
+Permission: everyone
+This works just like the #map command except rather than directly gogin to a map it places a vote for the map of choice. Just like with #map, you can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version).
+
 
 SUPPORT
 =======
