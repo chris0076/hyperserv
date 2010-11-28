@@ -11,6 +11,7 @@ def serverNotice(string):
 
 @CSCommand("notice","admin")
 def CSserverNotice(caller, *strings):
+        """This allows the caller to make a server notice at the top of the screen of all of the players."""
 	string=' '.join(strings)
 	if caller[0]=="system":
 		serverNotice(string)
