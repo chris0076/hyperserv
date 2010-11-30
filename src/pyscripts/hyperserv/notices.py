@@ -1,9 +1,11 @@
-"""This file contains all the even handlers for notices"""
+"""This file contains all the event handlers for notices"""
 from hyperserv.events import eventHandler, triggerServerEvent
 
 import hypershade
 from hypershade.cubescript import CSCommand, playerCS
 from hypershade.util import modeName, mastermodeName, formatCaller
+
+muted_cns = []
 
 def serverNotice(string):
 	print "Notice: ",string
@@ -116,7 +118,10 @@ def noticePlayerTeamChanged(cn):
 
 @eventHandler('vote_map')
 def noticeVoteMap(caller,mode,name):
-	serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
+	if caller[1] in muted_cns:
+                playerCS.executeby(caller,"echo \"You are muted so you are not allowed to vote.\"") 
+	else:
+                serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
 
 @eventHandler('savemap')
 def noticeSavemap(caller,mapname,ogzfilename):
@@ -125,3 +130,22 @@ def noticeSavemap(caller,mapname,ogzfilename):
 @eventHandler('loadmap')
 def noticeLoadmap(caller,mapname,ogzfilename):
 	serverNotice("Loaded map from %s." % (ogzfilename))
+
+@eventHandler("player_muted")
+def playerMuted(caller,boolean,target):
+	if boolean:
+		if target not in muted_cns:
+			muted_cns.append(target)
+	else:
+		if target in muted_cns:
+			muted_cns.remove(target)
+
+@eventHandler('player_connect')
+def playerconnect(cn):
+	if cn in muted_cns:
+		muted_cns.remove(cn)
+	
+@eventHandler('player_disconnect')
+def playerdisconnect(cn):
+	if cn in muted_cns:
+		muted_cns.remove(cn)
