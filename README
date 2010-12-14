@@ -23,7 +23,7 @@ Before you can build and install the server, you must have the following install
  - Python 2.4 or greater (Python 2.6 recommended)
  - One of: python-mysqldb, python sqlite3
  - Twisted python framework
- - Python Image Library 
+ - Python Image Library (used for map generation)
  - Zlib
  - CMake
  - C++ compiler
@@ -43,8 +43,22 @@ RUN HyperServ
  - cd into hyperserv folder
  - ./start_server.py
 
+COMMON TASKS
+============
+Sending a Message Via IRC
+If the user is trying to login with IRC they need to send their message to the server username otherwise everyone can see the message/password. ex. "/msg hyperserv #login (password)". This can be simplified with opening a New Dialog Window with the server username. 
+
+Setting Up a New User Account
+The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password and/or account names. This can be done with "#user 'password' 'the password that they want'", "#user 'sauerbraten name' 'their sauerbraten name'" and "#user 'irc nick' 'their irc nick'". This can then be checked by the user with "#echo (user)".
+
+Removing a User
+To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (user (the username))".
+
+Banning a Player
+To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. To check to see if the ban was added type "#echo (bans)".
+
 COMMON COMMANDS
-========
+===============
 Key
 Arguments: (required) [optional]
 Permission: everyone < master < trusted < admin
@@ -64,7 +78,7 @@ This bans the person specified. If there is not a name given then the caller wil
 
 #deluser (username)
 Permission: admin
-This deletes a username from the database. The most importaints use of this is removing the "firstuser" account from when you first make your server.
+This deletes a username from the database. The most importaint use of this is removing the "firstuser" account from when you first make your server.
 
 #echo [something]
 Permission: everyone
