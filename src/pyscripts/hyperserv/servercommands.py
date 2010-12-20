@@ -18,21 +18,21 @@ from hypershade.bandatabase import bandatabase
 class ServerError(Exception): pass
 
 @CSCommand("vote")
-def changeMap(caller,name,mode=None):
+def voteMap(caller,name,mode=None):
         """This command works just like the #map command except rather than directly going to a map it places a vote for the map of choice. Just like with #map, the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version)."""
 	if mode is None:
 		mode=sbserver.gameMode()
 	triggerServerEvent("vote_map",[caller,modeNumber(mode),name])
 
 @CSCommand("map","master")
-def voteMap(caller,name,mode=None):
+def changeMap(caller,name,mode=None):
         """This command works just like the /map command except for with #map the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version). """
 	if mode is None:
 		mode=sbserver.gameMode()
 	mode=modeNumber(mode)
-	
+
 	sbserver.setMap(name,mode)
-	
+
 	#load the map if it exists and mode is coop
 	if modeNumber("coop")==mode:
 		try:
@@ -250,8 +250,9 @@ def team(caller,*args):
 	
 	if cn!=caller[1]:
 		UserSessionManager.checkPermissions(caller,"master")
-	
+		
 	sbserver.setTeam(cn,teamname)
+	sbserver.suicide(cn)
 
 @CSCommand("mute","master")
 def mute(caller,*args):

@@ -55,7 +55,7 @@ Removing a User
 To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (user (the username))".
 
 Banning a Player
-To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. To check to see if the ban was added type "#echo (bans)".
+To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. To check to see if the ban was added type "#echo (bans)". The ban can be removed with the "#delban (cn)".
 
 COMMON COMMANDS
 ===============
@@ -75,6 +75,10 @@ Makes the caller the admin of the server. This is denoted by the gold color of t
 #ban [username] [reason] [time]
 Permission: trusted
 This bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes.
+
+#delban (username)
+Permission: trusted
+This will delete a ban for the username provided.
 
 #deluser (username)
 Permission: admin
@@ -110,7 +114,7 @@ This logs the caller out. If everything="everything" then the caller will be log
 
 #map (mapname) [mode]
 Permission: everyone
-This works just like the /map command except for with #map the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version).
+This works just like the /map command except for with #map the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version). Note that if the map name has an special characters in it then it would be best to put the map name in quotes to prevent errors with python.
 
 #master
 Permission: master
