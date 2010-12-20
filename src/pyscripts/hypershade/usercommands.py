@@ -2,17 +2,12 @@ from hypershade.cubescript import CSCommand, systemCS, playerCS, escape
 
 from hypershade.usersession import UserSessionManager, PermissionError
 from hypershade.userdatabase import userdatabase
-from hyperserv.events import eventHandler, triggerServerEvent
 
 from hypershade.util import formatCaller
 
 import hashlib
 def hashPassword(password):
 	return hashlib.sha224(password).hexdigest()
-
-def serverNotice(string):
-	print "Notice: ",string
-	triggerServerEvent("notice",[string])
 
 @CSCommand("login")
 def login(caller,*params):
