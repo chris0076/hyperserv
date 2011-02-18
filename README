@@ -55,7 +55,7 @@ Removing a User
 To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (user (the username))".
 
 Banning a Player
-To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. To check to see if the ban was added type "#echo (bans)". The ban can be removed with the "#delban (username)".
+To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. To check to see if the ban was added type "#echo (bans)". The ban can be removed with the "#delban (username)".
 
 COMMON COMMANDS
 ===============
