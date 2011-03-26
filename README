@@ -49,10 +49,10 @@ Sending a Message Via IRC
 If the user is trying to login with IRC they need to send their message to the server username otherwise everyone can see the message/password. ex. "/msg hyperserv #login (password)". This can be simplified with opening a New Dialog Window with the server username. 
 
 Setting Up a New User Account
-The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password and/or account names. This can be done with "#user 'password' 'the password that they want'", "#user 'sauerbraten name' 'their sauerbraten name'" and "#user 'irc nick' 'their irc nick'". This can then be checked by the user with "#echo (user)".
+The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password. This can be done with "#user 'password' 'the password that they want'". Then you can add their usernames with "#useradmin (username) 'sauerbraten name' (their sauerbraten name)" and "#useradmin (username) 'irc nick' (their irc nick)". This can then be checked by the user with "#echo (user)" or by admins with #echo (useradmin (username)).
 
 Removing a User
-To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (user (the username))".
+To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (useradmin (username))".
 
 Banning a Player
 To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. To check to see if the ban was added type "#echo (bans)". The ban can be removed with the "#delban (cn)".
@@ -151,6 +151,10 @@ If there are no arguments other than #spectator then the caller will be set to s
 #user [key] [value]
 Permission: trusted
 This allows users to change account details like: "password", "sauerbraten name" and "irc nick". Example being: #username "password" "Th1s@w3s0M3pAsSworDt4aTn0oneCou1dev3rgue55e^en1fth#yknewThePAS5w0rd." . This command can also be used with #echo to show the user his information. 
+
+#useradmin (username) [key] [value]
+Permission: admin
+This allows admins to change information on user accounts. This works the exact same as #user just with the addition of a (username).
 
 #vote (mapname) [mode]
 Permission: everyone
