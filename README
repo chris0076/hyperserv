@@ -49,7 +49,7 @@ Sending a Message Via IRC
 If the user is trying to login with IRC they need to send their message to the server username otherwise everyone can see the message/password. ex. "/msg hyperserv #login (password)". This can be simplified with opening a New Dialog Window with the server username. 
 
 Setting Up a New User Account
-The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password. This can be done with "#user 'password' 'the password that they want'". Then you can add their usernames with "#useradmin (username) 'sauerbraten name' (their sauerbraten name)" and "#useradmin (username) 'irc nick' (their irc nick)". This can then be checked by the user with "#echo (user)" or by admins with #echo (useradmin (username)).
+The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password. This can be done with "#user 'password' 'the password that they want'". Then you can add their usernames with "#useradmin (username) 'sauerbraten name' (their sauerbraten name)" and "#useradmin (username) 'irc nick' (their irc nick)". By doing thi the player can then login using just #login theirawesomepass, rather than having to always type in their server username *Note that these names are respective of where they are at (ingame vs irc). This can then be checked by the user with "#echo (user)" or by admins with #echo (useradmin (username)).
 
 Removing a User
 To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (useradmin (username))".
@@ -154,7 +154,7 @@ This allows users to change account details like: "password", "sauerbraten name"
 
 #useradmin (username) [key] [value]
 Permission: admin
-This allows admins to change information on user accounts. This works the exact same as #user just with the addition of a (username).
+This allows admins to change information on user accounts. This works the exact same as #user just with the addition of a (username). This can also be used with #echo to show the information of other users. #echo (useradmin (username)).
 
 #vote (mapname) [mode]
 Permission: everyone
