@@ -49,13 +49,44 @@ Sending a Message Via IRC
 If the user is trying to login with IRC they need to send their message to the server username otherwise everyone can see the message/password. ex. "/msg hyperserv #login (password)". This can be simplified with opening a New Dialog Window with the server username. 
 
 Setting Up a New User Account
-The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password. This can be done with "#user 'password' 'the password that they want'". Then you can add their usernames with "#useradmin (username) 'sauerbraten name' (their sauerbraten name)" and "#useradmin (username) 'irc nick' (their irc nick)". By doing thi the player can then login using just #login theirawesomepass, rather than having to always type in their server username *Note that these names are respective of where they are at (ingame vs irc). This can then be checked by the user with "#echo (user)" or by admins with #echo (useradmin (username)).
+The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password. This can be done with "#user 'password' 'the password that they want'". Then you can add their usernames with "#useradmin (username) 'sauerbraten name' (their sauerbraten name)" and "#useradmin (username) 'irc nick' (their irc nick)". By doing this the player can then login using just #login theirawesomepass, rather than having to always type in their server username *Note that these names are respective of where they are at (ingame vs irc). This can then be checked by the user with "#echo (user)" or by admins with #echo (useradmin (username)).
+
+EX:
+To add the player: "PLAYER" with the ingame name "PLAYER_INGAME" and with an irc nick of "PLAYER_IRC" with a permission level of "trusted". They are also currently ingame with the CN of 3 and they want their password to be "AW3S0Me". So, one would type the following commands:
+
+(you) #adduser PLAYER trusted
+(you) #loginother ingame 3 PLAYER
+(player) #user "password" "AW3S0Me"
+(you) #useradmin PLAYER "sauerbraten name" PLAYER_INGAME
+(you) #useradmin PLAYER "irc nick" PLAYER_IRC
+(player) #logout
+(player) #login AW3S0Me
+
 
 Removing a User
 To remove a user use the deluser command. "#deluser (username)". After this you can check to see if it worked by typing "#say (useradmin (username))".
 
+EX:
+If you wanted to now remove the player "PLAYER" from the server you can use these commands:
+
+(you) #deluser PLAYER
+(you) #(useradmin (PLAYER)
+
+
 Banning a Player
 To ban a player the ban command. "#ban [username] [reason] [time]" Note that if you do not specify a username you will be banned. If the time is left blank then it will be automaticly set to 60 minutes. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. To check to see if the ban was added type "#echo (bans)". The ban can be removed with the "#delban (username)".
+
+EX:
+Say "PLAYER" came back on the server and was acting like a jerk after you just deleted his account, you can then proceed to ban him with the following commands. Then after his original ban is up he comes back and proceeds to troll the server so you ban his IP adress so he can never come back...
+
+(you) #ban PLAYER_INGAME "he is being a jerk" 120
+
+...later...
+
+(you) #echo (who)
+-ServerOut- NobodyCool (cn3/192.168.1.1); NotMeEither (cn0/192.256.12.1); PLAYER_INGAME (cn1/127.0.0.1)
+(you) #ban 127.0.0.1 "he is trolling teh server" "perm"
+
 
 COMMON COMMANDS
 ===============
@@ -67,98 +98,170 @@ Permission: everyone < master < trusted < admin
 #adduser (username) (permissionlevel)
 Permission: admin
 Creates a user with with the desired name and permission level. After a user has been added then you must use #loginother to log them in so they can add a password.
+EX:
+#adduser PLAYER trusted
+//The user "PLAYER" is added at the permission level "trusted".
 
 #admin
 Permission: admin
 Makes the caller the admin of the server. This is denoted by the gold color of their name. Note that this is just for show because it does not give the user any more powers.
+EX:
+#admin
+//You are now the admin of the server. (yellow name)
 
 #ban [username] [reason] [time]
 Permission: trusted
 This bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes.
+EX:
+#ban PLAYER_INGAME "he is being a jerk" 120
+//PLAYER_INGAME is now banned for 120 minutes with the ban message of "he is being a jerk".
 
 #delban (username)
 Permission: trusted
 This will delete a ban for the username provided.
+EX:
+#delban PLAYER_INGAME
+//The ban on PLAYER_INGAME has now been removed.
 
 #deluser (username)
 Permission: admin
 This deletes a username from the database. The most importaint use of this is removing the "firstuser" account from when you first make your server.
+EX:
+#deluser PLAYER
+//The account Player has been deleted.
 
 #echo [something]
 Permission: everyone
 This is how the caller can read the output from some commands. Examples: listusersessions, list, user, who, whoami. Note that the command must be in parentheses. #echo (command)
+EX:
+#echo (listusersessions)
+//Server output of all the users in irc/ingame with what accounts they are logged in to..
 
 #editmute [0/1] [cn]
 Permission: master
 If there are no arguments other than #editmute then the caller will be editmuted. The first argument is a boolen that says what state of editmuted the player will be (0 for not editmuted and 1 for editmuted), anything other than 0 will result in an editmute. The cn is the client number of the player that the caller want editmuted. If left off it will apply to the caller.
+EX:
+#editmute 1 4
+//The player with the CN 4 is now editmuted.
 
 #kick (cn)
 Permission: master
 This allows the caller to kick another player; however, this will not override players with higher permission. Meaning, a master level permission can not kick someone with admin or trusted permission. To prevent the player from rejoining the server, they will also be banned for the default 60 minutes.
+EX:
+#kick 3
+//The player with the CN 3 is now kicked from the server. (also includes a 60 minute ban)
 
 #loadmap (name)
 Permission: master
 This is the opposite of #savemap. This is automatically executed when you change to a map that the server has in storage.
+EX:
+#loadmap cmvalley
+//cmvalley is now loaded from the server. 
 
 #login [username] (password)
 Permission: everyone
 This allows the caller to login to the server giving them the permission level that is allocated to them by the database.
+EX:
+#login AW3S0Me
+//If your account is setup right and that is your password you wil login.
 
 #loginother (where) (cn) [username]
 Permission: trusted
 This allows a player to use their permissions to login another player, but just like with kicking they can not login someone of higher permissions than themselves.
+EX:
+#loginother ingame 1 PLAYER
+//This logs in the player with the CN 1 ingame as the server account "PLAYER".
 
 #logout [everything]
 Permission: master
 This logs the caller out. If everything="everything" then the caller will be logged out in every case of the UserSessionManager.
+EX:
+#logout
+//You are now logged out.
 
 #map (mapname) [mode]
 Permission: everyone
 This works just like the /map command except for with #map the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version). Note that if the map name has an special characters in it then it would be best to put the map name in quotes to prevent errors with python.
+EX:
+#map cmvalley coop
+//The map is now cmvalley in the mode coop.
 
 #master
 Permission: master
 Makes the caller the master of the server. This is denoted by the green color of the callers name. Also like with #admin it does not give the caller any powers beyond what the caller had before.
+EX:
+#master
+//You are now the master of the server. (green name)
 
 #mastermode (mode)
 Permission: master
 This changes the mastermode in the same way that /mastermode does without the need to have claimed master or admin.
+EX:
+#mastermode 2
+//The server is now locked.
 
 #mute [0/1] [cn]
 Permission: master
 If there are no arguments other than #mute then the caller will be muted. The first argument is a boolen that says what state of muted the player will be (0 for not muted and 1 for muted), anything other than 0 will result in an mute. The cn is the client number of the player that caller want muted. If left off it will apply to the caller.
+EX:
+#mute 1 2
+//The player with the CN 2 is now muted.
 
 #notice (message)
 Permission: admin
 This allows the caller to make a server notice at the top of the screen of all of the players.
+EX:
+#notice "This is a notice from the admins."
+//A message is displayed at the top of the screen saying "Notice from Admin: This is a notice from the admins."
 
 #relinquish
 Permission: master
 This command gives up the level of power that the player has (master or admin).
+#EX:
+#relinquish
+//This makes you lose master/admin as well as any color you name has gained.
 
 #savemap [name]
 Permission: trusted
 This allows players to savemaps to the server. This not only allows for easier transfer of files later on, but also allows for partial asynchronous work on a map by saving the map back to the server.
+EX:
+#savemap cmvalley
+//This saves the current sent map as "cmvalley" on the server.
 
 #sendto (cn)
 Permission: master
 This command forces the specified player to /getmap. This is useful when a player is not paying attention, AFK or, for extension, if the caller wanted everyone to getmap.
+EX:
+#sendto 1
+//This sends the current sent map to the player with the CN 1.
 
 #spectator [0/1] [cn]
 Permission: master
 If there are no arguments other than #spectator then the caller will be set to spectator. The first argument is a boolen that says what state of spectating the player will be (0 for not not a spectator and 1 for spectator), anything other than 0 will result in an them being a spectator. The cn is the client number of the player that the caller want spectated. If left off it will apply to the caller.
+EX:
+#spectator 0 1
+//This unspectates the player with the CN 1.
 
 #user [key] [value]
 Permission: trusted
 This allows users to change account details like: "password", "sauerbraten name" and "irc nick". Example being: #username "password" "Th1s@w3s0M3pAsSworDt4aTn0oneCou1dev3rgue55e^en1fth#yknewThePAS5w0rd." . This command can also be used with #echo to show the user his information. 
+EX:
+#user "password" "Th1s@w3s0M3pAsSworDt4aTn0oneCou1dev3rgue55e^en1fth#yknewThePAS5w0rd."
+//This changes your password to Th1s@w3s0M3pAsSworDt4aTn0oneCou1dev3rgue55e^en1fth#yknewThePAS5w0rd.
 
 #useradmin (username) [key] [value]
 Permission: admin
 This allows admins to change information on user accounts. This works the exact same as #user just with the addition of a (username). This can also be used with #echo to show the information of other users. #echo (useradmin (username)).
+EX:
+#useradmin PLAYER "irc nick" PLAYER_IRC
+//This adds the irc nickname "PLAYER_IRC" to the account of PLAYER
 
 #vote (mapname) [mode]
 Permission: everyone
 This works just like the #map command except rather than directly going to a map it places a vote for the map of choice. Just like with #map, the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version).
+EX:
+#vote cmvalley coop
+//This makes a vote for the map cmvalley with the mode coop.
 
 
 SUPPORT
