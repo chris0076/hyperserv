@@ -7,6 +7,8 @@ sauer.log
 /config.cfg
 /*.sqlite
 
+/storage
+
 #stuff that comes after cmake . and make
 CMakeCache.txt
 CMakeFiles/
