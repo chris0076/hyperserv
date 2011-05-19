@@ -109,12 +109,12 @@ static PyObject *playerPosition(PyObject *self, PyObject *args)
 		PyErr_SetString(PyExc_RuntimeError, "Client cn is valid but has no name.");
 		return 0;
 	}
-	PyObject *pTuple = PyTuple_New(19);
+	PyObject *pTuple = PyTuple_New(4);
 	PyObject *pInt;
-	for(int i=0;i<19;i++) {
-		pInt = PyInt_FromLong(ci->position[i]);
-		PyTuple_SetItem(pTuple, i, pInt);
-	}
+	PyTuple_SetItem(pTuple,0,PyInt_FromLong(ci->state.o.x));
+	PyTuple_SetItem(pTuple,1,PyInt_FromLong(ci->state.o.y));
+	PyTuple_SetItem(pTuple,2,PyInt_FromLong(ci->state.o.z));
+	PyTuple_SetItem(pTuple,3,PyInt_FromLong(ci->state.dir));
 	return pTuple;
 }
 

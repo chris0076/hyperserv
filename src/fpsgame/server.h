@@ -112,6 +112,7 @@ namespace server
     struct gamestate : fpsstate
     {
         vec o;
+        int dir;
         int state, editstate;
         int lastdeath, lastspawn, lifesequence;
         int lastshot;

@@ -1770,6 +1770,7 @@ namespace server
                     }
                     if(smode && cp->state.state==CS_ALIVE) smode->moved(cp, cp->state.o, cp->gameclip, pos, (flags&0x80)!=0);
                     cp->state.o = pos;
+                    cp->state.dir = (dir%360);
                     cp->gameclip = (flags&0x80)!=0;
                 }
                 break;
