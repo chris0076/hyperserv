@@ -6,6 +6,7 @@ import hyperserv.notices
 import hyperserv.clientcommands
 import hyperserv.servercommands
 import hyperserv.ingame
+import hyperserv.position
 
 import editing
 
