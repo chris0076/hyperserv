@@ -1,9 +1,11 @@
-"""This file contains all the even handlers for notices"""
+"""This file contains all the event handlers for notices"""
 from hyperserv.events import eventHandler, triggerServerEvent
 
 import hypershade
 from hypershade.cubescript import CSCommand, playerCS
 from hypershade.util import modeName, mastermodeName, formatCaller
+
+muted_cns = []
 
 def serverNotice(string):
 	print "Notice: ",string
@@ -11,6 +13,7 @@ def serverNotice(string):
 
 @CSCommand("notice","admin")
 def CSserverNotice(caller, *strings):
+        """This allows the caller to make a server notice at the top of the screen of all of the players."""
 	string=' '.join(strings)
 	if caller[0]=="system":
 		serverNotice(string)
@@ -79,7 +82,7 @@ def noticePlayerMuted(caller,boolean,target):
 		serverNotice("%s is now unmuted." % (formatCaller(("ingame",target)),))
 
 @eventHandler("player_kicked")
-def noticePlayerUnSpectated(caller,cn):
+def noticePlayerKicked(caller,cn):
 	serverNotice("%s got kicked by %s." % (formatCaller(("ingame",cn)),formatCaller(caller)))
 
 @eventHandler("player_uploaded_map")
@@ -101,7 +104,7 @@ def noticeAuth(cn,name):
 @eventHandler('edit_blocked')
 def noticeEditMute(cn):
 	caller=("ingame",cn)
-	playerCS.executeby(caller,"echo \"%s is edit muted.\"" % (formatCaller(caller)))
+	playerCS.executeby(caller,"echo \"%s is edit muted. You can not edit.\"" % (formatCaller(caller)))
 
 @eventHandler('talk_blocked')
 def noticeMute(cn):
@@ -115,7 +118,10 @@ def noticePlayerTeamChanged(cn):
 
 @eventHandler('vote_map')
 def noticeVoteMap(caller,mode,name):
-	serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
+	if caller[1] in muted_cns:
+                playerCS.executeby(caller,"echo \"You are muted so you are not allowed to vote.\"") 
+	else:
+                serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
 
 @eventHandler('savemap')
 def noticeSavemap(caller,mapname,ogzfilename):
@@ -124,3 +130,22 @@ def noticeSavemap(caller,mapname,ogzfilename):
 @eventHandler('loadmap')
 def noticeLoadmap(caller,mapname,ogzfilename):
 	serverNotice("Loaded map from %s." % (ogzfilename))
+
+@eventHandler("player_muted")
+def playerMuted(caller,boolean,target):
+	if boolean:
+		if target not in muted_cns:
+			muted_cns.append(target)
+	else:
+		if target in muted_cns:
+			muted_cns.remove(target)
+
+@eventHandler('player_connect')
+def playerconnect(cn):
+	if cn in muted_cns:
+		muted_cns.remove(cn)
+	
+@eventHandler('player_disconnect')
+def playerdisconnect(cn):
+	if cn in muted_cns:
+		muted_cns.remove(cn)
