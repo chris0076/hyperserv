@@ -13,6 +13,8 @@
 
 #include <signal.h>
 
+#include <stdio.h>
+
 namespace game
 {
     void parseoptions(vector<const char *> &args)
@@ -1640,13 +1642,18 @@ namespace server
     void editpackethook(int cn, int type, packetbuf p)
     {
         int size = msgsizelookup(type);
+        int pos = p.len;
         
         std::vector<int> packet;
         packet.push_back(cn);
         packet.push_back(type);
         
-        for(int i=0;i<size-1;i++)
+        for(int i=0;i<size-1;i++) {
             packet.push_back(getint(p));
+            printf("len %d\n",p.len);
+        }
+        
+        p.len=pos;
         
         SbPy::triggerEventVectorInt("edit_packet",packet);
     }
@@ -2085,6 +2092,7 @@ namespace server
 
             case N_EDITENT:
             {
+                editpackethook(ci->clientnum,type,p);
                 int i = getint(p);
                 loopk(3) getint(p);
                 int type = getint(p);
