@@ -13,8 +13,6 @@
 
 #include <signal.h>
 
-#include <stdio.h>
-
 namespace game
 {
     void parseoptions(vector<const char *> &args)
@@ -1650,7 +1648,6 @@ namespace server
         
         for(int i=0;i<size-1;i++) {
             packet.push_back(getint(p));
-            printf("len %d\n",p.len);
         }
         
         p.len=pos;
