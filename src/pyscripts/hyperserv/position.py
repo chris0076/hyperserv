@@ -9,11 +9,11 @@ def merge(a):
 
 def getPosition(cn):
 	return sbserver.playerPosition(cn)[:3]
-
+	
 def getYaw(cn):
 	return sbserver.playerPosition(cn)[3]
 
-@CSCommand("pos","admin")
+@CSCommand("pos","master")
 def getPositionCS(caller, cn=None):
 	if cn is None:
 		if caller[0]!="ingame":
