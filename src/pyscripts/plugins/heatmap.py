@@ -3,18 +3,18 @@ from hypershade.cubescript import playerCS, CSCommand
 from hyperserv.servercommands import ServerError
 from hyperserv.position import getPosition
 from editing.base import sendpacket
+from editing.ents import ent
 
-count=0
+flamecolours = {
+	"good": 0,
+	"evil": 15,
+	"neutral": 240,
+}
 
-@CSCommand("mark","master")
+@CSCommand("mark","trusted")
 def mark(caller,color):
-	global count
-	color=int(color)
-	color=[15,2840][color]
 	cn=int(caller[1])
+	color=flamecolours[color]
 	position=map(lambda a: a*16, getPosition(cn))
-	packet=("EDITENT",count,position[0],position[1],position[2]+128,5,0,0,0,color,0)
-	count=count+1
-	print packet
-	sendpacket(("system",""),*packet)
-	print "done"
+	entity=(position[0],position[1],position[2]+64,5,0,0,0,color,0)
+	ent(entity)
