@@ -7,8 +7,8 @@ from hyperserv.servercommands import ServerError
 editentnumber=base.packettypenumber("EDITENT")
 editentlength=base.packettypes[editentnumber][1]
 i=0
-imax=5000
-istart=5000
+imax=10000
+istart=1
 
 @CSCommand("ent","trusted")
 def entcommand(caller, *args):

@@ -5,6 +5,7 @@ from hyperserv.servercommands import ServerError
 from hyperserv.position import getPosition
 from editing.ents import ent
 from hypershade.config import config
+from hypershade.files import openfile
 from hyperserv.events import eventHandler
 
 flamecolour = {
@@ -26,3 +27,15 @@ def player_frag(killer, victim):
 	ent((victimposition[0],victimposition[1],victimposition[2]+64,1,32,0,64,127,0))
 	attackerposition=map(lambda a: a*16, getPosition(killer))
 	ent((attackerposition[0],attackerposition[1],attackerposition[2]+64,1,32,127,0,0,0))
+
+@CSCommand("acdatafrag", "trusted")
+@threaded
+def acdatafrag(caller):
+        f = openfile("killdata.txt", "r")[1]
+        lines = f.readlines() 
+        for line in lines:
+            a = line[:-2].split(' ')
+            victimposition=map(lambda a: a*16, (int(a[4]), int(a[5]), int(a[6])))
+            ent((victimposition[0],victimposition[1],victimposition[2]+32,1,32,0,64,127,0))
+            attackerposition=map(lambda a: a*16, (int(a[7]), int(a[8]), int(a[9])))
+            ent((attackerposition[0],attackerposition[1],attackerposition[2]+32,1,32,127,0,0,0))
