@@ -11,7 +11,7 @@ def hashPassword(password):
 
 @CSCommand("login")
 def login(caller,*params):
-        """This allows the caller to login to the server giving them the permission level that is allocated to them by the database."""
+        """Allows the caller to login to the server."""
 	username=None
 	password=None
 	
@@ -74,31 +74,31 @@ def logout(caller,everything="no"):
 
 @CSCommand("whoami")
 def whoami(caller,param=""):
-        """This gives all the information about your conection. It tells where you are and what name you are using. Use this in conjuction with #echo. Ex: #echo (whoami)"""
+        """This gives all the information about your conection: where you are and what cn you are. Add "+login" to view that as well. Use this in conjuction with #echo. Ex: #echo (whoami)"""
 	if param=="+login":
 		return "%s - %s" % (str(caller),str(UserSessionManager[caller]))
 	return str(caller)
 
 @CSCommand("listusersessions","admin")
 def listusersessions(caller):
-        """This tells all the people that are connected to the server. Use this in conjuction with #echo. Ex: #echo (listusersessions)"""
+        """Tells all the people that are connected to the server. Use this in conjuction with #echo. Ex: #echo (listusersessions)"""
 	return str(UserSessionManager)
 
 ##
 #User Management
 @CSCommand("adduser","admin")
 def addUser(caller,username,privileges):
-        """Creates a user with with the desired name and permission level. After a user has been added then you must use #loginother to log them in so they can add a password."""
+        """Creates a user with with the desired name and permission level. This can be used in conjuction with #echo. Ex: #echo (user)"""
 	userdatabase[username]=privileges
 
 @CSCommand("deluser","admin")
 def delUser(caller,username):
-        """This deletes a username from the database."""
+        """Deletes a username from the database."""
 	del userdatabase[username]
 
 @CSCommand("user","trusted")
 def userKey(caller,key=None,*values):
-        """This allows users to change account details like: "password", "sauerbraten name" and "irc nick". Example being: #username "password" "Th1s@w3s0M3pAsSworDt4aTn0oneCou1dev3rgue55e^en1fth#yknewThePAS5w0rd." . This command can also be used with #echo to show the user his information. """
+        """Allows users to change account details like: "password", "sauerbraten name" and "irc nick".  """
 	username=UserSessionManager[caller][0]
 	if key=="privileges":
 		raise PermissionError("You cannot change your privileges level.")
@@ -106,6 +106,7 @@ def userKey(caller,key=None,*values):
 
 @CSCommand("useradmin","admin")
 def userKeyAdmin(caller,username=None,key=None,*values):
+        """Allows the administration of user accounts the same as the #user command."""
 	#if called with no arguments, list the user/keys
 	if key is None:
 		if username is None:
@@ -128,7 +129,7 @@ def userKeyAdmin(caller,username=None,key=None,*values):
 
 @CSCommand("loginother","trusted")
 def loginOther(caller,where,who,username=None):
-        """This allows a player to use their permissions to login another player, but just like with kicking they can not login someone of higher permissions than themselves."""
+        """Logs in another player. This does not allow someone to login someone with higher permissions."""
 	if where=="ingame":
 		who=int(who)
 	if username is None:
@@ -140,7 +141,7 @@ def loginOther(caller,where,who,username=None):
 
 @CSCommand("takemaster","trusted")
 def takeMaster(caller):
-        """This command takes master from the person that currently has it."""
+        """Takes master from the person that currently has it."""
 	masters=[session for session,user in UserSessionManager.items() if session[0]=='ingame' and user[1]=='master']
 	for master in masters:
 		playerCS.executeby(master,"relinquish; logout")
