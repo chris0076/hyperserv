@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sbserver
-from hypershade.cubescript import playerCS, CSCommand
+from hypershade.cubescript import playerCS, CSCommand, threaded
 from hyperserv.servercommands import ServerError
 from hyperserv.position import getPosition
 from editing.ents import ent
@@ -30,8 +30,8 @@ def player_frag(killer, victim):
 
 @CSCommand("acdatafrag", "trusted")
 @threaded
-def acdatafrag(caller):
-        f = openfile("killdata.txt", "r")[1]
+def acdatafrag(caller, filename="killdata.txt"):
+        f = openfile(filename, "r")[1]
         lines = f.readlines() 
         for line in lines:
             a = line[:-2].split(' ')
