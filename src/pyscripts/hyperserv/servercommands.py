@@ -195,7 +195,7 @@ def helpCommand(caller, command="help"):
                         else:
                                 string = command+'(' + ', '.join(d)+')\n'+docstring
 		else:
-			args = f.func_code.co_varnames[2:f.func_code.co_argcount]
+			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
 			string = command+'('+', '.join(args)+')\n'+docstring
 		triggerServerEvent("echo",[caller,string])
 	return command
