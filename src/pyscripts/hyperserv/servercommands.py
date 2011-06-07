@@ -19,14 +19,14 @@ class ServerError(Exception): pass
 
 @CSCommand("vote")
 def voteMap(caller,name,mode=None):
-        """Places a vote for the map of choice. This can be used to call maps from /storage/maps."""
+	"""Places a vote for the map of choice. This can be used to call maps from /storage/maps."""
 	if mode is None:
 		mode=sbserver.gameMode()
 	triggerServerEvent("vote_map",[caller,modeNumber(mode),name])
 
 @CSCommand("map","master")
 def changeMap(caller,name,mode=None):
-        """Same as the /map command."""
+	"""Same as the /map command."""
 	if mode is None:
 		mode=sbserver.gameMode()
 	mode=modeNumber(mode)
@@ -44,7 +44,7 @@ def changeMap(caller,name,mode=None):
 
 @CSCommand("master","master")
 def setMaster(caller):
-        """Makes the caller the master of the server."""
+	"""Makes the caller the master of the server."""
 	if(caller[0]=="ingame"):
 		return sbserver.setMaster(caller[1])
 	raise ServerError("You are not ingame.")
@@ -52,7 +52,7 @@ def setMaster(caller):
 
 @CSCommand("admin","admin")
 def setAdmin(caller):
-        """Makes the caller the admin of the server."""
+	"""Makes the caller the admin of the server."""
 	if(caller[0]=="ingame"):
 		return sbserver.setAdmin(caller[1])
 	raise ServerError("You are not ingame.")
@@ -60,7 +60,7 @@ def setAdmin(caller):
 
 @CSCommand("relinquish")
 def relinquish(caller):
-        """Gives up the level of power that the player has (master or admin)."""
+	"""Gives up the level of power that the player has (master or admin)."""
 	if(caller[0]=="ingame"):
 		return sbserver.resetPrivilege(caller[1])
 	raise ServerError("You are not ingame.")
@@ -68,7 +68,7 @@ def relinquish(caller):
 
 @CSCommand("kick","master")
 def kick(caller,cn):
-        """Kicks another player; however, this command does not work on players with higher permission. Kicking a player also gives them a 60 minute ban."""
+	"""Kicks another player; however, this command does not work on players with higher permission. Kicking a player also gives them a 60 minute ban."""
 	cn=int(cn)
 	UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
 	
@@ -78,13 +78,13 @@ def kick(caller,cn):
 
 @CSCommand("sendto","master")
 def sendto(caller,cn):
-        """Forces the specified player to /getmap."""
+	"""Forces the specified player to /getmap."""
 	cn=int(cn)
 	return sbserver.sendMapTo(cn)
 
 @CSCommand("spectator")
 def spectator(caller,boolean=None,cn=None):
-        """Sets spectator for the given cn. If the cn is left of it applies to the caller."""
+	"""Sets spectator for the given cn. If the cn is left of it applies to the caller."""
 	#empty args
 	if boolean is None:
 		boolean=1
@@ -114,7 +114,7 @@ def spectatorHelpler(boolean,cn):
 
 @CSCommand("editmute","master")
 def editmute(caller,boolean=None,cn=None):
-        """Sets an editmute on the given cn. If the cn is left of it applies to the caller."""
+	"""Sets an editmute on the given cn. If the cn is left of it applies to the caller."""
 	#empty args
 	if boolean is None:
 		boolean=1
@@ -137,7 +137,7 @@ def editmute(caller,boolean=None,cn=None):
 
 @CSCommand("mastermode","master")
 def masterMode(caller,name=None):
-        """Changes the mastermode of the server."""
+	"""Changes the mastermode of the server."""
 	if name==None:
 		return sbserver.masterMode()
 	mastermode=mastermodeNumber(name)
@@ -153,7 +153,7 @@ def masterMode(caller,name=None):
 
 @CSCommand("who")
 def who(caller,where="ingame"):
-        """Gives info on all the people logged in to the server. This includes: name, cn and IP address. Use this in conjuction with #echo. Ex: #echo (who)"""
+	"""Gives info on all the people logged in to the server. This includes: name, cn and IP address. Use this in conjuction with #echo. Ex: #echo (who)"""
 	def cndetails(cn):
 		return sbserver.playerName(cn)+" (cn"+str(cn)+"/"+ipLongToString(sbserver.playerIpLong(cn))+")"
 	
@@ -179,23 +179,41 @@ def listCommands(caller,which="hyperserv"):
 	commands.sort()
 	return ' '.join(commands)
 
+@CSCommand("help")
+def helpCommand(caller, command="help"):
+	"""Gives the various help information about commands in hyperserv."""
+	if command in systemCS.helpfunc.keys():
+		f = systemCS.helpfunc[command]
+		docstring = f.__doc__
+		if f.func_defaults:
+			nDefault = len(f.func_defaults)
+			defaults = zip(f.func_code.co_varnames[1:f.func_code.co_argcount][-nDefault:],f.func_defaults)
+			args = f.func_code.co_varnames[:f.func_code.co_argcount][:-nDefault]
+			d = [x[0]+'='+str(x[1]) for x in defaults]
+			string = command+'('+', '.join(args)+', '+', '.join(d)+')\n'+docstring
+		else:
+			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
+			string = command+'('+', '.join(args)+')\n'+docstring
+		triggerServerEvent("echo",[caller,string])
+	return command
+
 @CSCommand("say","admin")
 def say(caller,*what):
-        """Causes the server to say the input, simialar to #notice, without "Notice from PlayerName: MESSAGE HERE""""
+	"""Causes the server to say the input, simialar to #notice, without "Notice from PlayerName: MESSAGE HERE"""
 	string=' '.join(map(str,what))
 	triggerServerEvent("say",[string])
 	return string
 
 @CSCommand("echo")
 def echo(caller,*what):
-        """Displays the output from commands. Examples: listusersessions, list, user, who, whoami. Note that the command must be in parentheses. #echo (command)"""
+	"""Displays the output from commands. Examples: listusersessions, list, user, who, whoami. Note that the command must be in parentheses. #echo (command)"""
 	string=' '.join(map(str,what))
 	triggerServerEvent("echo",[caller,string])
 	return string
 
 @CSCommand("ban","trusted")
 def ban(caller,who=None,reason="",time="60"):
-        """Bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes."""
+	"""Bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes."""
 	if who is None:
 		bans(caller)
 	
@@ -216,17 +234,17 @@ def ban(caller,who=None,reason="",time="60"):
 
 @CSCommand("bans","master")
 def bans(caller):
-        """Returns all of the current bans in effect. Use this in conjuction with #echo. Ex: #echo (bans)"""
+	"""Returns all of the current bans in effect. Use this in conjuction with #echo. Ex: #echo (bans)"""
 	return bandatabase
 
 @CSCommand("delban","trusted")
 def delban(caller,who):
-        """Deletes a username from the ban database."""
+	"""Deletes a username from the ban database."""
 	del bandatabase[who]
 
 @CSCommand("minsleft")
 def minsleft(caller,time=None):
-        """Sets the amount of time remianing on the map. This can also be used in conjuction with #echo. Ex: #echo (minsleft)"""
+	"""Sets the amount of time remianing on the map. This can also be used in conjuction with #echo. Ex: #echo (minsleft)"""
 	if time is not None:
 		UserSessionManager.checkPermissions(caller,"trusted")
 		sbserver.setMinsRemaining(int(time))
@@ -234,7 +252,7 @@ def minsleft(caller,time=None):
 
 @CSCommand("team")
 def team(caller,*args):
-        """Allows players to switch teams just like with /team."""
+	"""Allows players to switch teams just like with /team."""
 	if(len(args)==1):
 		if(caller[0]=="ingame"):
 			cn=caller[1]
@@ -256,7 +274,7 @@ def team(caller,*args):
 
 @CSCommand("mute","master")
 def mute(caller,*args):
-        """Sets a mute on the given cn. If the cn is left of it applies to the caller."""
+	"""Sets a mute on the given cn. If the cn is left of it applies to the caller."""
 	if(len(args)==1):
 		boolean=1
 		cn=args[0]
@@ -272,7 +290,7 @@ def mute(caller,*args):
 
 @CSCommand("savemap","trusted")
 def savemap(caller,name=None):
-        """Saves the map to the server. Note that the map must be sent prior to saving."""
+	"""Saves the map to the server. Note that the map must be sent prior to saving."""
 	if name is None:
 		name=sbserver.mapName()
 	ogzfilename,ogz=openfile(os.path.join("maps",name+".ogz"),"wb")
@@ -286,7 +304,7 @@ def savemap(caller,name=None):
 
 @CSCommand("loadmap","master")
 def loadmap(caller,name=None):
-        """Loads a map from the server. This is automatically executed when you change to a map that the server has in storage."""
+	"""Loads a map from the server. This is automatically executed when you change to a map that the server has in storage."""
 	if name is None:
 		name=sbserver.mapName()
 	
