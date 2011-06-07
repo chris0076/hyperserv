@@ -188,11 +188,14 @@ def helpCommand(caller, command="help"):
 		if f.func_defaults:
 			nDefault = len(f.func_defaults)
 			defaults = zip(f.func_code.co_varnames[1:f.func_code.co_argcount][-nDefault:],f.func_defaults)
-			args = f.func_code.co_varnames[:f.func_code.co_argcount][:-nDefault]
+			args = f.func_code.co_varnames[1:f.func_code.co_argcount][:-nDefault]
 			d = [x[0]+'='+str(x[1]) for x in defaults]
-			string = command+'('+', '.join(args)+', '+', '.join(d)+')\n'+docstring
+			if args:
+                                string = command+'('+', '.join(args)+', '+', '.join(d)+')\n'+docstring
+                        else:
+                                string = command+'(' + ', '.join(d)+')\n'+docstring
 		else:
-			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
+			args = f.func_code.co_varnames[2:f.func_code.co_argcount]
 			string = command+'('+', '.join(args)+')\n'+docstring
 		triggerServerEvent("echo",[caller,string])
 	return command
