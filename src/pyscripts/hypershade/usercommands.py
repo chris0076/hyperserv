@@ -145,3 +145,25 @@ def takeMaster(caller):
 	masters=[session for session,user in UserSessionManager.items() if session[0]=='ingame' and user[1]=='master']
 	for master in masters:
 		playerCS.executeby(master,"relinquish; logout")
+
+@CSCommand("help")
+def helpCommand(caller, command="help"):
+        """Gives the various help information about commands in hyperserv."""
+	if command in systemCS.helpfunc.keys():
+		f = systemCS.helpfunc[command][0]
+		permission = systemCS.helpfunc[command][1]
+		docstring = f.__doc__.replace('\n', ' ')
+		if f.func_defaults:
+			nDefault = len(f.func_defaults)
+			defaults = zip(f.func_code.co_varnames[1:f.func_code.co_argcount][-nDefault:],f.func_defaults)
+			args = f.func_code.co_varnames[1:f.func_code.co_argcount][:-nDefault]
+			d = [x[0]+'='+str(x[1]) for x in defaults]
+			if args:
+                                string = command+'('+', '.join(args)+', '+', '.join(d)+') Permission: '+permission+' '+docstring
+                        else:
+                                string = command+'(' + ', '.join(d)+') Permission: '+permission+' '+docstring
+		else:
+			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
+			string = command+'('+', '.join(args)+') (Permission: '+permission+') '+docstring
+		#triggerServerEvent("echo",[caller,string])
+	return string

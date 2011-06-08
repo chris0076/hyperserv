@@ -84,7 +84,7 @@ def sendto(caller,cn):
 
 @CSCommand("spectator")
 def spectator(caller,boolean=None,cn=None):
-	"""Sets spectator for the given cn. If the cn is left of it applies to the caller."""
+	"""Sets spectator for the given cn. If the cn is left off it applies to the caller."""
 	#empty args
 	if boolean is None:
 		boolean=1
@@ -114,7 +114,7 @@ def spectatorHelpler(boolean,cn):
 
 @CSCommand("editmute","master")
 def editmute(caller,boolean=None,cn=None):
-	"""Sets an editmute on the given cn. If the cn is left of it applies to the caller."""
+	"""Sets an editmute on the given cn. If the cn is left off it applies to the caller."""
 	#empty args
 	if boolean is None:
 		boolean=1
@@ -179,27 +179,6 @@ def listCommands(caller,which="hyperserv"):
 	commands.sort()
 	return ' '.join(commands)
 
-@CSCommand("help")
-def helpCommand(caller, command="help"):
-	"""Gives the various help information about commands in hyperserv."""
-	if command in systemCS.helpfunc.keys():
-		f = systemCS.helpfunc[command]
-		docstring = f.__doc__
-		if f.func_defaults:
-			nDefault = len(f.func_defaults)
-			defaults = zip(f.func_code.co_varnames[1:f.func_code.co_argcount][-nDefault:],f.func_defaults)
-			args = f.func_code.co_varnames[1:f.func_code.co_argcount][:-nDefault]
-			d = [x[0]+'='+str(x[1]) for x in defaults]
-			if args:
-                                string = command+'('+', '.join(args)+', '+', '.join(d)+')\n'+docstring
-                        else:
-                                string = command+'(' + ', '.join(d)+')\n'+docstring
-		else:
-			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
-			string = command+'('+', '.join(args)+')\n'+docstring
-		triggerServerEvent("echo",[caller,string])
-	return command
-
 @CSCommand("say","admin")
 def say(caller,*what):
 	"""Causes the server to say the input, simialar to #notice, without "Notice from PlayerName: MESSAGE HERE"""
@@ -216,9 +195,9 @@ def echo(caller,*what):
 
 @CSCommand("ban","trusted")
 def ban(caller,who=None,reason="",time="60"):
-	"""Bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes."""
+	"""Bans the person specified. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes."""
 	if who is None:
-		bans(caller)
+		return
 	
 	try:
 		who=sbserver.playerName(int(who))
@@ -277,7 +256,7 @@ def team(caller,*args):
 
 @CSCommand("mute","master")
 def mute(caller,*args):
-	"""Sets a mute on the given cn. If the cn is left of it applies to the caller."""
+	"""Sets a mute on the given cn. If the cn is left off it applies to the caller."""
 	if(len(args)==1):
 		boolean=1
 		cn=args[0]
