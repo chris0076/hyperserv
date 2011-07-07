@@ -300,3 +300,20 @@ def loadmap(caller,name=None):
 	ogz.close()
 	
 	triggerServerEvent("loadmap",[caller,name,ogzfilename])
+
+def color(number, string):
+        return '\fs\f' + str(number) + string + '\fr'
+
+@CSCommand("pm")
+def CSserverPM(caller, cn=None, *what):
+        """Allows players to pm other players."""
+        string=' '.join(map(str,what))
+        try:
+                cn = int(cn)
+                reciver = ("ingame", cn)
+                string1 = "(PM) %s:" %formatCaller(caller)
+                newstring = color(3, string1+string)
+                playerCS.executeby(reciver,"echo \"%s\"" %newstring)
+        except ValueError:
+                triggerServerEvent("pm",[caller,cn,string])
+        return string
