@@ -101,5 +101,4 @@ def noticeirc(msg):
 
 @eventHandler('pm')
 def ircpm(caller,cn,msg):
-	if caller[0]=="irc":
-		factory.notice(cn,"<"+formatCaller(caller)+"> "+msg)
+	factory.notice(cn,"<"+formatCaller(caller)+"> "+msg)
