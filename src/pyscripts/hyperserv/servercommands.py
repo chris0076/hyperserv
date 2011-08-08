@@ -8,7 +8,7 @@ from datetime import timedelta, datetime
 from hyperserv.events import eventHandler, triggerServerEvent
 
 from hypershade.config import config
-from hypershade.cubescript import systemCS, CSCommand
+from hypershade.cubescript import systemCS, CSCommand, playerCS
 from hypershade.usersession import UserSessionManager
 from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller
 from hypershade.files import openfile
@@ -224,6 +224,11 @@ def delban(caller,who):
 	"""Deletes a username from the ban database."""
 	del bandatabase[who]
 
+@CSCommand("clearbans", "master")
+def clearbans(caller):
+	"""Clears all of the bans ending within the next hour."""
+	bandatabase.clearbans()
+
 @CSCommand("minsleft")
 def minsleft(caller,time=None):
 	"""Sets the amount of time remianing on the map. This can also be used in conjuction with #echo. Ex: #echo (minsleft)"""
@@ -302,18 +307,22 @@ def loadmap(caller,name=None):
 	triggerServerEvent("loadmap",[caller,name,ogzfilename])
 
 def color(number, string):
-        return '\fs\f' + str(number) + string + '\fr'
+	return '\fs\f' + str(number) + string + '\fr'
 
 @CSCommand("pm")
-def CSserverPM(caller, cn=None, *what):
-        """Allows players to pm other players."""
-        string=' '.join(map(str,what))
-        try:
-                cn = int(cn)
-                reciver = ("ingame", cn)
-                string1 = "(PM) %s:" %formatCaller(caller)
-                newstring = color(3, string1+string)
-                playerCS.executeby(reciver,"echo \"%s\"" %newstring)
-        except ValueError:
-                triggerServerEvent("pm",[caller,cn,string])
-        return string
+def CSserverPM(caller, cn, *what):
+	"""Allows players to pm other players."""
+	string=' '.join(map(str,what))
+	try:
+		cn = int(cn)
+		reciver = ("ingame", cn)
+		if caller[0] == "ingame":
+			namecn = " ("+str(caller[1])+"): "
+		else:
+			namecn = ""
+		string1 = formatCaller(caller) + namecn
+		newstring = color(3, string1+string)
+		playerCS.executeby(reciver,"echo \"%s\"" %newstring)
+	except ValueError:
+		triggerServerEvent("pm",[caller,cn,string])
+	return string
