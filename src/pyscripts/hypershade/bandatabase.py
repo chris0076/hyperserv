@@ -66,8 +66,8 @@ class BanDatabase():
 		if type(names) is str:
 			#probably a mistake, only one is wanted
 			return (self[names],)
-		string = ' OR '.join('`id` = %s')
-		database.query('SELECT * FROM `bans` WHERE %s ORDER BY `bans`.`expires` DESC' % string, (names,))
+		string = ' OR '.join(('`id` = %s',)*len(names))
+		database.query('SELECT * FROM `bans` WHERE %s ORDER BY `bans`.`expires` DESC' % string, names)
 		return tuple(database.cursor.fetchall())
 
 def formatExpiration(time):
