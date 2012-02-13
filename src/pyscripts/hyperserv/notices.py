@@ -4,6 +4,7 @@ from hyperserv.events import eventHandler, triggerServerEvent
 import hypershade
 from hypershade.cubescript import CSCommand, playerCS
 from hypershade.util import modeName, mastermodeName, formatCaller
+from hypershade.usersession import UserSessionManager
 
 muted_cns = []
 
@@ -84,6 +85,10 @@ def noticePlayerMuted(caller,boolean,target):
 @eventHandler("player_kicked")
 def noticePlayerKicked(caller,cn):
 	serverNotice("%s got kicked by %s." % (formatCaller(("ingame",cn)),formatCaller(caller)))
+
+@eventHandler("player_kick_failed")
+def noticePlayerKickFailed(caller,cn):
+	serverNotice("%s attempted to kick %s but failed since %s is an %s." % (formatCaller(caller),formatCaller(("ingame",cn)),formatCaller(("ingame",cn)),UserSessionManager[("ingame",cn)][1]))
 
 @eventHandler("player_uploaded_map")
 def noticePlayerUploadedMap(cn):

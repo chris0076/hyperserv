@@ -9,7 +9,7 @@ from hyperserv.events import eventHandler, triggerServerEvent
 
 from hypershade.config import config
 from hypershade.cubescript import systemCS, CSCommand
-from hypershade.usersession import UserSessionManager
+from hypershade.usersession import UserSessionManager, PermissionError
 from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller
 from hypershade.files import openfile
 
@@ -70,7 +70,11 @@ def relinquish(caller):
 def kick(caller,cn):
         """This allows the caller to kick another player; however, this will not override players with higher permission. Meaning, a master level permission can not kick someone with admin or trusted permission. To prevent the player from rejoining the server, they will also be banned for the default 60 minutes."""
 	cn=int(cn)
-	UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
+	try:
+		UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
+	except PermissionError:
+		triggerServerEvent("player_kick_failed",[caller,cn])
+		raise
 	
 	ban(caller,sbserver.playerName(cn),"kicked by %s" % formatCaller(caller))
 	triggerServerEvent("player_kicked",[caller,cn])
