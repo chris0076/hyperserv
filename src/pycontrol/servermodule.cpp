@@ -21,7 +21,7 @@
 #include "server.h"
 #include "sbcs.h"
 #include "stream.cpp"
-
+#include "stdio.h"
 #include <iostream>
 
 namespace SbPy
@@ -90,6 +90,32 @@ static PyObject *triggercsevent(PyObject *self, PyObject *pyargs)
 static PyObject *numClients(PyObject *self, PyObject *args)
 {
 	return Py_BuildValue("i", server::numclients());
+}
+
+static PyObject *playerPosition(PyObject *self, PyObject *args)
+{
+	int cn;
+	server::clientinfo *ci;
+	if(!PyArg_ParseTuple(args, "i", &cn))
+		return 0;
+	ci = server::getinfo(cn);
+	if(!ci)
+	{
+		PyErr_SetString(PyExc_ValueError, "Invalid cn specified.");
+		return 0;
+	}
+	if(!ci->name)
+	{
+		PyErr_SetString(PyExc_RuntimeError, "Client cn is valid but has no name.");
+		return 0;
+	}
+	PyObject *pTuple = PyTuple_New(4);
+	PyObject *pInt;
+	PyTuple_SetItem(pTuple,0,PyInt_FromLong(ci->state.o.x));
+	PyTuple_SetItem(pTuple,1,PyInt_FromLong(ci->state.o.y));
+	PyTuple_SetItem(pTuple,2,PyInt_FromLong(ci->state.o.z));
+	PyTuple_SetItem(pTuple,3,PyInt_FromLong(ci->state.dir));
+	return pTuple;
 }
 
 static PyObject *clients(PyObject *self, PyObject *args)
@@ -1020,6 +1046,7 @@ static PyMethodDef ModuleMethods[] = {
 	{"clients", clients, METH_VARARGS, "List of client numbers."},
 	{"players", players, METH_VARARGS, "List of client numbers of active clients."},
 	{"spectators", spectators, METH_VARARGS, "List of client numbers of spectating clients."},
+	{"playerPosition", playerPosition, METH_VARARGS, "Get the position of the player."},
 	{"playerMessage", playerMessage, METH_VARARGS, "Send a message to player."},
 	{"playerName", playerName, METH_VARARGS, "Get name of player from cn."},
 	{"playerSessionId", playerSessionId, METH_VARARGS, "Session ID of player."},

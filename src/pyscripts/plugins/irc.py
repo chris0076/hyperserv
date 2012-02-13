@@ -33,7 +33,7 @@ class IrcBot(irc.IRCClient):
 			self.joined_channels.remove(channel)
 	def broadcast(self, message):
 		for channel in self.joined_channels:
-			self.say(channel, message)
+			self.say(channel, message, 256)
 	def privmsg(self, user, channel, msg):
 		user = user.split('!', 1)[0]
 		if channel == self.nickname:

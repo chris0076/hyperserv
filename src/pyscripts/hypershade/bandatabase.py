@@ -8,7 +8,7 @@ def checkForExpired(function):
 			ban=results
 			if expired(ban):
 				del bandatabase[ban[0]]
-				raise KeyError("No such ban: %s" % (ban[0]))
+				raise KeyError("No such ban: %s", (ban[0]))
 			return formatExpiration(ban)
 		else:
 			def checkExpired(ban):
@@ -38,10 +38,10 @@ class BanDatabase():
 	
 	@checkForExpired
 	def __getitem__(self,name):
-		database.query('SELECT * FROM `bans` WHERE `id` = "%s" ORDER BY `bans`.`expires` DESC LIMIT 1' % (name))
+		database.query('SELECT * FROM `bans` WHERE `id` = %s ORDER BY `bans`.`expires` DESC LIMIT 1', (name))
 		
 		if database.cursor.rowcount==0:
-			raise KeyError("No such ban: %s" % (name))
+			raise KeyError("No such ban: %s", (name))
 		
 		return database.cursor.fetchone()
 	
@@ -50,10 +50,10 @@ class BanDatabase():
 			del self[name]
 		except:
 			pass
-		database.query('INSERT INTO `bans` VALUES ("%s","%s","%s")' % (name,values[0],values[1]))
+		database.query('INSERT INTO `bans` VALUES (%s,%s,%s)', (name,values[0],values[1]))
 	
 	def __delitem__(self,name):
-		database.query('DELETE FROM `bans` WHERE `id` = "%s"' % (name))
+		database.query('DELETE FROM `bans` WHERE `id` = %s', (name))
 	
 	def cleargbans(self):
 		database.query('DELETE FROM `bans` WHERE `reason` = "gban"')
@@ -69,8 +69,8 @@ class BanDatabase():
 		if type(names) is str:
 			#probably a mistake, only one is wanted
 			return (self[names],)
-		string = ' OR '.join(map(lambda name: '`id` = "%s"' % name,names))
-		database.query('SELECT * FROM `bans` WHERE %s ORDER BY `bans`.`expires` DESC' % (string))
+		string = ' OR '.join(('`id` = %s',)*len(names))
+		database.query('SELECT * FROM `bans` WHERE %s ORDER BY `bans`.`expires` DESC' % string, names)
 		return tuple(database.cursor.fetchall())
 
 def formatExpiration(time):
