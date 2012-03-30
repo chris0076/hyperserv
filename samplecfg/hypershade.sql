@@ -38,6 +38,6 @@ INSERT INTO `users` (`user`, `key`, `value`) VALUES
 
 CREATE TABLE IF NOT EXISTS `bans` (
   `id` varchar(256) NOT NULL,
-  `expires` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `expires` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `reason` tinytext NOT NULL
 );
