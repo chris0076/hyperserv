@@ -22,7 +22,7 @@ def openfile(filename,mode="rb"):
 
 @CSCommand("listfiles")
 def listfiles(caller,folder="."):
-        """Lists all the files in the given folder. Use this in conjuction with #echo. Ex: #echo (listfiles)"""
+	"""Lists all the files in the given folder. Use this in conjuction with #echo. Ex: #echo (listfiles)"""
 	filelist=glob.glob(safepath(config["storage"],os.path.join(folder,"*")))
 	filelist=map(lambda absolute:os.path.split(absolute)[1],filelist)
 	return ' '.join(filelist)
@@ -30,7 +30,7 @@ def listfiles(caller,folder="."):
 @CSCommand("downloadfile","trusted")
 @threaded
 def downloadfile(caller,address,filename=None):
-        """Downloads the specified file to the server."""
+	"""Downloads the specified file to the server."""
 	if filename is None:
 		filename=posixpath.split(address)[-1]
 	source=urllib2.urlopen(address)
@@ -41,7 +41,7 @@ def downloadfile(caller,address,filename=None):
 
 @CSCommand("deletefile","admin")
 def deletefile(caller,filename):
-        """Deletes the specified file from the server."""
+	"""Deletes the specified file from the server."""
 	filename=safepath(config["storage"],filename)
 	os.remove(filename)
 	serverNotice("Deleted %s" % (filename,))

@@ -92,7 +92,7 @@ def setSimpleMaster(caller):
 
 @CSCommand("givemaster","master")
 def giveMaster(caller,cn):
-        """Gives master to the cn designated. This will raise an error if the player already has permssions at, or beyond, master."""
+		"""Gives master to the cn designated. This will raise an error if the player already has permssions at, or beyond, master."""
 	target=("ingame",int(cn))
 	if UserSessionManager[target][0]=="notloggedin":
 		setSimpleMaster(target)

@@ -9,7 +9,7 @@ editflength=base.packettypes[editfnumber][1]
 
 @CSCommand("editf","trusted")
 def editfcommand(caller,*args):
-        '''Sends an editf packet with the given args.'''
+	'''Sends an editf packet with the given args.'''
 	editf(*map(int,args))
 
 def editf(*args):
@@ -19,7 +19,7 @@ def editf(*args):
 
 @CSCommand("makecube","trusted")
 def makecube(caller,x,y,z,s=16):
-        '''Makes a single cube at the specified location and of the repective size.'''
+	'''Makes a single cube at the specified location and of the repective size.'''
 	s=int(s)
 	x=int(x)*s
 	y=int(y)*s
@@ -28,7 +28,7 @@ def makecube(caller,x,y,z,s=16):
 
 @CSCommand("makecolumn","trusted")
 def makecolumn(caller,x,y,z=0,h=16,s=16):
-        '''Creates a clumn of cubes at an x, y coordinate.'''
+	'''Creates a clumn of cubes at an x, y coordinate.'''
 	s=int(s)
 	h=int(h)
 	x=int(x)*s
@@ -38,7 +38,7 @@ def makecolumn(caller,x,y,z=0,h=16,s=16):
 
 @CSCommand("corners","trusted")
 def cornerscommand(caller,x,y,z,c0,c1,c2,c3,s=16):
-        '''Pushes the top 4 corners of the cube at the given coordinate.'''
+	'''Pushes the top 4 corners of the cube at the given coordinate.'''
 	s=int(s)
 	
 	x=int(x)
