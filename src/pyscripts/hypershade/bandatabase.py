@@ -1,5 +1,26 @@
 from hypershade.database import database
 import datetime
+import re
+
+def match(pattern,string):
+	"""Function for matching strings with * in them, you can also escape \* if you mean literal *."""
+	
+	#process pattern to make it usable by regex
+	oldpattern=pattern
+	pattern="^"
+	while oldpattern:
+		if oldpattern.startswith("*"):
+			pattern+=".*"
+			oldpattern=oldpattern[1:]
+		elif oldpattern.startswith("\*"):
+			pattern+="\*"
+			oldpattern=oldpattern[2:]
+		else:
+			pattern+=re.escape(oldpattern[0])
+			oldpattern=oldpattern[1:]
+	pattern+="$"
+	
+	return re.match(pattern,string)
 
 def checkForExpired(function):
 	def newfunction(*args):
@@ -61,14 +82,16 @@ class BanDatabase():
 	def __repr__(self):
 		return repr(self.items())
 	
-	@checkForExpired
 	def search(self,names):
 		if type(names) is str:
 			#probably a mistake, only one is wanted
 			return (self[names],)
-		string = ' OR '.join(('`id` = %s',)*len(names))
-		database.query('SELECT * FROM `bans` WHERE %s ORDER BY `bans`.`expires` DESC' % string, names)
-		return tuple(database.cursor.fetchall())
+		
+		for pattern,expires,reason in self.items():
+			for name in names:
+				if match(pattern,name):
+					return ((pattern,expires,reason),)
+		return ()
 
 def formatExpiration(time):
 	if type(time) is tuple:
