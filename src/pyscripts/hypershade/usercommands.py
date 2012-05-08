@@ -161,9 +161,9 @@ def helpCommand(caller, command="help"):
 			args = f.func_code.co_varnames[1:f.func_code.co_argcount][:-nDefault]
 			d = [x[0]+'='+str(x[1]) for x in defaults]
 			if args:
-								string = command+'('+', '.join(args)+', '+', '.join(d)+') (Permission: '+permission+') '+docstring
-						else:
-								string = command+'(' + ', '.join(d)+') (Permission: '+permission+') '+docstring
+				string = command+'('+', '.join(args)+', '+', '.join(d)+') (Permission: '+permission+') '+docstring
+			else:
+				string = command+'(' + ', '.join(d)+') (Permission: '+permission+') '+docstring
 		else:
 			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
 			string = command+'('+', '.join(args)+') (Permission: '+permission+') '+docstring
