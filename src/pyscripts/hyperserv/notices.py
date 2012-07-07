@@ -1,9 +1,11 @@
 """This file contains all the event handlers for notices"""
 from hyperserv.events import eventHandler, triggerServerEvent
 
+import sbserver
+
 import hypershade
 from hypershade.cubescript import CSCommand, playerCS
-from hypershade.util import modeName, mastermodeName, formatCaller
+from hypershade.util import modeName, mastermodeName, formatCaller, ipLongToString
 from hypershade.usersession import UserSessionManager
 
 muted_cns = []
@@ -24,7 +26,9 @@ def CSserverNotice(caller, *strings):
 
 @eventHandler('player_connect')
 def noticePlayerConnect(cn):
-	serverNotice("Connected: "+formatCaller(("ingame",cn))+"("+str(cn)+")")
+	ip = "(%s)" % (ipLongToString(sbserver.playerIpLong(cn)))
+	normal = "Connected: %s(%d)" % (formatCaller(("ingame",cn)), cn)
+	serverNotice(normal + ip)
 
 @eventHandler('player_disconnect')
 def noticePlayerDisconnect(cn):
