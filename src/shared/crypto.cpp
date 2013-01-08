@@ -146,6 +146,14 @@ namespace tiger
         while(j < 56) temp[j++] = 0;
         *(chunk *)(temp+56) = (chunk)length<<3;
         compress((chunk *)temp, val.chunks);
+        if(!*(const uchar *)&islittleendian)
+        {
+            loopk(3) 
+            {
+                uchar *c = &val.bytes[k*sizeof(chunk)];
+                loopl(sizeof(chunk)/2) swap(c[l], c[sizeof(chunk)-1-l]);
+            }
+        }
     }
 }
 
@@ -732,7 +740,7 @@ void genprivkey(const char *seed, vector<char> &privstr, vector<char> &pubstr)
     tiger::hashval hash;
     tiger::hash((const uchar *)seed, (int)strlen(seed), hash);
     bigint<8*sizeof(hash.bytes)/BI_DIGIT_BITS> privkey;
-    memcpy(privkey.digits, hash.bytes, sizeof(privkey.digits));
+    memcpy(privkey.digits, hash.bytes, sizeof(hash.bytes));
     privkey.len = 8*sizeof(hash.bytes)/BI_DIGIT_BITS;
     privkey.shrink();
     privkey.printdigits(privstr);
@@ -789,7 +797,7 @@ void *genchallenge(void *pubkey, const void *seed, int seedlen, vector<char> &ch
     tiger::hashval hash;
     tiger::hash((const uchar *)seed, sizeof(seed), hash);
     gfint challenge;
-    memcpy(challenge.digits, hash.bytes, sizeof(challenge.digits));
+    memcpy(challenge.digits, hash.bytes, sizeof(hash.bytes));
     challenge.len = 8*sizeof(hash.bytes)/BI_DIGIT_BITS;
     challenge.shrink();
 

@@ -7,7 +7,7 @@ namespace aiman
 
     void calcteams(vector<teamscore> &teams)
     {
-        const char *defaults[2] = { "good", "evil" };
+        static const char * const defaults[2] = { "good", "evil" };
         loopv(clients)
         {
             clientinfo *ci = clients[i];
@@ -20,12 +20,7 @@ namespace aiman
         teams.sort(teamscore::compare);
         if(teams.length() < int(sizeof(defaults)/sizeof(defaults[0])))
         {
-            loopi(sizeof(defaults)/sizeof(defaults[0]))
-            {
-                loopvj(teams) if(!strcmp(teams[j].team, defaults[i])) goto nextteam;
-                teams.add(teamscore(defaults[i], 0));
-            nextteam:;
-            }
+            loopi(sizeof(defaults)/sizeof(defaults[0])) if(teams.htfind(defaults[i]) < 0) teams.add(teamscore(defaults[i], 0));
         }
     }
 
@@ -55,7 +50,7 @@ namespace aiman
             {
                 if(smode && bot->state.state==CS_ALIVE) smode->changeteam(bot, bot->team, t.team);
                 copystring(bot->team, t.team, MAXTEAMLEN+1);
-                sendf(-1, 1, "riis", N_SETTEAM, bot->clientnum, bot->team);
+                sendf(-1, 1, "riisi", N_SETTEAM, bot->clientnum, bot->team, 0);
             }
             else teams.remove(0, 1);
         }
@@ -103,9 +98,9 @@ namespace aiman
 
                 clientinfo *owner = findaiclient();
                 ci->ownernum = owner ? owner->clientnum : -1;
+                if(owner) owner->bots.add(ci);
                 ci->aireinit = 2;
                 dorefresh = true;
-				SbPy::triggerEventInt("game_bot_added", ci->clientnum);
                 return true;
             }
         }
@@ -128,13 +123,11 @@ namespace aiman
 		ci->aireinit = 2;
 		ci->connected = true;
         dorefresh = true;
-        SbPy::triggerEventInt("game_bot_added", ci->clientnum);
 		return true;
 	}
 
 	void deleteai(clientinfo *ci)
 	{
-		SbPy::triggerEventInt("game_bot_removed", ci->clientnum);
         int cn = ci->clientnum - MAXCLIENTS;
         if(!bots.inrange(cn)) return;
         if(smode) smode->leavegame(ci, true);
@@ -172,12 +165,12 @@ namespace aiman
 		}
 	}
 
-	void shiftai(clientinfo *ci, clientinfo *owner)
+	void shiftai(clientinfo *ci, clientinfo *owner = NULL)
 	{
         clientinfo *prevowner = (clientinfo *)getclientinfo(ci->ownernum);
         if(prevowner) prevowner->bots.removeobj(ci);
 		if(!owner) { ci->aireinit = 0; ci->ownernum = -1; }
-		else { ci->aireinit = 2; ci->ownernum = owner->clientnum; owner->bots.add(ci); }
+		else if(ci->clientnum != owner->clientnum) { ci->aireinit = 2; ci->ownernum = owner->clientnum; owner->bots.add(ci); }
         dorefresh = true;
 	}
 
